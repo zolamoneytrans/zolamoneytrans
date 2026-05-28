@@ -1,3 +1,9 @@
 node_modules/
 .DS_Store
 *.log
+
+# Local iOS certificate files
+private_key.key
+ios_csr.certSigningRequest
+ios_distribution.cer
+ios_distribution.p12
