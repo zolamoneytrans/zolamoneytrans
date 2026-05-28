@@ -17,8 +17,9 @@ workflows:
         script: npm install
       - name: Sync Capacitor (iOS)
         script: npx cap sync ios
-      - name: Set up iOS code signing
+      - name: Fetch and Create iOS code signing files
         script: |
+          app-store-connect fetch-signing-files "com.zolamoneytrans.app" --type IOS_APP_STORE --create
           xcode-project use-profiles
       - name: Build IPA
         script: |
