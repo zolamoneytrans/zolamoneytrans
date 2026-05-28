@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Demander un paiement — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Zola <span>Money</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Tableau de bord
+      </a>
+      <a href="scan.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+        Scanner QR
+      </a>
+      <a href="transfer.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+        Transferts
+      </a>
+      <a href="bills.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+        Factures
+      </a>
+      <div class="nav-section-title">Compte</div>
+      <a href="kyc.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        Vérification KYC
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+        Aide & Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div class="topbar-title">Demander un paiement</div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar" id="userAvatar">Z</div>
+      </div>
+    </header>
+
+    <div class="page-content page-enter">
+      <div class="responsive-grid" style="margin-bottom:24px;">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Générer une demande de paiement</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Saisissez le montant que vous souhaitez demander. Un QR code et un lien seront générés pour être partagés.</p>
+
+          <div style="display:flex; gap:12px; margin-bottom:16px;">
+            <div class="form-group" style="flex:1; margin-bottom:0;">
+              <label class="form-label">Montant</label>
+              <input type="number" id="requestAmount" class="form-control" placeholder="Ex: 50000"/>
+            </div>
+            <div class="form-group" style="width:100px; margin-bottom:0;">
+              <label class="form-label">Devise</label>
+              <select id="requestCurrency" class="form-control" style="cursor:pointer; font-weight:600;">
+                <option value="CDF">CDF</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description (optionnel)</label>
+            <input type="text" id="requestDesc" class="form-control" placeholder="Ex: Remboursement dîner"/>
+          </div>
+          <button class="btn btn-gold btn-block" onclick="generatePaymentRequest()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Générer la demande
+          </button>
+
+          <div id="requestResult" style="display:none; text-align:center; margin-top:24px; padding-top:20px; border-top:1px solid var(--c-border);">
+            <div class="section-title" style="margin-bottom:12px;">QR Code de Paiement</div>
+            <div class="qr-box" id="requestQR" style="display:inline-flex; margin-bottom:16px;"></div>
+            
+            <div style="background:var(--c-surface2); border-radius:var(--radius-sm); padding:12px; font-size:0.82rem; color:var(--c-text2); margin-bottom:16px; word-break:break-all;">
+              <strong style="color:var(--c-text);">Lien de paiement :</strong><br/>
+              <span id="requestLinkUrl" style="color:var(--c-primary-light);"></span>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <button class="btn btn-outline" onclick="copyRequestLink()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                Copier le lien
+              </button>
+              <button class="btn btn-primary" onclick="shareRequestLink()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+                Partager
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Mobile Bas (PWA Shell) -->
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="scan.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      <span>Scanner QR</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="bills.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Factures</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module">
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './js/firebase.js';
+
+  let currentUserUid = null;
+  let qrCode = null;
+  let currentRequestUrl = null;
+
+  window.handleLogout = async function() {
+    await signOut(auth);
+    window.location.href = 'auth.html';
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'auth.html';
+      return;
+    }
+    currentUserUid = user.uid;
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    const u = userSnap.exists() ? userSnap.data() : {};
+    const initial = (u.prenom || u.name || 'Z').charAt(0).toUpperCase();
+    document.getElementById('userAvatar').innerText = initial;
+    
+    document.getElementById('loadingScreen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('appShell').style.display = 'flex';
+    }, 300);
+  });
+
+  window.generatePaymentRequest = function() {
+    const amount = document.getElementById('requestAmount').value;
+    const currency = document.getElementById('requestCurrency').value;
+    const desc = document.getElementById('requestDesc').value;
+
+    const minAmt = currency === 'USD' ? 1 : 240;
+    if(!amount || amount < minAmt) {
+      alert(`Veuillez entrer un montant valide (minimum ${minAmt} ${currency}).`);
+      return;
+    }
+
+    const baseUrl = window.location.origin + window.location.pathname.replace('request_payment.html', 'pay.html');
+    const params = new URLSearchParams({
+      to: currentUserUid,
+      amount: amount,
+      currency: currency,
+      desc: desc
+    });
+    
+    currentRequestUrl = `${baseUrl}?${params.toString()}`;
+
+    document.getElementById('requestLinkUrl').innerText = currentRequestUrl;
+    document.getElementById('requestResult').style.display = 'block';
+
+    const qrContainer = document.getElementById("requestQR");
+    qrContainer.innerHTML = "";
+    qrCode = new QRCode(qrContainer, {
+      text: currentRequestUrl,
+      width: 200,
+      height: 200,
+      colorDark : "#1e1e2d",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+  };
+
+  window.copyRequestLink = function() {
+    if(!currentRequestUrl) return;
+    navigator.clipboard.writeText(currentRequestUrl).then(() => {
+      alert("Lien copié dans le presse-papier !");
+    });
+  };
+
+  window.shareRequestLink = function() {
+    if(!currentRequestUrl) return;
+    if (navigator.share) {
+      navigator.share({
+        title: 'Demande de paiement Zola Money',
+        text: 'Payez-moi via Zola Money en cliquant sur ce lien.',
+        url: currentRequestUrl
+      }).catch(console.error);
+    } else {
+      window.copyRequestLink();
+    }
+  };
+</script>
+</body>
+</html>

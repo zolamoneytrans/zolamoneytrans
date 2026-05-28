@@ -1,0 +1,20 @@
+{
+  "name": "zola-money-trans",
+  "version": "1.0.0",
+  "description": "Zola Money Trans PWA and Mobile App",
+  "main": "index.html",
+  "scripts": {
+    "build": "powershell -Command \"Remove-Item -Recurse -Force www -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Path www; Copy-Item *.html, manifest.json, sw.js www/; Copy-Item -Recurse css, js, icons www/\"",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:copy": "npm run build && npx cap copy",
+    "cap:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/ios": "^6.2.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

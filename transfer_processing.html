@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Traitement du Transfert — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <style>
+    .progress-container {
+      background: var(--c-surface);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 400px;
+      margin: 40px auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      border: 1px solid var(--c-border);
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+    }
+    .progress-step.active {
+      opacity: 1;
+    }
+    .progress-step.completed {
+      opacity: 1;
+    }
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--c-surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-size: 1.2rem;
+      border: 2px solid transparent;
+    }
+    .active .step-icon {
+      border-color: var(--c-primary);
+      color: var(--c-primary);
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+    }
+    .completed .step-icon {
+      background: var(--c-success);
+      color: white;
+      border-color: var(--c-success);
+    }
+    .step-text {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--c-text);
+      text-align: left;
+    }
+    .step-subtext {
+      font-size: 0.8rem;
+      color: var(--c-text2);
+    }
+    .loader {
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--c-primary);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="app-shell" id="appShell">
+  <main class="main-content" style="margin-left:0; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px;">
+    
+    <div style="margin-bottom:20px;">
+      <img src="icons/zolalogo192x192.png" alt="Zola Money" style="width:80px; height:80px; border-radius:20px;" />
+    </div>
+
+    <h2 style="margin-bottom:10px; text-align:center;">Traitement en cours</h2>
+    <p style="color:var(--c-text2); text-align:center; max-width:400px; margin-bottom:30px; font-size:0.9rem;">
+      Veuillez patienter pendant que nous confirmons et exécutons votre transfert. Ne fermez pas cette page.
+    </p>
+
+    <div class="progress-container">
+      
+      <div class="progress-step active" id="step1">
+        <div class="step-icon">
+          <div class="loader" id="loader1"></div>
+          <span id="check1" style="display:none;">✓</span>
+        </div>
+        <div>
+          <div class="step-text" id="text1">En attente de la confirmation Visa...</div>
+          <div class="step-subtext">Vérification du paiement sécurisé</div>
+        </div>
+      </div>
+
+      <div class="progress-step" id="step2">
+        <div class="step-icon">
+          <div class="loader" id="loader2" style="display:none;"></div>
+          <span id="check2" style="display:none;">✓</span>
+          <span id="icon2">💸</span>
+        </div>
+        <div>
+          <div class="step-text" id="text2">Paiement Mobile Money en attente</div>
+          <div class="step-subtext">Envoi des fonds au bénéficiaire</div>
+        </div>
+      </div>
+
+      <div class="progress-step" id="step3">
+        <div class="step-icon" id="icon3">
+          🎉
+        </div>
+        <div>
+          <div class="step-text" id="text3">Finalisation</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="errorContainer" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:16px; color:#f87171; max-width:400px; text-align:center; margin-top:20px;">
+      <div style="font-weight:600; margin-bottom:8px;">Le transfert a échoué</div>
+      <div id="errorMessage" style="font-size:0.85rem;">Une erreur est survenue lors de la transaction.</div>
+      <button class="btn btn-outline" style="margin-top:16px;" onclick="window.location.href='transfer.html'">Retourner aux transferts</button>
+    </div>
+
+    <div id="successContainer" style="display:none; margin-top:20px; text-align:center;">
+      <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">Aller au tableau de bord</button>
+    </div>
+
+  </main>
+</div>
+
+<script type="module" src="js/transfer_processing.js"></script>
+</body>
+</html>

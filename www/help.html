@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aide & Support — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <style>
+    /* Custom styles for help page to make it look exceptionally beautiful and premium */
+    .help-header {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .help-header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .help-search-box {
+      max-width: 500px;
+      margin-top: 16px;
+      position: relative;
+    }
+
+    .help-search-box input {
+      padding-left: 44px;
+      height: 48px;
+      font-size: 0.95rem;
+      background: rgba(20, 20, 25, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .help-search-box input:focus {
+      border-color: var(--c-primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+    }
+
+    .help-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--c-text3);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .help-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 992px) {
+      .help-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .guide-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .guide-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .guide-card {
+      background: var(--c-card-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .guide-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(124, 58, 237, 0.4);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .guide-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    .guide-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--c-text1);
+    }
+
+    .guide-desc {
+      font-size: 0.82rem;
+      color: var(--c-text2);
+      line-height: 1.5;
+    }
+
+    .faq-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Beautiful expandable details styling */
+    details {
+      background: var(--c-card-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    details[open] {
+      border-color: rgba(124, 58, 237, 0.4);
+    }
+
+    summary {
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      user-select: none;
+      color: var(--c-text1);
+      transition: background-color 0.2s;
+    }
+
+    summary:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--c-primary);
+      transition: transform 0.3s;
+    }
+
+    details[open] summary::after {
+      content: '−';
+      transform: rotate(180deg);
+    }
+
+    .faq-content {
+      padding: 0 20px 16px;
+      font-size: 0.85rem;
+      color: var(--c-text2);
+      line-height: 1.6;
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .support-card {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: var(--c-text1);
+      border: 1px solid var(--c-border);
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(124, 58, 237, 0.3);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    
+    .highlight-badge {
+      background: var(--c-primary);
+      color: white;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Zola <span>Money</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Tableau de bord
+      </a>
+      <a href="merchant.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+        Paiement Marchand
+      </a>
+      <a href="transfer.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+        Transferts
+      </a>
+      <a href="bills.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+        Factures
+      </a>
+      <div class="nav-section-title" style="margin-top:8px;">Compte</div>
+      <a href="kyc.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        Vérification KYC
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+        Aide & Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%; background:none; border:none; cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">Centre d'Aide & Support</div>
+          <div style="font-size:0.78rem; color:var(--c-text3);">Retrouvez guides, FAQs et assistance</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar" id="userAvatar">Z</div>
+      </div>
+    </header>
+
+    <div class="page-content page-enter">
+      
+      <!-- Welcome Header & Search -->
+      <div class="help-header">
+        <h2 style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; margin-bottom:8px; color:var(--c-text1);">
+          Comment pouvons-nous vous aider ?
+        </h2>
+        <p style="color:var(--c-text2); font-size:0.9rem; max-width:550px; line-height:1.6;">
+          Zola Money Trans regroupe tous les opérateurs Mobile Money (M-Pesa, Airtel Money, Orange Money) pour vous simplifier la vie. Explorez nos guides rapides ci-dessous.
+        </p>
+        <div class="help-search-box">
+          <svg class="help-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+          <input type="text" id="faqSearchInput" class="form-control" placeholder="Rechercher une question ou un mot-clé (ex: frais, KYC, QR)..." onkeyup="filterFAQs()"/>
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="help-grid">
+        
+        <!-- Left Side: Interactive Feature Guides & Expandable FAQ -->
+        <div>
+          <div class="section-title" style="margin-bottom:16px;">Guides d'utilisation de l'application</div>
+          
+          <div class="guide-card-grid">
+            <div class="guide-card">
+              <div class="guide-icon" style="background: linear-gradient(135deg,#7C3AED,#4C1D95);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+              </div>
+              <h3 class="guide-title">Paiement Marchand (QR)</h3>
+              <p class="guide-desc">Accédez à votre QR code unique, imprimez-le ou affichez-le. Vos clients le scannent depuis Vodacom, Airtel ou Orange Money pour vous régler directement.</p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-icon" style="background: linear-gradient(135deg,#F59E0B,#D97706);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+              </div>
+              <h3 class="guide-title">Transferts Inter-Opérateurs</h3>
+              <p class="guide-desc">Envoyez des fonds depuis un réseau mobile vers un autre (ex: M-Pesa vers Airtel Money) ou vers nos banques partenaires Rawbank et Equity Bank en moins de 30 secondes.</p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-icon" style="background: linear-gradient(135deg,#10B981,#059669);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <h3 class="guide-title">Règlement de Factures</h3>
+              <p class="guide-desc">Payez instantanément vos factures de services publics comme la SNEL (électricité), la REGIDESO (eau) ou votre abonnement Canal+ directement depuis votre compte.</p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-icon" style="background: linear-gradient(135deg,#3B82F6,#1D4ED8);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+              </div>
+              <h3 class="guide-title">Limites KYC & Conformité</h3>
+              <p class="guide-desc">Ajustez vos limites de transaction en complétant vos niveaux KYC. Importez vos justificatifs d'identité nationale et de domicile en quelques clics.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Accordions -->
+          <div class="faq-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--c-primary);"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+            Foire Aux Questions (FAQ)
+          </div>
+
+          <div id="faqList">
+            <details class="faq-item">
+              <summary>Quels sont les opérateurs mobiles supportés ?</summary>
+              <div class="faq-content">
+                Zola Money Trans prend en charge tous les réseaux majeurs de la République Démocratique du Congo :
+                <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+                  <li><strong>M-Pesa</strong> (Vodacom)</li>
+                  <li><strong>Airtel Money</strong> (Airtel)</li>
+                  <li><strong>Orange Money</strong> (Orange)</li>
+                  <li>Et des retraits directs vers vos comptes bancaires <strong>Rawbank</strong> et <strong>Equity Bank</strong>.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary>Comment mes clients paient-ils via le QR code universel ?</summary>
+              <div class="faq-content">
+                C'est extrêmement simple :
+                <ol style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+                  <li>Vous présentez ou imprimez le QR Code disponible sur la page <strong>Paiement Marchand</strong>.</li>
+                  <li>Le client scanne le QR code, choisit son opérateur mobile habituel (M-Pesa, Airtel, Orange) et saisit son numéro ainsi que le montant.</li>
+                  <li>Le client reçoit une invitation push SIM sur son propre téléphone pour saisir son code PIN secret.</li>
+                  <li>La transaction est instantanément créditée sur votre tableau de bord et notifiée !</li>
+                </ol>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary>Quels sont les frais de transaction ?</summary>
+              <div class="faq-content">
+                Les frais sont transparents et calculés automatiquement avant chaque validation :
+                <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+                  <li><strong>Encaissement Marchand (QR Code) :</strong> 1.0% fixe par transaction.</li>
+                  <li><strong>Transfert National Inter-opérateurs :</strong> Affiché en temps réel dans le simulateur (généralement inférieur à l'addition des frais multi-opérateurs standard).</li>
+                  <li><strong>Paiement de factures (SNEL, REGIDESO, Canal+) :</strong> Frais de service minimes affichés avant confirmation.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary>Pourquoi mon compte est-il limité et comment lever les limites ?</summary>
+              <div class="faq-content">
+                Zola Money Trans opère conformément aux exigences de la Banque Centrale du Congo (BCC). Nous appliquons trois paliers de conformité KYC :
+                <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.6;">
+                  <li><strong>KYC Basique (Niveau 1) :</strong> Obtenu à l'inscription. Permet un volume maximum de 500 USD par mois.</li>
+                  <li><strong>KYC Avancé (Niveau 2) :</strong> Requis pour des transferts jusqu'à 5 000 USD par mois. Nécessite l'envoi d'un selfie biométrique et d'un justificatif de domicile (facture SNEL/REGIDESO récente).</li>
+                  <li><strong>KYC Marchand (Niveau 3) :</strong> Conçu pour les entreprises à volume illimité. Requiert le RCCM, l'identification nationale ou les statuts notariés.</li>
+                </ul>
+                Rendez-vous sur la page <a href="kyc.html" style="color:var(--c-primary); font-weight:600; text-decoration:underline;">Vérification KYC</a> pour importer vos documents.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary>Comment fonctionne le règlement des factures de services publics ?</summary>
+              <div class="faq-content">
+                Sur la page <strong>Factures</strong>, sélectionnez le fournisseur (SNEL, REGIDESO ou Canal+), saisissez votre numéro de compteur ou d'abonné, et cliquez sur vérifier. Notre système interroge en direct le solde du partenaire. Vous pouvez alors régler instantanément le montant dû.
+              </div>
+            </details>
+            
+            <div id="noResults" style="display:none; text-align:center; padding:32px; color:var(--c-text3);">
+              Aucune question ne correspond à votre recherche. Essayez avec un autre mot-clé.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Support Card & Direct Contact Channels -->
+        <div>
+          <div class="section-title" style="margin-bottom:16px;">Assistance & Support en Direct</div>
+          
+          <div class="card support-card">
+            <h3 style="font-size:1rem; font-weight:700; margin-bottom:8px; color:var(--c-gold); display:flex; align-items:center; gap:8px;">
+              <span>💬</span> Service Clientèle RDC
+            </h3>
+            <p style="font-size:0.8rem; color:var(--c-text2); margin-bottom:18px; line-height:1.6;">
+              Notre service support est disponible 24h/24 et 7j/7 pour répondre à toutes vos questions d'intégration et de transaction.
+            </p>
+
+            <div style="font-size:0.75rem; color:var(--c-text3); text-transform:uppercase; font-weight:700; letter-spacing:0.05em; margin-bottom:10px;">Canaux Rapides (WhatsApp & Tel)</div>
+            
+            <a href="https://wa.me/243993242872" target="_blank" class="contact-item">
+              <div class="contact-icon" style="background:#25D366; color:white;">💬</div>
+              <div>
+                <div style="font-size:0.82rem; font-weight:700;">Support WhatsApp (Vodacom)</div>
+                <div style="font-size:0.75rem; color:var(--c-text3);">+243 993 242 872</div>
+              </div>
+              <span class="highlight-badge" style="margin-left:auto; background:#25D366;">En ligne</span>
+            </a>
+
+            <a href="https://wa.me/243857767040" target="_blank" class="contact-item">
+              <div class="contact-icon" style="background:#25D366; color:white;">💬</div>
+              <div>
+                <div style="font-size:0.82rem; font-weight:700;">Support WhatsApp (Orange)</div>
+                <div style="font-size:0.75rem; color:var(--c-text3);">+243 857 767 040</div>
+              </div>
+              <span class="highlight-badge" style="margin-left:auto; background:#25D366;">En ligne</span>
+            </a>
+
+            <div style="font-size:0.75rem; color:var(--c-text3); text-transform:uppercase; font-weight:700; letter-spacing:0.05em; margin:20px 0 10px 0;">Courrier électronique</div>
+
+            <a href="mailto:info@zolamoneytrans.com" class="contact-item">
+              <div class="contact-icon" style="background:var(--c-primary); color:white;">📧</div>
+              <div>
+                <div style="font-size:0.82rem; font-weight:700;">Email Support</div>
+                <div style="font-size:0.75rem; color:var(--c-text3);">info@zolamoneytrans.com</div>
+              </div>
+            </a>
+
+            <div style="margin-top:20px; padding:12px; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm); border:1px dashed var(--c-border); text-align:center;">
+              <span style="font-size:0.75rem; color:var(--c-text3);">Agréé BCC • Conforme KYC/AML • Sécurisé TLS 1.3 <br><br> <a href="privacy.html" style="color:var(--c-primary); text-decoration:underline;">Politique de confidentialité</a></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Navigation Mobile Bas (PWA Shell) -->
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="merchant.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      <span>Paiement</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="bills.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Factures</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/help.js"></script>
+</body>
+</html>

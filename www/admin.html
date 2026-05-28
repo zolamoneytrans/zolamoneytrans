@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administration — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#4C1D95"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<!-- Login Admin -->
+<div id="adminLogin" class="auth-page" style="display:flex;">
+  <div class="auth-card animate-slideUp">
+    <div class="auth-logo">
+      <img src="icons/zolalogo128x128.png" alt="Zola"/>
+      <h1>Administration</h1>
+      <p style="color:var(--c-danger); font-size:0.82rem; font-weight:600;">⚠️ Accès restreint — Personnel autorisé uniquement</p>
+    </div>
+    <div id="adminAlert" style="display:none;"></div>
+    <form onsubmit="adminLogin(event)">
+      <div class="form-group">
+        <label class="form-label">E-mail administrateur</label>
+        <div class="input-group">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+          <input type="email" id="adminEmail" class="form-control" value="drnduwa@gmail.com" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <div class="input-group">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input type="password" id="adminPwd" class="form-control" placeholder="Mot de passe admin" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="adminLoginBtn">
+        <span id="adminLoginTxt">Accéder au panneau admin</span>
+        <span id="adminLoginSpin" class="spinner" style="display:none;width:18px;height:18px;"></span>
+      </button>
+    </form>
+    <div style="margin-top:16px; text-align:center;">
+      <a href="index.html" style="font-size:0.82rem; color:var(--c-text3);">← Retour au site public</a>
+    </div>
+  </div>
+</div>
+
+<div id="loadingScreen" class="loading-screen" style="display:none;">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<!-- App Shell Admin -->
+<div class="app-shell" id="adminShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Admin <span>Panel</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Opérations</div>
+      <a href="#" class="nav-item active" onclick="showSection('overview')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Vue d'ensemble
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('users')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Utilisateurs & KYC
+        <span class="nav-badge">7</span>
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('transactions')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+        Toutes les transactions
+      </a>
+      <div class="nav-section-title">Conformité</div>
+      <a href="#" class="nav-item" onclick="showSection('aml')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        Alertes AML/CFT
+        <span class="nav-badge" style="background:var(--c-danger);">3</span>
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('reports')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Rapports BCC
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('merchants')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/></svg>
+        Gestion Marchands
+      </a>
+      <div class="nav-section-title">Assistance</div>
+      <a href="help.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+        Aide & Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:0 8px;">
+        <div class="avatar" style="width:34px;height:34px;font-size:0.85rem;background:linear-gradient(135deg,#4C1D95,#7C3AED);" id="adminAvatar">D</div>
+        <div><div style="font-size:0.85rem;font-weight:600;" id="adminName">Dr. Nduwa</div><div style="font-size:0.72rem;color:var(--c-text3);">CTO · Administrateur</div></div>
+      </div>
+      <button class="nav-item" onclick="adminLogout()" style="width:100%;background:none;border:none;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div>
+          <div class="topbar-title" id="sectionTitle">Vue d'ensemble</div>
+          <div style="font-size:0.75rem;color:var(--c-text3);" id="adminDateDisplay"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="badge badge-danger animate-pulse">🔴 Live</span>
+        <span class="badge badge-success">Système opérationnel</span>
+      </div>
+    </header>
+
+    <div class="page-content page-enter" id="mainContent">
+      <!-- Overview Section -->
+      <div id="section-overview">
+        <div class="stat-grid stagger">
+          <div class="stat-card" style="--accent-color:#7C3AED;"><div class="stat-icon" style="background:#7C3AED;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-label">Utilisateurs actifs</div><div class="stat-value">1 247</div><div class="stat-change up">+23 cette semaine</div></div>
+          <div class="stat-card" style="--accent-color:#F59E0B;"><div class="stat-icon" style="background:#F59E0B;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg></div><div class="stat-label">Transactions du jour</div><div class="stat-value">342</div><div class="stat-change up">+12% vs hier</div></div>
+          <div class="stat-card" style="--accent-color:#10B981;"><div class="stat-icon" style="background:#10B981;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="stat-label">Volume (mois)</div><div class="stat-value">485 000 $</div><div class="stat-change up">+18% vs mois préc.</div></div>
+          <div class="stat-card" style="--accent-color:#EF4444;"><div class="stat-icon" style="background:#EF4444;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/></svg></div><div class="stat-label">Alertes AML actives</div><div class="stat-value">3</div><div class="stat-change down">À traiter sous 2h</div></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:24px;">
+          <div class="card">
+            <div class="section-header">
+              <span class="section-title">Volume transactions (30 jours)</span>
+            </div>
+            <div class="chart-container"><canvas id="adminChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="margin-bottom:16px;">Répartition opérateurs</div>
+            <div style="height:200px;"><canvas id="opChart"></canvas></div>
+            <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px; font-size:0.82rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e31e24;margin-right:6px;"></span>M-Pesa</span><strong>52%</strong></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF0000;margin-right:6px;"></span>Airtel Money</span><strong>31%</strong></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF6600;margin-right:6px;"></span>Orange Money</span><strong>17%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dernières transactions -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Dernières transactions (toutes)</span>
+            <button class="btn btn-outline btn-sm" onclick="exportAllCSV()">Export CSV</button>
+          </div>
+          <div class="table-wrap" id="adminTxTable"></div>
+        </div>
+      </div>
+
+      <!-- Users Section -->
+      <div id="section-users" style="display:none;">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Utilisateurs & Dossiers KYC</span>
+            <input type="text" class="form-control" placeholder="Rechercher..." style="width:220px;padding:8px 12px;" oninput="filterUsers(this.value)"/>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Utilisateur</th><th>E-mail</th><th>Téléphone</th><th>Type</th><th>KYC</th><th>Inscrit le</th><th>Actions</th></tr></thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- AML Section -->
+      <div id="section-aml" style="display:none;">
+        <div class="alert alert-danger" style="margin-bottom:20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <span>3 alertes AML actives nécessitent un traitement sous 2 heures (exigence BCC). Compliance Officer requis.</span>
+        </div>
+        <div id="amlAlertsList" class="stagger"></div>
+      </div>
+
+      <!-- Reports Section -->
+      <div id="section-reports" style="display:none;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;" class="stagger">
+          <div class="card card-hover" style="cursor:pointer;" onclick="genReport('mensuel')">
+            <div style="font-size:2rem; margin-bottom:12px;">📊</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:700; margin-bottom:8px;">Rapport mensuel BCC</h3>
+            <p style="font-size:0.85rem; color:var(--c-text2);">Volumes, utilisateurs actifs, signalements AML — format réglementaire BCC.</p>
+            <div style="margin-top:16px;"><span class="badge badge-success">Généré auto — Mai 2026</span></div>
+          </div>
+          <div class="card card-hover" style="cursor:pointer;" onclick="genReport('reconciliation')">
+            <div style="font-size:2rem; margin-bottom:12px;">🔄</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:700; margin-bottom:8px;">Réconciliation financière</h3>
+            <p style="font-size:0.85rem; color:var(--c-text2);">Matching débit/crédit de toutes les transactions du mois. Alertes sur écarts.</p>
+            <div style="margin-top:16px;"><span class="badge badge-warning">Dernier : 12 mai 2026</span></div>
+          </div>
+          <div class="card card-hover" style="cursor:pointer;" onclick="genReport('cenaref')">
+            <div style="font-size:2rem; margin-bottom:12px;">🏛️</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:700; margin-bottom:8px;">Signalements CENAREF</h3>
+            <p style="font-size:0.85rem; color:var(--c-text2);">Transactions suspectes signalées automatiquement à la Cellule Nationale des Renseignements Financiers.</p>
+            <div style="margin-top:16px;"><span class="badge badge-danger">2 signalements ce mois</span></div>
+          </div>
+          <div class="card card-hover" style="cursor:pointer;" onclick="genReport('audit')">
+            <div style="font-size:2rem; margin-bottom:12px;">🔒</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-weight:700; margin-bottom:8px;">Journal d'audit sécurité</h3>
+            <p style="font-size:0.85rem; color:var(--c-text2);">Logs immuables de toutes les actions — conservés 10 ans (obligation réglementaire BCC).</p>
+            <div style="margin-top:16px;"><span class="badge badge-primary">Conservation 10 ans</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merchants Section -->
+      <div id="section-merchants" style="display:none;">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Marchands enregistrés</span>
+            <button class="btn btn-primary btn-sm">+ Ajouter manuellement</button>
+          </div>
+          <div class="table-wrap" id="merchantsTable"></div>
+        </div>
+      </div>
+
+      <!-- Transactions Section -->
+      <div id="section-transactions" style="display:none;">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Toutes les transactions</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <select class="form-control" style="width:auto;padding:7px 12px;font-size:0.82rem;" id="txFilterOp">
+                <option value="">Tous opérateurs</option>
+                <option>M-Pesa</option><option>Airtel Money</option><option>Orange Money</option>
+              </select>
+              <select class="form-control" style="width:auto;padding:7px 12px;font-size:0.82rem;" id="txFilterStatus">
+                <option value="">Tous statuts</option>
+                <option>succès</option><option>en attente</option><option>échoué</option>
+              </select>
+              <button class="btn btn-outline btn-sm" onclick="exportAllCSV()">Export CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="allTxTable"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

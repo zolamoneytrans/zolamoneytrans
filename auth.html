@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Zola Money Trans — Agrégateur de Paiement en RDC">
+  <meta name="description" content="Zola Money Trans est le premier agrégateur de paiement marchand inter-opérateurs de la RDC. Acceptez M-Pesa, Airtel Money et Orange Money avec un seul QR code.">
+  <meta name="keywords" content="Zola Money, Paiement RDC, Mobile Money RDC, M-Pesa, Airtel Money, Orange Money, Fintech Afrique, Transfert d'argent, Agrégateur de paiement, Zola">
+  <meta name="author" content="Swazi Appli Lab SARL">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zolamoneypay.com/">
+  <meta property="og:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="og:description" content="Acceptez tous les paiements Mobile Money (M-Pesa, Airtel, Orange) en RDC avec un seul compte.">
+  <meta property="og:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://zolamoneypay.com/">
+  <meta property="twitter:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="twitter:description" content="Acceptez tous les paiements Mobile Money en RDC avec un seul compte.">
+  <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+
+  
+  
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+</head>
+<body class="hero-bg">
+
+<div class="auth-page">
+  <div class="auth-card animate-slideUp">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <img src="icons/zolalogo128x128.png" alt="Zola Money Trans"/>
+      <h1>Zola Money Trans</h1>
+      <p>Agrégateur de paiement marchand · RDC</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs" id="authTabs">
+      <div class="auth-tab active" data-tab="login" onclick="switchTab('login')">Connexion</div>
+      <div class="auth-tab" data-tab="register" onclick="switchTab('register')">Inscription</div>
+    </div>
+
+    <!-- Alertes -->
+    <div id="authAlert" style="display:none;"></div>
+
+    <!-- ══ FORMULAIRE CONNEXION ══ -->
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Adresse e-mail</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </span>
+          <input type="email" id="loginEmail" class="form-control" placeholder="vous@exemple.com" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex; justify-content:space-between;">
+          Mot de passe
+          <a href="#" style="font-weight:400; font-size:0.82rem;" onclick="showForgot()">Mot de passe oublié ?</a>
+        </label>
+        <div class="input-group">
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
+        <span id="loginBtnText">Se connecter</span>
+        <span id="loginSpinner" class="spinner" style="display:none; width:18px; height:18px;"></span>
+      </button>
+    </form>
+
+    <!-- ══ FORMULAIRE INSCRIPTION ══ -->
+    <form id="registerForm" style="display:none;" onsubmit="handleRegister(event)">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Prénom</label>
+          <input type="text" id="regPrenom" class="form-control" placeholder="Jean" required/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Nom</label>
+          <input type="text" id="regNom" class="form-control" placeholder="Mukeba" required/>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:16px;">
+        <label class="form-label">Adresse e-mail</label>
+        <div class="input-group">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+          <input type="email" id="regEmail" class="form-control" placeholder="vous@exemple.com" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de téléphone</label>
+        <div class="input-group">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.04a16 16 0 0 0 6.05 6.05l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <input type="tel" id="regTel" class="form-control" placeholder="+243 8XX XXX XXX" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type de compte</label>
+        <select id="regType" class="form-control">
+          <option value="particulier">Particulier</option>
+          <option value="marchand">Commerçant / Marchand</option>
+          <option value="entreprise">Entreprise / PME</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <input type="password" id="regPassword" class="form-control" placeholder="Minimum 8 caractères" minlength="8" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmer le mot de passe</label>
+        <input type="password" id="regConfirm" class="form-control" placeholder="••••••••" required/>
+      </div>
+      <label style="display:flex; gap:10px; align-items:flex-start; font-size:0.82rem; color:var(--c-text2); margin-bottom:20px; cursor:pointer;">
+        <input type="checkbox" id="regTerms" required style="margin-top:2px; accent-color:var(--c-primary);"/>
+        J'accepte les <a href="#" style="margin:0 4px;">Conditions d'utilisation</a> et la <a href="privacy.html">Politique de confidentialité</a>
+      </label>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerBtn">
+        <span id="regBtnText">Créer mon compte</span>
+        <span id="regSpinner" class="spinner" style="display:none; width:18px; height:18px;"></span>
+      </button>
+    </form>
+
+    <div class="divider-text" style="margin-top:24px;">
+      <div style="flex:1;height:1px;background:var(--c-border);"></div>
+      <span style="padding:0 12px; font-size:0.8rem; color:var(--c-text3);">Sécurisé par</span>
+      <div style="flex:1;height:1px;background:var(--c-border);"></div>
+    </div>
+    <div style="display:flex; justify-content:center; gap:16px; margin-top:14px; font-size:0.78rem; color:var(--c-text3);">
+      <span>🔒 TLS 1.3</span>
+      <span>🛡️ AES-256</span>
+      <span>✅ Conforme BCC</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal OTP -->
+<div class="modal-overlay" id="otpModal">
+  <div class="modal" style="max-width:380px; text-align:center;">
+    <div class="modal-header" style="justify-content:center;">
+      <h3 class="modal-title">Vérification OTP</h3>
+    </div>
+    <p style="color:var(--c-text2); font-size:0.88rem; margin-bottom:20px;">Un code à 6 chiffres a été envoyé au numéro <strong id="otpPhone"></strong></p>
+    <div class="pin-inputs" id="otpInputs">
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,0)"/>
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,1)"/>
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,2)"/>
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,3)"/>
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,4)"/>
+      <input type="tel" maxlength="1" class="pin-input" oninput="moveOtp(this,5)"/>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="verifyOtp()">Vérifier</button>
+    <p style="margin-top:16px; font-size:0.82rem; color:var(--c-text3);">Pas reçu ? <a href="#" onclick="resendOtp()">Renvoyer</a></p>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, setDoc, doc, serverTimestamp, isAdmin, RecaptchaVerifier, signInWithPhoneNumber, getDoc } from './js/firebase.js';
+
+let confirmationResult = null; // Firebase Phone Auth confirmation
+
+window.switchTab = function(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('authAlert').style.display = 'none';
+};
+
+function showAlert(msg, type='danger') {
+  const el = document.getElementById('authAlert');
+  el.style.display = '';
+  el.className = `alert alert-${type}`;
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg> ${msg}`;
+}
+
+function setLoading(btn, spinner, txt, loading) {
+  document.getElementById(btn).disabled = loading;
+  document.getElementById(spinner).style.display = loading ? '' : 'none';
+  document.getElementById(txt).style.display = loading ? 'none' : '';
+}
+
+window.handleLogin = async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  setLoading('loginBtn','loginSpinner','loginBtnText',true);
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    if (isAdmin(cred.user)) { window.location.href = 'admin.html'; return; }
+    const docSnap = await getDoc(doc(db, 'users', cred.user.uid));
+    if (docSnap.exists()) {
+      const uType = docSnap.data().type;
+      if (uType === 'marchand') window.location.href = 'dashboard_marchand.html';
+      else if (uType === 'entreprise') window.location.href = 'dashboard_entreprise.html';
+      else window.location.href = 'dashboard.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  } catch(err) {
+    let msg = 'Identifiants incorrects. Vérifiez votre e-mail et mot de passe.';
+    if (err.code === 'auth/too-many-requests') msg = 'Trop de tentatives. Réessayez plus tard.';
+    if (err.code === 'auth/user-not-found') msg = 'Aucun compte trouvé avec cet e-mail.';
+    if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect.';
+    showAlert(msg);
+    setLoading('loginBtn','loginSpinner','loginBtnText',false);
+  }
+};
+
+window.handleRegister = async function(e) {
+  e.preventDefault();
+  const pass = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regConfirm').value;
+  if (pass !== confirm) { showAlert('Les mots de passe ne correspondent pas.'); return; }
+  if (pass.length < 8) { showAlert('Mot de passe trop faible (minimum 8 caractères).'); return; }
+  setLoading('registerBtn','regSpinner','regBtnText',true);
+  const email  = document.getElementById('regEmail').value.trim();
+  const prenom = document.getElementById('regPrenom').value.trim();
+  const nom    = document.getElementById('regNom').value.trim();
+  const tel    = document.getElementById('regTel').value.trim();
+  const type   = document.getElementById('regType').value;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await setDoc(doc(db, 'users', cred.user.uid), {
+      prenom, nom, email, tel, phone: tel, type,
+      kycLevel: 'basique', kycStatus: 'en_attente',
+      createdAt: serverTimestamp(), role: 'user'
+    });
+
+    // Envoyer SMS OTP si numéro fourni
+    if (tel && tel.startsWith('+')) {
+      await sendPhoneOtp(tel, cred.user.uid);
+    } else {
+      window.location.href = 'kyc.html';
+    }
+  } catch(err) {
+    let msg = "Erreur lors de l'inscription.";
+    if (err.code === 'auth/email-already-in-use') msg = 'Cet e-mail est déjà utilisé.';
+    if (err.code === 'auth/weak-password') msg = 'Mot de passe trop faible (min. 8 caractères).';
+    showAlert(msg);
+    setLoading('registerBtn','regSpinner','regBtnText',false);
+  }
+};
+
+// ── Firebase Phone Auth — Envoyer OTP ──
+async function sendPhoneOtp(phoneNumber, uid) {
+  try {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {}
+      });
+    }
+    confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+    // Stocker uid pour association post-OTP
+    sessionStorage.setItem('pendingUid', uid || '');
+    // Afficher modal OTP
+    document.getElementById('otpModal').classList.add('open');
+    document.querySelector('#otpInputs .pin-input').focus();
+    showAlert('Code SMS envoyé ! Saisissez le code reçu.', 'info');
+  } catch(err) {
+    console.error('[Phone Auth]', err);
+    // Si l'OTP ne peut pas être envoyé (ex: numéro non vérifié en test), aller au KYC
+    window.location.href = 'kyc.html';
+  }
+}
+
+window.moveOtp = function(el, idx) {
+  el.value = el.value.replace(/\D/,'');
+  if (el.value && idx < 5) {
+    const inputs = document.querySelectorAll('#otpInputs .pin-input');
+    if (inputs[idx]) inputs[idx].focus();
+  }
+};
+
+window.verifyOtp = async function() {
+  const code = [...document.querySelectorAll('#otpInputs .pin-input')].map(i => i.value).join('');
+  if (code.length !== 6) { showAlert('Entrez les 6 chiffres du code SMS.', 'danger'); return; }
+  const verifyBtn = document.querySelector('#otpModal .btn-primary');
+  if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Vérification…'; }
+  try {
+    if (confirmationResult) {
+      await confirmationResult.confirm(code);
+    }
+    document.getElementById('otpModal').classList.remove('open');
+    window.location.href = 'kyc.html';
+  } catch(err) {
+    showAlert('Code incorrect ou expiré. Réessayez.', 'danger');
+    if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Vérifier'; }
+  }
+};
+
+window.resendOtp = async function() {
+  const tel = document.getElementById('regTel')?.value?.trim();
+  if (tel && tel.startsWith('+')) {
+    await sendPhoneOtp(tel);
+  } else {
+    showAlert('Numéro de téléphone international requis (ex: +243978…)', 'info');
+  }
+};
+
+window.showForgot = function() {
+  showAlert('Pour réinitialiser votre mot de passe, contactez le support : support@zolamoneytrans.com', 'info');
+};
+
+// Check hash for auto-switch to register
+if (location.hash === '#register') switchTab('register');
+
+// Auth guard - redirect if already logged in
+onAuthStateChanged(auth, async user => {
+  if (user) { 
+    if (isAdmin(user)) { window.location.href = 'admin.html'; return; }
+    const docSnap = await getDoc(doc(db, 'users', user.uid));
+    if (docSnap.exists()) {
+      const uType = docSnap.data().type;
+      if (uType === 'marchand') window.location.href = 'dashboard_marchand.html';
+      else if (uType === 'entreprise') window.location.href = 'dashboard_entreprise.html';
+      else window.location.href = 'dashboard.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  }
+});
+</script>
+<!-- Invisible reCAPTCHA container for Phone Auth -->
+<div id="recaptcha-container"></div>
+</body>
+</html>

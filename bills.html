@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement de Factures — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen"><img src="icons/zolalogo192x192.png" alt=""/><div class="spinner" style="width:32px;height:32px;"></div></div>
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><img src="icons/zolalogo96x96.png" alt="Zola"/><div class="brand">Zola <span>Money</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Tableau de bord</a>
+      <a href="merchant.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/></svg>Paiement Marchand</a>
+      <a href="transfer.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>Transferts</a>
+      <a href="bills.html" class="nav-item active"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Factures</a>
+      <div class="nav-section-title">Compte</div>
+      <a href="kyc.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>Vérification KYC</a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>Aide & Support</a>
+    </nav>
+    <div class="sidebar-footer"><button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Déconnexion</button></div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div class="topbar-title">Paiement de Factures</div>
+      </div>
+      <div class="topbar-right"><div class="avatar" id="userAvatar">Z</div></div>
+    </header>
+
+    <div class="page-content page-enter">
+      <!-- Services grid -->
+      <div style="margin-bottom:24px;">
+        <div class="section-title" style="margin-bottom:16px;">Choisissez un service</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px;" id="servicesGrid">
+          <button class="operator-btn selected" onclick="selectService(this,'snel','SNEL Kinshasa','#F59E0B')" id="svc-snel">
+            <div class="operator-dot" style="background:#F59E0B; font-size:0.7rem;">⚡</div>
+            <span>SNEL</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">Électricité</small>
+          </button>
+          <button class="operator-btn" onclick="selectService(this,'regideso','REGIDESO','#3B82F6')" id="svc-regideso">
+            <div class="operator-dot" style="background:#3B82F6; font-size:0.7rem;">💧</div>
+            <span>REGIDESO</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">Eau</small>
+          </button>
+          <button class="operator-btn" onclick="selectService(this,'canaptel','CanAl','#10B981')" id="svc-canaptel">
+            <div class="operator-dot" style="background:#10B981; font-size:0.7rem;">📡</div>
+            <span>CanAl+</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">TV / Internet</small>
+          </button>
+          <button class="operator-btn" onclick="selectService(this,'impots','DGRAD','#8B5CF6')" id="svc-impots">
+            <div class="operator-dot" style="background:#8B5CF6; font-size:0.7rem;">🏛</div>
+            <span>DGRAD</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">Impôts / Taxes</small>
+          </button>
+          <button class="operator-btn" onclick="selectService(this,'inss','INSS','#EC4899')" id="svc-inss">
+            <div class="operator-dot" style="background:#EC4899; font-size:0.7rem;">🏥</div>
+            <span>INSS</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">Sécurité sociale</small>
+          </button>
+          <button class="operator-btn" onclick="selectService(this,'sctp','SCTP','#F97316')" id="svc-sctp">
+            <div class="operator-dot" style="background:#F97316; font-size:0.7rem;">📬</div>
+            <span>SCTP</span>
+            <small style="color:var(--c-text3); font-size:0.72rem;">Poste</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="responsive-grid">
+        <!-- Formulaire -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:4px;" id="billFormTitle">Paiement SNEL Kinshasa</div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Entrez votre référence client pour retrouver votre facture.</p>
+          <form onsubmit="lookupBill(event)">
+            <div class="form-group">
+              <label class="form-label">Référence client / Compteur</label>
+              <div class="input-group">
+                <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg></span>
+                <input type="text" id="billRef" class="form-control" placeholder="Ex: KIN-2024-001234" required/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Devise de paiement</label>
+              <select id="billCurrency" class="form-control" style="cursor:pointer; font-weight:600;">
+                <option value="CDF">CDF (Franc Congolais)</option>
+                <option value="USD">USD (Dollar Américain)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payer via</label>
+              <select id="billOp" class="form-control" onchange="handleBillSourceChange()">
+                <option value="mpesa">M-Pesa (Vodacom)</option>
+                <option value="airtel">Airtel Money</option>
+                <option value="orange">Orange Money</option>
+                <option value="afrimoney">Afrimoney</option>
+                <option value="visa">Carte Visa (Ma Banque)</option>
+              </select>
+            </div>
+
+            <!-- Formulaire Visa style Alipay -->
+            <div id="billVisaFormContainer" class="glass-input" style="display:none; margin-bottom:16px; padding:16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
+              <div style="font-size:0.85rem; font-weight:700; color:var(--c-gold); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                <span>💳</span> Option de Paiement Visa
+              </div>
+              
+              <!-- Saved Card Info (if attached) -->
+              <div id="billSavedVisaCardInfo" style="display:none; margin-bottom:12px; padding:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); border-radius:8px; font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span style="font-weight:700; color:var(--c-text1);">Carte Visa Liée</span>
+                    <div id="billSavedCardMasked" style="margin-top:4px; font-family:monospace; color:var(--c-text2);">**** **** **** ----</div>
+                  </div>
+                  <label class="checkbox-container" style="font-size:0.75rem; margin-bottom:0;">
+                    <input type="checkbox" id="billUseSavedVisa" checked onchange="toggleBillVisaInputFields()"/> Utiliser
+                  </label>
+                </div>
+              </div>
+
+              <!-- Manual Visa Details -->
+              <div id="billManualVisaFields">
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label" style="font-size:0.75rem;">Numéro de carte</label>
+                  <input type="text" id="billVisaCardNumber" class="form-control" placeholder="4000 1234 5678 9010" maxlength="19"/>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" style="font-size:0.75rem;">Date d'expiration</label>
+                    <input type="text" id="billVisaExpiry" class="form-control" placeholder="MM/AA" maxlength="5"/>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" style="font-size:0.75rem;">CVV</label>
+                    <input type="password" id="billVisaCvv" class="form-control" placeholder="•••" maxlength="4"/>
+                  </div>
+                </div>
+                <div class="form-group" style="margin-top:10px; margin-bottom:0;">
+                  <label class="form-label" style="font-size:0.75rem;">Nom du titulaire</label>
+                  <input type="text" id="billVisaCardName" class="form-control" placeholder="Ex: Jean Mukeba"/>
+                </div>
+                
+                <label class="checkbox-container" style="margin-top:12px; font-size:0.75rem;">
+                  <input type="checkbox" id="billSaveVisaOption"/> Associer cette carte pour de futurs paiements
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              Rechercher la facture
+            </button>
+          </form>
+
+          <!-- Résultat facture -->
+          <div id="billResult" style="display:none; margin-top:20px;">
+            <div class="divider" style="margin:16px 0;"></div>
+            <div class="card-gold">
+              <div style="font-size:0.85rem; color:var(--c-gold); font-weight:700; margin-bottom:12px;">📄 Facture trouvée</div>
+              <div id="billDetails" style="font-size:0.88rem; display:flex; flex-direction:column; gap:8px;"></div>
+              <button class="btn btn-gold btn-block" style="margin-top:16px;" onclick="payBill()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                Payer maintenant
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historique factures -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Factures payées</span>
+            <span class="badge badge-primary" id="billCount">0</span>
+          </div>
+          <div id="billHistory">
+            <p style="text-align:center;color:var(--c-text3);padding:32px;font-size:0.88rem;">Aucune facture payée récemment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Mobile Bas (PWA Shell) -->
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="merchant.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      <span>Paiement</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="bills.html" class="mobile-nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Factures</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/bills.js"></script>
+</body>
+</html>

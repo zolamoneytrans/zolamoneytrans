@@ -1,0 +1,23 @@
+{
+  "name": "Zola Money Trans",
+  "short_name": "Zola Pay",
+  "description": "Agrégateur de paiement marchand inter-opérateurs — RDC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0a1e",
+  "theme_color": "#7C3AED",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    { "src": "icons/zolalogo72x72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "icons/zolalogo96x96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "icons/zolalogo128x128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "icons/zolalogo144x144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "icons/zolalogo152x152.png", "sizes": "152x152", "type": "image/png" },
+    { "src": "icons/zolalogo192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
+    { "src": "icons/zolalogo384x384.png", "sizes": "384x384", "type": "image/png" },
+    { "src": "icons/zolalogo512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ],
+  "categories": ["finance", "utilities"],
+  "screenshots": []
+}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement Marchand — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Zola <span>Money</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Tableau de bord
+      </a>
+      <a href="merchant.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+        Paiement Marchand
+      </a>
+      <a href="transfer.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+        Transferts
+      </a>
+      <a href="bills.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        Factures
+      </a>
+      <div class="nav-section-title">Compte</div>
+      <a href="kyc.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        Vérification KYC
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+        Aide & Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div class="topbar-title">Paiement Marchand</div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar" id="userAvatar">Z</div>
+      </div>
+    </header>
+
+    <div class="page-content page-enter">
+      <div class="responsive-grid" style="margin-bottom:24px;">
+
+        <!-- QR Code statique -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">QR Code Statique Marchand</span>
+            <span class="badge badge-success">Actif</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Imprimez ce QR code et affichez-le dans votre commerce. Vos clients peuvent payer avec n'importe quel opérateur.</p>
+          <div style="text-align:center; margin-bottom:20px;">
+            <div class="qr-box" id="staticQR" style="display:inline-flex;"></div>
+          </div>
+          <div class="btn-group-mobile" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="downloadQR('staticQR','qr-statique-zola')">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Télécharger HD
+            </button>
+            <button class="btn btn-outline" onclick="shareLink()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+              Partager
+            </button>
+          </div>
+          <div class="divider" style="margin:16px 0;"></div>
+          <div style="background:var(--c-surface2); border-radius:var(--radius-sm); padding:12px; font-size:0.82rem; color:var(--c-text2);">
+            <strong style="color:var(--c-text);">Lien de paiement :</strong><br/>
+            <span id="payLink" style="color:var(--c-primary-light); word-break:break-all;"></span>
+          </div>
+        </div>
+
+        <!-- QR Code dynamique -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">QR Code Dynamique</span>
+            <span class="badge badge-primary">Avec montant</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Générez un QR code avec un montant pré-rempli et une durée de validité configurable.</p>
+
+          <div style="display:flex; gap:12px; margin-bottom:16px;">
+            <div class="form-group" style="flex:1; margin-bottom:0;">
+              <label class="form-label">Montant</label>
+              <input type="number" id="dynAmount" class="form-control" placeholder="Ex: 50000"/>
+            </div>
+            <div class="form-group" style="width:100px; margin-bottom:0;">
+              <label class="form-label">Devise</label>
+              <select id="dynCurrency" class="form-control" style="cursor:pointer; font-weight:600;">
+                <option value="CDF">CDF</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description (optionnel)</label>
+            <input type="text" id="dynDesc" class="form-control" placeholder="Ex: Commande #001"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Validité</label>
+            <select id="dynValidity" class="form-control">
+              <option value="5">5 minutes</option>
+              <option value="30" selected>30 minutes</option>
+              <option value="60">1 heure</option>
+              <option value="1440">24 heures</option>
+            </select>
+          </div>
+          <button class="btn btn-gold btn-block" onclick="generateDynamicQR()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+            Générer le QR Code
+          </button>
+          <div id="dynQRWrap" style="text-align:center; margin-top:20px; display:none;">
+            <div class="qr-box" id="dynamicQR" style="display:inline-flex; margin-bottom:12px;"></div>
+            <div id="dynTimer" class="badge badge-warning" style="display:block; text-align:center; margin-bottom:12px;"></div>
+            <button class="btn btn-outline btn-sm btn-block" onclick="downloadQR('dynamicQR','qr-dynamique-zola')">Télécharger</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélection opérateur & simulation paiement -->
+      <div class="card" style="margin-bottom:24px;">
+        <div class="section-title" style="margin-bottom:16px;">Simuler un paiement entrant</div>
+        <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Testez la réception d'un paiement via un opérateur Mobile Money.</p>
+        <div class="operator-grid" id="opSelector">
+          <button class="operator-btn selected" onclick="selectOp(this,'M-Pesa')">
+            <div class="operator-dot" style="background:#e31e24;">M</div>
+            M-Pesa
+            <span class="badge badge-success" style="font-size:0.65rem;">En ligne</span>
+          </button>
+          <button class="operator-btn" onclick="selectOp(this,'Airtel Money')">
+            <div class="operator-dot" style="background:#FF0000;">A</div>
+            Airtel Money
+            <span class="badge badge-success" style="font-size:0.65rem;">En ligne</span>
+          </button>
+          <button class="operator-btn" onclick="selectOp(this,'Orange Money')">
+            <div class="operator-dot" style="background:#FF6600;">O</div>
+            Orange Money
+            <span class="badge badge-warning" style="font-size:0.65rem;">Lent</span>
+          </button>
+        </div>
+        <div class="btn-group-mobile" style="margin-top:20px; display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap;">
+          <div class="form-group" style="flex:1; min-width:180px; margin-bottom:0;">
+            <label class="form-label">Montant simulation (CDF)</label>
+            <input type="number" id="simAmount" class="form-control" placeholder="45000" value="45000"/>
+          </div>
+          <button class="btn btn-success" onclick="simulatePayment()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Simuler réception
+          </button>
+        </div>
+      </div>
+
+      <!-- Transactions du jour -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Transactions du jour</span>
+          <span class="badge badge-primary" id="todayCount">0 transactions</span>
+        </div>
+        <div class="tx-list" id="todayTxList">
+          <p style="text-align:center; color:var(--c-text3); padding:24px; font-size:0.88rem;">Aucune transaction aujourd'hui. Partagez votre QR code pour commencer !</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Mobile Bas (PWA Shell) -->
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="merchant.html" class="mobile-nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      <span>Paiement</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="bills.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Factures</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/merchant.js"></script>
+</body>
+</html>

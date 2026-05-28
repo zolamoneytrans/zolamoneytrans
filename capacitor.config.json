@@ -1,0 +1,12 @@
+{
+  "appId": "com.zolamarchand.app",
+  "appName": "Zola Money Trans",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

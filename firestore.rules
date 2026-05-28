@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Utilisateurs ──
+    match /users/{uid} {
+      allow read, write: if request.auth != null && (request.auth.uid == uid || request.auth.token.admin == true || request.auth.token.email == "drnduwa@gmail.com");
+    }
+
+    // ── Transactions (créées uniquement par Cloud Functions) ──
+    match /transactions/{txId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        request.auth.token.admin == true
+      );
+      // Seules les Cloud Functions écrivent les transactions (via Admin SDK)
+      allow create, update: if false;
+    }
+
+    // ── Alertes AML (admin seulement) ──
+    match /aml_alerts/{alertId} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+      allow create: if false; // seul Cloud Function peut créer
+    }
+
+    // ── Notifications (lecture utilisateur propriétaire) ──
+    match /notifications/{notifId} {
+      allow read, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if false;
+    }
+
+    // ── Admin — lecture globale ──
+    match /{document=**} {
+      allow read, write: if request.auth != null && (request.auth.token.admin == true || request.auth.token.email == "drnduwa@gmail.com");
+    }
+  }
+}

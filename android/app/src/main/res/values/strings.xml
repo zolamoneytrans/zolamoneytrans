@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Zola Money Trans</string>
+    <string name="title_activity_main">Zola Money Trans</string>
+    <string name="package_name">com.zolamarchand.app</string>
+    <string name="custom_url_scheme">com.zolamarchand.app</string>
+</resources>

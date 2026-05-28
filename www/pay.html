@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement Sécurisé — Zola Money</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+</head>
+<body class="hero-bg" style="display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px;">
+
+<div class="auth-card" style="width:100%; max-width:400px; padding-bottom: 30px;">
+  <div style="text-align:center; margin-bottom:24px;">
+    <div id="merchantAvatar" style="width:72px; height:72px; border-radius:50%; margin:0 auto 12px; background:#e0e0e0; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 3px solid var(--c-primary);">
+      <img src="icons/zolalogo96x96.png" id="merchantImg" style="width:100%; height:100%; object-fit:cover;" alt="Marchand"/>
+    </div>
+    <h2 id="merchantName" style="margin:0; font-family:'Outfit', sans-serif; font-size:1.5rem; color:var(--c-text);">Chargement...</h2>
+    <p style="color:var(--c-text2); font-size:0.9rem; margin-top:4px;" id="merchantRole">Demande de paiement</p>
+  </div>
+
+  <div style="background:var(--c-surface); border:1px solid var(--c-border); border-radius:12px; padding:20px; margin-bottom:24px; text-align:center;">
+    <div style="font-size:0.85rem; color:var(--c-text3); text-transform:uppercase; letter-spacing:1px;">Montant à payer</div>
+    <div style="font-size:2.2rem; font-weight:700; color:var(--c-gold); margin:8px 0; font-family:'Outfit', sans-serif;" id="displayAmount">...</div>
+    <div id="customAmountGroup" style="display:none; margin-top:12px;">
+      <div class="input-group" style="display:flex; border-radius:8px; overflow:hidden;">
+        <input type="number" id="customAmount" class="form-control" placeholder="Entrez le montant" step="0.01" style="text-align:center; font-size:1.2rem; font-weight:bold; border-right:none; border-radius:8px 0 0 8px;"/>
+        <select id="customCurrency" class="form-control" style="max-width:90px; padding:0 10px; border-left:1px solid var(--c-border); border-radius:0 8px 8px 0; background:var(--c-surface); font-weight:bold;">
+          <option value="CDF">CDF</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+    </div>
+    <div style="font-size:0.9rem; color:var(--c-text2);" id="displayDesc"></div>
+  </div>
+
+  <div class="form-group" id="paymentMethodGroup" style="display:none;">
+    <label class="form-label">Compte de prélèvement</label>
+    <div class="input-group">
+      <span class="input-icon">💳</span>
+      <select id="paymentMethodSelect" class="form-control" style="appearance:auto; padding-left:40px; cursor:pointer;" onchange="handleMethodChange()">
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" id="operatorGroup" style="display:none;">
+    <label class="form-label">Opérateur Mobile Money</label>
+    <div class="input-group">
+      <span class="input-icon">🌐</span>
+      <select id="operatorSelect" class="form-control" style="appearance:auto; padding-left:40px; cursor:pointer;">
+        <option value="mpesa">M-Pesa</option>
+        <option value="airtel">Airtel Money</option>
+        <option value="orange">Orange Money</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" id="customPhoneGroup" style="display:none;">
+    <label class="form-label">Numéro Mobile Money (Airtel, M-Pesa, Orange)</label>
+    <div class="input-group">
+      <span class="input-icon">📱</span>
+      <input type="tel" id="customPhone" class="form-control" placeholder="Ex: 0820000000"/>
+    </div>
+  </div>
+
+  <div class="form-group" id="pinGroup" style="display:none;">
+    <label class="form-label">Code PIN Zola (6 chiffres)</label>
+    <div class="input-group">
+      <span class="input-icon">🔒</span>
+      <input type="password" id="userPin" class="form-control" placeholder="••••••" maxlength="6" pattern="\d{6}"/>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-block btn-lg" onclick="processPayment()" id="payBtn" disabled>
+    Chargement...
+  </button>
+  
+  <div style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--c-text3);">
+    Transactions sécurisées par Moko Africa & Zola Money
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module">
+  import { auth, db, functions, onAuthStateChanged, doc, getDoc, addDoc, collection, serverTimestamp, httpsCallable } from './js/firebase.js';
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetUid = urlParams.get('to');
+  const amount = urlParams.get('amount');
+  const desc = urlParams.get('desc');
+  const currency = urlParams.get('currency') || 'CDF';
+
+  let currentUserDoc = null;
+  let currentUserAuth = null;
+  let merchantDoc = null;
+
+  if(amount) {
+    document.getElementById('displayAmount').textContent = window.formatMoney ? window.formatMoney(amount, currency) : amount + " " + currency;
+  } else {
+    document.getElementById('displayAmount').style.display = 'none';
+    document.getElementById('customAmountGroup').style.display = 'block';
+  }
+
+  if(desc) {
+    document.getElementById('displayDesc').textContent = desc;
+  }
+
+  // Handle Auth State
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Veuillez vous connecter pour effectuer un paiement.");
+      window.location.href = 'auth.html?redirect=' + encodeURIComponent(window.location.href);
+      return;
+    }
+    currentUserAuth = user;
+    
+    try {
+      // Fetch user profile
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      if(userSnap.exists()) {
+        currentUserDoc = userSnap.data();
+      }
+
+      if(!targetUid) {
+        document.getElementById('merchantName').textContent = "Destinataire Inconnu";
+        document.getElementById('payBtn').textContent = "Erreur de lien";
+        return;
+      }
+
+      // Fetch merchant profile via Cloud Function
+      const getMerchantFn = httpsCallable(functions, 'getMerchantInfo');
+      const merchRes = await getMerchantFn({ merchantUid: targetUid });
+      merchantDoc = merchRes.data;
+
+      document.getElementById('merchantName').textContent = merchantDoc.name || 'Utilisateur';
+      if(merchantDoc.photoURL) document.getElementById('merchantImg').src = merchantDoc.photoURL;
+      document.getElementById('merchantRole').textContent = (merchantDoc.kycLevel === 'marchand') ? 'Marchand Vérifié' : 'Particulier';
+
+      // Setup Payment Methods
+      const select = document.getElementById('paymentMethodSelect');
+      select.innerHTML = ''; // clear
+
+      let hasDefault = false;
+      if (currentUserDoc && currentUserDoc.phone) {
+        select.innerHTML += `<option value="default_phone">Mobile: ${currentUserDoc.phone}</option>`;
+        hasDefault = true;
+      }
+      if (currentUserDoc && currentUserDoc.cardAttached) {
+        select.innerHTML += `<option value="visa">Carte Visa (...${currentUserDoc.cardLast4})</option>`;
+        hasDefault = true;
+      }
+      select.innerHTML += `<option value="other_mobile">Autre Numéro Mobile Money</option>`;
+
+      document.getElementById('paymentMethodGroup').style.display = 'block';
+      document.getElementById('pinGroup').style.display = 'block';
+
+      document.getElementById('payBtn').disabled = false;
+      document.getElementById('payBtn').textContent = "Confirmer le Paiement";
+
+      window.handleMethodChange();
+    } catch(err) {
+      console.error(err);
+      alert("Erreur de chargement des informations.");
+    }
+  });
+
+  window.handleMethodChange = function() {
+    const val = document.getElementById('paymentMethodSelect').value;
+    if (val === 'other_mobile') {
+      document.getElementById('customPhoneGroup').style.display = 'block';
+      document.getElementById('operatorGroup').style.display = 'block';
+    } else if (val === 'visa') {
+      document.getElementById('customPhoneGroup').style.display = 'none';
+      document.getElementById('operatorGroup').style.display = 'none';
+    } else {
+      document.getElementById('customPhoneGroup').style.display = 'none';
+      document.getElementById('operatorGroup').style.display = 'block';
+    }
+  };
+
+  window.processPayment = async function() {
+    const btn = document.getElementById('payBtn');
+    if(btn.disabled) return;
+
+    let finalAmount = amount;
+    let finalCurrency = currency;
+
+    if (!amount) {
+      finalAmount = document.getElementById('customAmount').value;
+      finalCurrency = document.getElementById('customCurrency').value;
+    }
+
+    const parsedAmount = parseFloat(finalAmount);
+    if(!parsedAmount || parsedAmount <= 0) {
+      alert("Montant invalide.");
+      return;
+    }
+
+    if (finalCurrency === 'USD' && parsedAmount < 1) {
+      alert("Le montant minimum est de 1 USD.");
+      return;
+    } else if (finalCurrency === 'CDF' && parsedAmount < 240) {
+      alert("Le montant minimum est de 240 CDF.");
+      return;
+    }
+
+    if(!currentUserDoc || !currentUserDoc.pin) {
+      alert("Veuillez configurer votre code PIN Zola dans les paramètres (Settings) avant de payer.");
+      return;
+    }
+
+    const enteredPin = document.getElementById('userPin').value;
+    if(enteredPin !== currentUserDoc.pin) {
+      alert("Code PIN incorrect !");
+      return;
+    }
+
+    const method = document.getElementById('paymentMethodSelect').value;
+    let customerNumber = "";
+    let operator = "";
+
+    if (method === 'default_phone') {
+      customerNumber = currentUserDoc.phone;
+      operator = document.getElementById('operatorSelect').value;
+    } else if (method === 'visa') {
+      customerNumber = currentUserDoc.phone; // Assuming Moko Africa handles linked cards via the user's phone identifier
+      operator = "Visa";
+    } else {
+      customerNumber = document.getElementById('customPhone').value;
+      operator = document.getElementById('operatorSelect').value;
+      if(!customerNumber || customerNumber.length < 9) {
+        alert("Veuillez entrer un numéro mobile valide.");
+        return;
+      }
+    }
+
+    if (!operator || (operator !== 'Visa' && !['mpesa', 'airtel', 'orange'].includes(operator))) {
+      alert("Veuillez sélectionner un opérateur Mobile Money valide.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Traitement en cours...";
+
+    try {
+      const payload = {
+        amount: parsedAmount,
+        currency: finalCurrency,
+        customerNumber: customerNumber,
+        method: operator,
+        reference: "ZOLA-" + Date.now(),
+        description: desc || "Paiement via Zola App",
+        txType: "Paiement Marchand",
+        returnUrl: window.location.origin + '/dashboard.html'
+      };
+
+      // Si le marchand a activé le reversement automatique
+      if (merchantDoc && merchantDoc.autoSettlementEnabled && merchantDoc.autoSettlementMethod && merchantDoc.autoSettlementTarget) {
+        payload.isTransfer = true;
+        payload.transferDest = merchantDoc.autoSettlementMethod;
+        payload.transferBenef = merchantDoc.autoSettlementTarget;
+        payload.transferAmount = parsedAmount;
+      }
+
+      // Call API via Cloud Function
+      const payInFn = httpsCallable(functions, 'payIn');
+      const response = await payInFn(payload);
+
+      const data = response.data;
+      if(data.success) {
+        if (data.links) {
+          alert("Redirection vers la page de paiement sécurisée Visa...");
+          window.location.href = data.links;
+          return;
+        }
+
+        alert("Paiement initié avec succès via Moko Africa ! (Ref: " + data.transactionId + ")");
+        
+        // Optionnel: Créer la transaction crédit pour le destinataire dans Firestore
+        await addDoc(collection(db, 'transactions'), {
+          userId: targetUid,
+          type: 'Paiement Reçu',
+          action: 'credit',
+          montant: parsedAmount,
+          currency: finalCurrency,
+          expediteur: currentUserDoc.name || customerNumber,
+          statut: 'en_attente',
+          description: desc || 'Paiement en ligne',
+          operateur: operator,
+          transactionId: data.transactionId,
+          createdAt: serverTimestamp()
+        });
+
+        window.location.href = 'dashboard.html';
+      } else {
+        throw new Error(data.error || "Erreur de paiement");
+      }
+    } catch(err) {
+      console.error(err);
+      alert("Une erreur est survenue lors de la transaction : " + (err.message || "Erreur interne."));
+      btn.disabled = false;
+      btn.textContent = "Confirmer le Paiement";
+    }
+  };
+</script>
+</body>
+</html>

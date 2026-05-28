@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement en masse — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Zola <span>Money</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard_entreprise.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Tableau de bord
+      </a>
+      <a href="maker_checker.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        Validations (Maker/Checker)
+      </a>
+      <a href="mass_payment.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Paiements en masse
+      </a>
+      <a href="transfer.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+        Transferts
+      </a>
+      <a href="bills.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        Factures
+      </a>
+      <div class="nav-section-title">Compte</div>
+      <a href="kyc.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        Vérification KYC
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div class="topbar-title">Paiement en masse (Paie)</div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar" id="userAvatar">Z</div>
+      </div>
+    </header>
+
+    <div class="page-content page-enter">
+      <div class="responsive-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:24px;">
+
+        <!-- Import CSV -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Importer un fichier (CSV)</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Importer un fichier Excel/CSV contenant la liste de vos employés.<br/>Format attendu : <code>Nom, Destination, Méthode, Montant</code></p>
+          <div class="form-group">
+            <label class="form-label" for="csvFile">Sélectionnez le fichier CSV</label>
+            <input type="file" id="csvFile" accept=".csv" class="form-control" onchange="handleCSVUpload(event)"/>
+          </div>
+        </div>
+
+        <!-- Ajout manuel -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Ajout manuel</span>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Nom Complet</label>
+              <input type="text" id="empName" class="form-control" placeholder="Jean Dupont"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Destination (N° / RIB)</label>
+              <input type="text" id="empDest" class="form-control" placeholder="0970000000"/>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Méthode</label>
+              <select id="empMethod" class="form-control">
+                <option value="M-Pesa">M-Pesa</option>
+                <option value="Airtel Money">Airtel Money</option>
+                <option value="Orange Money">Orange Money</option>
+                <option value="Compte Bancaire">Compte Bancaire</option>
+                <option value="Compte Zola">Compte Zola</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Montant (CDF)</label>
+              <input type="number" id="empAmount" class="form-control" placeholder="100000"/>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-block" onclick="addManualEmployee()">Ajouter à la liste</button>
+        </div>
+      </div>
+
+      <!-- Liste du lot courant -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Lot actuel : Salaires à payer</span>
+          <span class="badge badge-primary" id="batchCount">0 employé(s)</span>
+        </div>
+        <div class="table-wrap" style="margin-bottom:20px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Destination</th>
+                <th>Méthode</th>
+                <th>Montant</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="batchTableBody">
+              <tr><td colspan="5" style="text-align:center; padding:24px; color:var(--c-text3);">Aucun employé dans le lot actuel.</td></tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" style="text-align:right; font-weight:bold;">Total du lot :</td>
+                <td colspan="2" style="font-weight:bold; font-size:1.1rem; color:var(--c-gold);" id="totalAmount">0 CDF</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <button class="btn btn-primary btn-block" id="submitBatchBtn" onclick="submitBatch()">Soumettre le lot pour validation</button>
+      </div>
+    </div>
+  </main>
+
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard_entreprise.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="maker_checker.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+      <span>Validations</span>
+    </a>
+    <a href="mass_payment.html" class="mobile-nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Masse</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/mass_payment.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transferts Inter-Opérateurs — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><img src="icons/zolalogo96x96.png" alt="Zola"/><div class="brand">Zola <span>Money</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Tableau de bord</a>
+      <a href="merchant.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>Paiement Marchand</a>
+      <a href="transfer.html" class="nav-item active"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>Transferts</a>
+      <a href="bills.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Factures</a>
+      <div class="nav-section-title">Compte</div>
+      <a href="kyc.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>Vérification KYC</a>
+      <a href="settings.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help.html" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>Aide & Support</a>
+    </nav>
+    <div class="sidebar-footer"><button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>Déconnexion</button></div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+        <div class="topbar-title">Transferts Inter-Opérateurs</div>
+      </div>
+      <div class="topbar-right"><div class="avatar" id="userAvatar">Z</div></div>
+    </header>
+
+    <div class="page-content page-enter">
+      <div class="responsive-grid">
+
+        <!-- Formulaire transfert -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:4px;">Nouveau Transfert</div>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Transférez des fonds entre opérateurs Mobile Money instantanément.</p>
+
+          <form onsubmit="initTransfer(event)">
+            <div class="form-group">
+              <label class="form-label">Source de paiement (débit)</label>
+              <select id="srcOp" class="form-control" onchange="handleSourceChange()">
+                <option value="mpesa">M-Pesa (Vodacom)</option>
+                <option value="airtel">Airtel Money</option>
+                <option value="orange">Orange Money</option>
+                <option value="afrimoney">Afrimoney</option>
+                <option value="visa">Carte Visa (Ma Banque)</option>
+              </select>
+            </div>
+
+            <!-- Option Visa -->
+            <div id="visaFormContainer" class="glass-input" style="display:none; margin-bottom:16px; padding:16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
+              <div style="font-size:0.85rem; font-weight:700; color:var(--c-gold); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <span>💳</span> Paiement Sécurisé Visa
+              </div>
+              <p style="font-size:0.8rem; color:var(--c-text2); margin:0;">
+                Vous serez redirigé vers le portail sécurisé Cybersource (Visa) pour confirmer ce paiement après avoir cliqué sur le bouton de transfert.
+              </p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Opérateur destination (crédit)</label>
+              <select id="dstOp" class="form-control" onchange="calcFees()">
+                <option value="airtel">Airtel Money</option>
+                <option value="mpesa">M-Pesa (Vodacom)</option>
+                <option value="orange">Orange Money</option>
+                <option value="afrimoney">Afrimoney</option>
+                <option value="rawbank">Rawbank</option>
+                <option value="equity">Equity Bank</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Numéro du bénéficiaire</label>
+              <div class="input-group">
+                <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12A19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.04a16 16 0 0 0 6.05 6.05l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+                <input type="tel" id="benefPhone" class="form-control" placeholder="+243 8XX XXX XXX" required/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nom du bénéficiaire (optionnel)</label>
+              <input type="text" id="benefName" class="form-control" placeholder="Ex: Jean Mukeba"/>
+            </div>
+            <div style="display:flex; gap:12px; margin-bottom:16px;">
+              <div class="form-group" style="flex:1; margin-bottom:0;">
+                <label class="form-label">Montant</label>
+                <input type="number" id="txAmount" class="form-control" placeholder="Ex: 50000" required oninput="calcFees()"/>
+              </div>
+              <div class="form-group" style="width:100px; margin-bottom:0;">
+                <label class="form-label">Devise</label>
+                <select id="txCurrency" class="form-control" style="cursor:pointer; font-weight:600;" onchange="calcFees()">
+                  <option value="CDF">CDF</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Résumé frais -->
+            <div class="card-gold" id="feeSummary" style="margin-bottom:20px; display:none;">
+              <div style="font-size:0.85rem; font-weight:600; margin-bottom:10px; color:var(--c-gold);">Résumé du transfert</div>
+              <div style="display:flex; justify-content:space-between; font-size:0.88rem; margin-bottom:6px;"><span style="color:var(--c-text2);">Montant envoyé</span><span id="feeMontant" style="font-weight:600;">—</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:0.88rem; margin-bottom:6px;"><span style="color:var(--c-text2);">Frais de transfert</span><span id="feeMontantFrais" style="color:var(--c-gold);">—</span></div>
+              <div style="height:1px; background:rgba(245,158,11,0.2); margin:10px 0;"></div>
+              <div style="display:flex; justify-content:space-between; font-size:1rem; font-weight:700;"><span>Total débité</span><span id="feeTotal" style="color:var(--c-gold);">—</span></div>
+              <div style="font-size:0.78rem; color:var(--c-text2); margin-top:8px;" id="feeDelay">⚡ Instantané (&lt;30 sec)</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="txBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+              <span id="txBtnTxt">Confirmer le transfert</span>
+              <span id="txSpinner" class="spinner" style="display:none;width:18px;height:18px;"></span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Historique -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Historique des transferts</span>
+            <span class="badge badge-primary" id="histCount">0</span>
+          </div>
+          <div class="tx-list" id="histList">
+            <p style="text-align:center;color:var(--c-text3);padding:32px;font-size:0.88rem;">Aucun transfert effectué.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Mobile Bas (PWA Shell) -->
+  <nav class="mobile-bottom-nav">
+    <a href="dashboard.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Accueil</span>
+    </a>
+    <a href="merchant.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+      <span>Paiement</span>
+    </a>
+    <a href="transfer.html" class="mobile-nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
+      <span>Transferts</span>
+    </a>
+    <a href="bills.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>Factures</span>
+    </a>
+    <a href="settings.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Paramètres</span>
+    </a>
+  </nav>
+</div>
+
+<!-- Modal confirmation -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirmer le transfert</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="confirmBody" style="margin-bottom:24px;"></div>
+    <div style="display:flex; gap:12px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="executeTransfer()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/transfer.js"></script>
+</body>
+</html>

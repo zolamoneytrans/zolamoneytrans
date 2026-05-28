@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — Zola Money</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <link rel="stylesheet" href="css/main.css?v=8"/>
+  <link rel="stylesheet" href="css/components.css?v=8"/>
+  <style>
+    /* Admin specific layout styles */
+    :root {
+      --admin-bg: #F8FAFC;
+      --admin-sidebar: #FFFFFF;
+      --admin-border: #E2E8F0;
+      --admin-text: #1E293B;
+      --admin-text-light: #64748B;
+      --admin-primary: #4F46E5;
+    }
+    body {
+      background-color: var(--admin-bg);
+      color: var(--admin-text);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Auth Form */
+    #adminLogin {
+      position: fixed; inset: 0; background: var(--admin-bg); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Sidebar */
+    .admin-sidebar {
+      width: 250px;
+      background: var(--admin-sidebar);
+      border-right: 1px solid var(--admin-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .admin-logo {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      color: var(--admin-primary);
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .admin-logo img { width: 32px; }
+    .admin-nav {
+      padding: 16px 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .admin-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      color: var(--admin-text-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .admin-nav a:hover, .admin-nav a.active {
+      background: #F1F5F9;
+      color: var(--admin-primary);
+    }
+    /* Main Area */
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .admin-header {
+      height: 70px;
+      background: var(--admin-sidebar);
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      flex-shrink: 0;
+    }
+    .admin-header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .search-bar {
+      background: #F1F5F9;
+      border: 1px solid var(--admin-border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 300px;
+    }
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    .admin-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      display: flex;
+      gap: 32px;
+    }
+    /* Users List Panel */
+    .users-list-panel {
+      width: 350px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--admin-border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .users-list-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .users-list-header h2 { margin: 0 0 12px 0; font-size: 1.2rem; }
+    .users-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 0;
+    }
+    .user-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #F1F5F9;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .user-item:hover, .user-item.active {
+      background: #F8FAFC;
+      border-left: 3px solid var(--admin-primary);
+    }
+    .user-item-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .user-item-email { font-size: 0.85rem; color: var(--admin-text-light); }
+    /* User Detail Panel */
+    .user-detail-panel {
+      flex: 1;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--admin-border);
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow-y: auto;
+    }
+    .user-profile-header {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 40px;
+    }
+    .user-avatar-large {
+      width: 80px;
+      height: 80px;
+      background: #F1F5F9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--admin-text-light);
+    }
+    .user-title-group h2 { margin: 0 0 4px 0; font-size: 1.5rem; }
+    .user-title-group p { margin: 0 0 12px 0; color: var(--admin-text-light); }
+    .badges { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+    .badge-role { background: #F1F5F9; color: var(--admin-text); padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; }
+    .badge-verified { background: #DCFCE7; color: #166534; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .badge-unverified { background: #FEE2E2; color: #991B1B; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .btn-toggle { background: #F8FAFC; border: 1px solid var(--admin-border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+    .btn-toggle:hover { background: #F1F5F9; }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .info-item { display: flex; gap: 12px; }
+    .info-icon { color: var(--admin-text-light); padding-top: 2px; }
+    .info-label { font-size: 0.8rem; color: var(--admin-text-light); margin-bottom: 4px; }
+    .info-value { font-weight: 500; font-size: 0.95rem; word-break: break-all; }
+    
+    .actions-footer {
+      display: flex;
+      gap: 12px;
+      padding-top: 24px;
+      border-top: 1px solid var(--admin-border);
+    }
+    .btn-outline { background: #fff; border: 1px solid var(--admin-border); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+    
+    .kyc-docs { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--admin-border); }
+    .kyc-docs h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 16px; }
+    .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+    .doc-card { border: 1px solid var(--admin-border); border-radius: 8px; padding: 8px; text-align: center; }
+    .doc-card img { max-width: 100%; border-radius: 4px; max-height: 120px; object-fit: cover; cursor: pointer; }
+    .doc-label { font-size: 0.8rem; color: var(--admin-text-light); margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- Login Admin -->
+<div id="adminLogin">
+  <div class="auth-card animate-slideUp">
+    <div class="auth-logo" style="text-align:center; margin-bottom: 24px;">
+      <img src="icons/zolalogo128x128.png" alt="Zola" style="width:64px;"/>
+      <h1 style="color:var(--admin-primary); margin-top:16px;">Administration</h1>
+    </div>
+    <div id="adminAlert" style="display:none; color:red; margin-bottom:16px; text-align:center;"></div>
+    <form onsubmit="adminLogin(event)">
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>E-mail administrateur</label>
+        <input type="email" id="adminEmail" class="form-control" value="drnduwa@gmail.com" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;"/>
+      </div>
+      <div class="form-group" style="margin-bottom:24px;">
+        <label>Mot de passe</label>
+        <input type="password" id="adminPwd" class="form-control" value="christanne1A" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;"/>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; background:var(--admin-primary); color:#fff; border:none; border-radius:8px; cursor:pointer;" id="adminLoginBtn">
+        Connexion
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="admin-sidebar" id="adminSidebar" style="display:none;">
+  <div class="admin-logo">
+    <img src="icons/zolalogo96x96.png" alt="Zola"/>
+    ZOLA MONEY
+  </div>
+  <nav class="admin-nav">
+    <a href="#">Dashboard</a>
+    <a href="#" class="active" id="navUsers" onclick="window.showAdminTab('users')">Users</a>
+    <a href="#">Payments</a>
+    <a href="#" id="navTransactions" onclick="window.showAdminTab('transactions')">Transactions</a>
+    <a href="#">Transactions Fees</a>
+    <a href="#">Notifications</a>
+    <a href="#">Analysis</a>
+    <a href="#">User Management</a>
+    <a href="#">Reporting</a>
+    <a href="#">Settings</a>
+    <a href="#" onclick="adminLogout()" style="margin-top:auto; color:red;">Logout</a>
+  </nav>
+</div>
+
+<main class="admin-main" id="adminMain" style="display:none;">
+  <header class="admin-header">
+    <h1>Users</h1>
+    <div class="header-actions">
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search..." oninput="filterUsers(this.value)"/>
+      </div>
+      <div style="font-size: 1.2rem;">🔔</div>
+      <div style="width: 32px; height: 32px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">A</div>
+    </div>
+  </header>
+  
+  <div class="admin-content">
+    <!-- Tab Users -->
+    <div id="tabUsers" style="display:flex; width:100%; gap:32px; height:100%;">
+      <div class="users-list-panel">
+        <div class="users-list-header">
+          <h2>Users</h2>
+          <p style="font-size:0.85rem; color:var(--admin-text-light); margin-bottom:12px;">Select a user to view their details.</p>
+          <input type="text" class="form-control" placeholder="Search users..." oninput="filterUsersList(this.value)" style="width:100%; padding:8px 12px; border:1px solid var(--admin-border); border-radius:6px;"/>
+        </div>
+        <div class="users-list" id="usersList">
+          <!-- Users will be populated here -->
+        </div>
+      </div>
+      
+      <div class="user-detail-panel" id="userDetailPanel" style="display:none;">
+        <!-- Details populated dynamically -->
+      </div>
+      <div id="noUserSelected" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--admin-text-light);">
+        Select a user from the list to view their details
+      </div>
+    </div>
+    
+    <!-- Tab Transactions -->
+    <div id="tabTransactions" style="display:none; width:100%; gap:32px; height:100%;">
+      <div class="users-list-panel" style="width: 400px;">
+        <div class="users-list-header">
+          <h2>Transactions</h2>
+          <p style="font-size:0.85rem; color:var(--admin-text-light); margin-bottom:12px;">All platform transactions.</p>
+          <input type="text" class="form-control" placeholder="Search ref or phone..." oninput="filterAdminTxList(this.value)" style="width:100%; padding:8px 12px; border:1px solid var(--admin-border); border-radius:6px;"/>
+        </div>
+        <div class="users-list" id="adminTxList">
+          <!-- Tx will be populated here -->
+        </div>
+      </div>
+      
+      <div class="user-detail-panel" id="adminTxDetailPanel" style="display:none;">
+        <!-- Details populated dynamically -->
+      </div>
+      <div id="noTxSelected" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--admin-text-light);">
+        Select a transaction from the list to view details
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
