@@ -15,8 +15,17 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install
+      - name: Build Web Assets (macOS compat)
+        script: |
+          rm -rf www
+          mkdir -p www
+          cp *.html manifest.json sw.js sitemap.xml robots.txt www/ 2>/dev/null || true
+          cp -R css js icons assets www/ 2>/dev/null || true
       - name: Sync Capacitor (iOS)
         script: npx cap sync ios
+      - name: Disable Xcode User Script Sandboxing
+        script: |
+          sed -i '' 's/buildSettings = {/buildSettings = {\n\t\t\t\tENABLE_USER_SCRIPT_SANDBOXING = NO;/g' ios/App/App.xcodeproj/project.pbxproj
 
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
