@@ -9,9 +9,11 @@ workflows:
       node: latest
       xcode: latest
       cocoapods: default
-      vars:
-        CM_CERTIFICATE: $zola_cert
-        CM_PROVISIONING_PROFILE: $zola_profile
+      ios_signing:
+        provisioning_profiles:
+          - zola_profile
+        certificates:
+          - zola_cert
     scripts:
       - name: Install dependencies
         script: npm install
