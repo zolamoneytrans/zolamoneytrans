@@ -25,7 +25,7 @@ workflows:
         script: npx cap sync ios
       - name: Disable Xcode User Script Sandboxing
         script: |
-          sed -i '' 's/buildSettings = {/buildSettings = {\n\t\t\t\tENABLE_USER_SCRIPT_SANDBOXING = NO;/g' ios/App/App.xcodeproj/project.pbxproj
+          node -e "const fs = require('fs'); let content = fs.readFileSync('ios/App/App.xcodeproj/project.pbxproj', 'utf8'); content = content.replace(/buildSettings = \{/g, 'buildSettings = {\\n\\t\\t\\t\\tENABLE_USER_SCRIPT_SANDBOXING = NO;'); fs.writeFileSync('ios/App/App.xcodeproj/project.pbxproj', content);"
 
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
