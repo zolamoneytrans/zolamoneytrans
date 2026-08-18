@@ -33,7 +33,14 @@ workflows:
         script: |
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
-            --scheme "App"
+            --scheme "App" || {
+              echo "==========================================="
+              echo "BUILD FAILED! EXTRACTING ACTUAL XCODE ERROR:"
+              echo "==========================================="
+              grep -A 5 -B 2 -i "error:" /tmp/xcodebuild_logs/*.log || tail -n 50 /tmp/xcodebuild_logs/*.log
+              echo "==========================================="
+              exit 1
+            }
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
