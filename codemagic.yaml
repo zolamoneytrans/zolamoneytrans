@@ -9,9 +9,9 @@ workflows:
       node: latest
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.zolamoneytrans.web
+      vars:
+        CM_CERTIFICATE: $zola_cert
+        CM_PROVISIONING_PROFILE: $zola_profile
     scripts:
       - name: Install dependencies
         script: npm install
@@ -27,6 +27,10 @@ workflows:
         script: |
           node -e "const fs = require('fs'); let content = fs.readFileSync('ios/App/App.xcodeproj/project.pbxproj', 'utf8'); content = content.replace(/buildSettings = \{/g, 'buildSettings = {\\n\\t\\t\\t\\tENABLE_USER_SCRIPT_SANDBOXING = NO;'); fs.writeFileSync('ios/App/App.xcodeproj/project.pbxproj', content);"
 
+      - name: Initialize keychain
+        script: keychain initialize
+      - name: Add certificates to keychain
+        script: keychain add-certificates
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       - name: Build IPA
