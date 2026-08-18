@@ -4,6 +4,7 @@
 // ============================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {
   getAuth,
@@ -31,7 +32,8 @@ import {
   limit,
   onSnapshot,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getDatabase,
@@ -57,6 +59,13 @@ const firebaseConfig = {
 };
 
 const app      = initializeApp(firebaseConfig);
+
+// ── App Check (reCAPTCHA Enterprise) ──
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider('6Ld1toMtAAAAADzOzkmD0wtFM7g3WQUWdnBGIDW4'),
+  isTokenAutoRefreshEnabled: true
+});
+
 const analytics = getAnalytics(app);
 const auth     = getAuth(app);
 const db       = getFirestore(app);
@@ -86,7 +95,7 @@ export {
   RecaptchaVerifier, signInWithPhoneNumber,
   // Firestore
   collection, doc, addDoc, getDoc, getDocs, setDoc, updateDoc, deleteDoc,
-  query, where, orderBy, limit, onSnapshot, serverTimestamp, Timestamp,
+  query, where, orderBy, limit, onSnapshot, serverTimestamp, Timestamp, increment,
   // RTDB
   ref, set, get, push, onValue, update,
   // Functions

@@ -2,7 +2,7 @@
 // Zola Money Trans · Swazi Appli Lab SARL
 
 import { auth, db } from './firebase.js';
-import { doc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { doc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
@@ -87,6 +87,8 @@ window.submitStep = function(step) {
 
 window.goToStep = function(step) {
   currentStep = step;
+  const donePanel = document.getElementById('stepPanelDone');
+  if (donePanel) donePanel.style.display = 'none';
   [3,4,5].forEach(s => {
     const p = document.getElementById(`stepPanel${s}`);
     if (p) p.style.display = s === step ? '' : 'none';
@@ -101,11 +103,12 @@ window.goToStep = function(step) {
 };
 
 window.submitKYC = async function() {
-  const rue   = document.getElementById('adresseRue')?.value.trim();
-  const ville = document.getElementById('adresseVille')?.value.trim();
+  const rue     = document.getElementById('adresseRue')?.value.trim();
+  const commune = document.getElementById('adresseCommune')?.value.trim() || '';
+  const ville   = document.getElementById('adresseVille')?.value.trim();
   if (!rue || !ville) { showToast('Veuillez remplir tous les champs d\'adresse.', 'error'); return; }
 
-  kycData.adresse = { rue, ville };
+  kycData.adresse = { rue, commune, ville };
 
   const submitBtn = document.querySelector('[onclick="submitKYC()"]');
   if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Soumission…'; }
@@ -114,16 +117,25 @@ window.submitKYC = async function() {
   if (!user) { showToast('Session expirée. Reconnectez-vous.', 'error'); return; }
 
   try {
-    await updateDoc(doc(db, 'users', user.uid), {
+    const kycDocs = {
+      docFront: uploadedFiles['frontZone'] || '',
+      docBack:  uploadedFiles['backZone'] || '',
+      selfie:   uploadedFiles['selfieZone'] || '',
+      proof:    uploadedFiles['proofZone'] || ''
+    };
+
+    await setDoc(doc(db, 'users', user.uid), {
       kycStatus:      'soumis',
       kycLevel:       'avance',
-      kycDocuments:   uploadedFiles,
+      kycDocuments:   kycDocs,
       kycData,
-      adresse:        { rue, ville },
+      adresse:        { rue, commune, ville },
       kycSubmittedAt: serverTimestamp()
-    });
+    }, { merge: true });
 
     // Afficher panneau de confirmation
+    const rejAlert = document.getElementById('kycRejectionAlert');
+    if (rejAlert) rejAlert.style.display = 'none';
     [3,4,5].forEach(s => { const p = document.getElementById(`stepPanel${s}`); if(p) p.style.display='none'; });
     const done = document.getElementById('stepPanelDone');
     if (done) done.style.display = '';
@@ -143,6 +155,117 @@ window.submitKYC = async function() {
 
 onAuthStateChanged(auth, user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
+
+  const userDocRef = doc(db, 'users', user.uid);
+  onSnapshot(userDocRef, (snap) => {
+    if (snap.exists()) {
+      const profile = snap.data();
+      const status = profile.kycStatus || 'non_initie';
+      const level = profile.kycLevel || 'basique';
+
+      // Update badges
+      const badgeBasic = document.getElementById('badge-basic');
+      const badgeAdvanced = document.getElementById('badge-advanced');
+      const badgeMerchant = document.getElementById('badge-merchant');
+
+      if (level === 'basique') {
+        if (badgeBasic) { badgeBasic.textContent = 'Actif'; badgeBasic.className = 'badge badge-success'; }
+        if (status === 'soumis') {
+          if (badgeAdvanced) { badgeAdvanced.textContent = 'En examen'; badgeAdvanced.className = 'badge badge-warning'; }
+        } else if (status === 'rejete') {
+          if (badgeAdvanced) { badgeAdvanced.textContent = 'Refusé'; badgeAdvanced.className = 'badge badge-danger'; }
+        } else {
+          if (badgeAdvanced) { badgeAdvanced.textContent = 'Non complété'; badgeAdvanced.className = 'badge badge-info'; }
+        }
+      } else if (level === 'avance') {
+        if (badgeBasic) { badgeBasic.textContent = 'Actif'; badgeBasic.className = 'badge badge-success'; }
+        if (badgeAdvanced) { badgeAdvanced.textContent = 'Actif'; badgeAdvanced.className = 'badge badge-success'; }
+        if (badgeMerchant) { badgeMerchant.textContent = 'Non complété'; badgeMerchant.className = 'badge badge-warning'; }
+      } else if (level === 'marchand') {
+        if (badgeBasic) { badgeBasic.textContent = 'Actif'; badgeBasic.className = 'badge badge-success'; }
+        if (badgeAdvanced) { badgeAdvanced.textContent = 'Actif'; badgeAdvanced.className = 'badge badge-success'; }
+        if (badgeMerchant) { badgeMerchant.textContent = 'Actif'; badgeMerchant.className = 'badge badge-success'; }
+      }
+
+      const rejAlert = document.getElementById('kycRejectionAlert');
+      const donePanel = document.getElementById('stepPanelDone');
+
+      // Check kycStatus
+      if (status === 'soumis') {
+        if (rejAlert) rejAlert.style.display = 'none';
+        // Hide steps and forms
+        [3, 4, 5].forEach(s => {
+          const p = document.getElementById(`stepPanel${s}`);
+          if (p) p.style.display = 'none';
+        });
+        const stepsBar = document.getElementById('kycStepsBar');
+        if (stepsBar) stepsBar.style.display = 'none';
+        
+        if (donePanel) {
+          donePanel.innerHTML = `
+            <div style="font-size:4rem; margin-bottom:16px;">🎉</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:8px;">Dossier soumis avec succès !</h3>
+            <p style="color:var(--c-text2); max-width:400px; margin:0 auto 24px;">Votre dossier KYC est en cours d'examen. La vérification prend généralement moins de 24 heures.</p>
+            <span class="badge badge-warning" style="font-size:0.9rem; padding:8px 20px;">⏳ En cours de vérification</span>
+            <div style="margin-top:24px;"><a href="dashboard.html" class="btn btn-primary">Retour au tableau de bord</a></div>
+          `;
+          donePanel.style.display = 'block';
+        }
+      } else if (status === 'approuve') {
+        if (rejAlert) rejAlert.style.display = 'none';
+        // Hide steps and forms
+        [3, 4, 5].forEach(s => {
+          const p = document.getElementById(`stepPanel${s}`);
+          if (p) p.style.display = 'none';
+        });
+        const stepsBar = document.getElementById('kycStepsBar');
+        if (stepsBar) stepsBar.style.display = 'none';
+        
+        if (donePanel) {
+          donePanel.innerHTML = `
+            <div style="font-size:4rem; margin-bottom:16px;">🛡️</div>
+            <h3 style="font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:8px; color:var(--c-success);">KYC Avancé Vérifié</h3>
+            <p style="color:var(--c-text2); max-width:400px; margin:0 auto 24px;">Félicitations ! Votre identité a été vérifiée avec succès. Vous bénéficiez désormais de limites de transactions étendues.</p>
+            <span class="badge badge-success" style="font-size:0.9rem; padding:8px 20px;">✅ Identité Vérifiée</span>
+            <div style="margin-top:24px;"><a href="dashboard.html" class="btn btn-primary">Retour au tableau de bord</a></div>
+          `;
+          donePanel.style.display = 'block';
+        }
+      } else {
+        // Normal form flow (non_initie, en_attente, rejete)
+        if (donePanel) donePanel.style.display = 'none';
+        
+        const stepsBar = document.getElementById('kycStepsBar');
+        if (stepsBar) stepsBar.style.display = 'flex';
+        
+        if (status === 'rejete' && rejAlert) {
+          const motif = profile.kycReason || "Les documents soumis sont illisibles, expirés ou incomplets.";
+          rejAlert.innerHTML = `
+            <div class="alert alert-danger" style="display:flex; align-items:flex-start; gap:14px; margin-bottom:24px; padding:18px; border-radius:14px; background:rgba(239, 68, 68, 0.12); border:1px solid rgba(239, 68, 68, 0.4); color:#fff; text-align:left;">
+              <div style="font-size:1.8rem; line-height:1;">❌</div>
+              <div style="flex:1;">
+                <h4 style="font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:800; color:#EF4444; margin-bottom:6px;">Vérification KYC Refusée</h4>
+                <p style="font-size:0.9rem; color:#cbd5e1; margin-bottom:10px; line-height:1.4;">
+                  Votre précédent dossier n'a pas pu être validé par notre équipe de conformité.<br>
+                  <strong style="color:#fCA5A5;">Motif du refus :</strong> ${motif}
+                </p>
+                <div style="padding:10px 14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:0.85rem; color:#e2e8f0;">
+                  ⚠️ Veuillez recharger des photos nettes et conformes ci-dessous pour soumettre à nouveau votre dossier.
+                </div>
+              </div>
+            </div>
+          `;
+          rejAlert.style.display = 'block';
+        } else if (rejAlert) {
+          rejAlert.style.display = 'none';
+        }
+        
+        goToStep(currentStep);
+      }
+    }
+  });
+
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('appShell').style.display = 'flex';
   const av = document.getElementById('userAvatar');

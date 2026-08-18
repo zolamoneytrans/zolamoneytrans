@@ -13,10 +13,10 @@ const checkStatus = httpsCallable(functions, 'checkStatus');
 
 // ── Frais par corridor ──
 const FEES = {
-  'mpesa-airtel': .018, 'mpesa-orange': .020, 'mpesa-rawbank': .025, 'mpesa-equity': .025,
-  'airtel-mpesa': .018, 'airtel-orange': .020, 'airtel-rawbank': .025, 'airtel-equity': .025,
-  'orange-mpesa': .020, 'orange-airtel': .020, 'orange-rawbank': .025, 'orange-equity': .025,
-  'default': .022
+  'mpesa-airtel': .095, 'mpesa-orange': .095, 'mpesa-rawbank': .095, 'mpesa-equity': .095,
+  'airtel-mpesa': .095, 'airtel-orange': .095, 'airtel-rawbank': .095, 'airtel-equity': .095,
+  'orange-mpesa': .095, 'orange-airtel': .095, 'orange-rawbank': .095, 'orange-equity': .095,
+  'default': .095
 };
 
 let pendingTransfer = null;
@@ -24,8 +24,11 @@ let currentUser     = null;
 let userProfile     = null;
 let userDocRef      = null;
 
+let initializedUrlParams = false;
+
 onAuthStateChanged(auth, user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   currentUser = user;
   userDocRef = doc(db, 'users', user.uid);
   onSnapshot(userDocRef, (snap) => {
@@ -34,6 +37,30 @@ onAuthStateChanged(auth, user => {
       updateVisaCardUI();
       populateSourceOptions();
       
+      if (!initializedUrlParams) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromParam = urlParams.get('from');
+        const toParam = urlParams.get('to');
+        
+        if (fromParam === 'bank' || fromParam === 'visa') {
+          const srcOp = document.getElementById('srcOp');
+          if (srcOp) {
+            srcOp.value = 'visa';
+            if (typeof window.handleSourceChange === 'function') {
+              window.handleSourceChange();
+            }
+          }
+        }
+        
+        if (toParam) {
+          const dstOp = document.getElementById('dstOp');
+          if (dstOp) {
+            dstOp.value = toParam === 'afri' ? 'afrimoney' : toParam;
+          }
+        }
+        initializedUrlParams = true;
+      }
+
       const uType = userProfile.type || 'particulier';
       document.querySelectorAll('a[href="merchant.html"]').forEach(link => {
         link.style.display = (uType === 'marchand') ? 'flex' : 'none';
@@ -83,11 +110,13 @@ function populateSourceOptions() {
       srcOp.add(new Option(`M-Pesa (${phone})`, 'mpesa'));
       srcOp.add(new Option(`Airtel Money (${phone})`, 'airtel'));
       srcOp.add(new Option(`Orange Money (${phone})`, 'orange'));
+      srcOp.add(new Option(`Afrimoney (${phone})`, 'afrimoney'));
     }
   } else {
     srcOp.add(new Option(`M-Pesa (Vodacom)`, 'mpesa'));
     srcOp.add(new Option(`Airtel Money`, 'airtel'));
     srcOp.add(new Option(`Orange Money`, 'orange'));
+    srcOp.add(new Option(`Afrimoney`, 'afrimoney'));
   }
   
   if (userProfile && userProfile.cardAttached) {
@@ -97,7 +126,7 @@ function populateSourceOptions() {
     srcOp.add(new Option(`Ma Banque (Ajouter Carte Visa)`, 'visa'));
   }
   
-  if (['mpesa', 'airtel', 'orange', 'visa'].includes(currentValue)) {
+  if (['mpesa', 'airtel', 'orange', 'afrimoney', 'visa'].includes(currentValue)) {
     srcOp.value = currentValue;
   }
 }
@@ -165,7 +194,7 @@ window.calcFees = function() {
   const total = currency === 'USD' ? parseFloat((amount + frais).toFixed(2)) : amount + frais;
 
   document.getElementById('feeMontant').textContent = window.formatMoney(amount, currency);
-  document.getElementById('feeMontantFrais').textContent = window.formatMoney(frais, currency) + ` (${(rate*100).toFixed(1)}%)`;
+  document.getElementById('feeMontantFrais').textContent = window.formatMoney(frais, currency);
   document.getElementById('feeTotal').textContent = window.formatMoney(total, currency);
   feeSummary.style.display = '';
 };
@@ -182,9 +211,26 @@ window.initTransfer = async function(e) {
   const phone     = document.getElementById('benefPhone').value.trim();
   const name      = document.getElementById('benefName').value.trim();
 
+  if (dst === 'rawbank' || dst === 'equity') {
+    const bankName = dst === 'rawbank' ? 'Rawbank' : 'Equity Bank';
+    showToast(`Le transfert vers ${bankName} n'est pas encore implémenté. Nous finalisons actuellement notre partenariat avec cette banque.`, 'error');
+    return;
+  }
+
   const minAmt = currency === 'USD' ? 1 : 240;
   if (!amount || amount < minAmt)  { showToast(`Montant minimum : ${minAmt} ${currency}`, 'error'); return; }
   if (!phone)                   { showToast('Numéro du bénéficiaire requis', 'error'); return; }
+  
+  const cleanPhone = phone.replace(/[\s\-\+]/g, '');
+  if (!cleanPhone.startsWith('243') && !cleanPhone.startsWith('0')) {
+    showToast('Le numéro doit commencer par +243 ou 0', 'error'); return;
+  }
+  if (cleanPhone.startsWith('243') && cleanPhone.length !== 12) {
+    showToast('Le numéro (avec +243) doit contenir 12 chiffres', 'error'); return;
+  }
+  if (cleanPhone.startsWith('0') && cleanPhone.length !== 10) {
+    showToast('Le numéro (avec 0) doit contenir 10 chiffres', 'error'); return;
+  }
 
   const rate  = FEES[`${src}-${dst}`] || FEES['default'];
   const frais = currency === 'USD' ? parseFloat((amount * rate).toFixed(2)) : Math.round(amount * rate);
@@ -248,6 +294,8 @@ async function _doTransfer() {
       // Le webhook s'occupera du payOut (Crédit) plus tard en cas de succès
       const result = await payInFn({
         amount:          String(pendingTransfer.total), // On débite le total (montant + frais)
+        amountBase:      String(pendingTransfer.amount),
+        frais:           String(pendingTransfer.frais),
         currency:        pendingTransfer.currency,
         customerNumber:  userProfile?.phone || pendingTransfer.phone, // Numéro à débiter (le client)
         method:          pendingTransfer.src, // Opérateur de débit (ex: mpesa ou visa)
@@ -304,7 +352,7 @@ async function pollStatus(reference, firestoreId, attempts = 0) {
     if (statut === 'succès') {
       showToast('✅ Transfert confirmé avec succès !', 'success');
     } else if (statut === 'échoué') {
-      showToast('❌ Transfert échoué. Veuillez réessayer ou contacter le support.', 'error');
+      showToast('❌ Transfert échoué. Raisons possibles : numéro incorrect (ex: +243...), mauvais opérateur, nom non correspondant ou fonds insuffisants. Support WhatsApp : +243 857767040', 'error');
     } else {
       pollStatus(reference, firestoreId, attempts + 1);
     }

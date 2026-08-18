@@ -608,6 +608,29 @@
   color: rgba(255,255,255,0.5);
 }
 
+/* Quick Action Colors */
+.icon-mpesa { background: #10B981 !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3) !important; }
+.card-mpesa:hover { border-color: rgba(16, 185, 129, 0.5) !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important; }
+
+.icon-orange { background: #F97316 !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3) !important; }
+.card-orange:hover { border-color: rgba(249, 115, 22, 0.5) !important; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2) !important; }
+
+.icon-airtel { background: #EF4444 !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3) !important; }
+.card-airtel:hover { border-color: rgba(239, 68, 68, 0.5) !important; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important; }
+
+.icon-afri { background: #8B5CF6 !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3) !important; }
+.card-afri:hover { border-color: rgba(139, 92, 246, 0.5) !important; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2) !important; }
+
+.icon-zola { background: #F59E0B !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3) !important; }
+.card-zola:hover { border-color: rgba(245, 158, 11, 0.5) !important; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2) !important; }
+
+.icon-info { background: #3B82F6 !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important; }
+.card-info:hover { border-color: rgba(59, 130, 246, 0.5) !important; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important; }
+
+.icon-purple { background: #7C3AED !important; color: #fff !important; border-radius: 50% !important; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3) !important; }
+.card-purple:hover { border-color: rgba(124, 58, 237, 0.5) !important; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2) !important; }
+
+
 .stat-card-horizontal {
   background: #13111f;
   border-radius: 20px;

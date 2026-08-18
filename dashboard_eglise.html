@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tableau de Bord Église — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div id="loadingScreen" class="loading-screen">
+  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
+  <div class="spinner" style="width:32px;height:32px;"></div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola"/>
+      <div class="brand">Zola <span>Money</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="dashboard_eglise.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Tableau de bord
+      </a>
+      <a href="settings_eglise.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
+      <a href="help_eglise.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+        Aide & Support
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%; background:none; border:none; cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">Tableau de Bord <span style="font-size: 0.65rem; padding: 2px 6px; background: var(--c-surface2); color: var(--c-primary); border-radius: 4px; vertical-align: middle; margin-left: 8px;">ÉGLISE</span></div>
+          <div style="font-size:0.78rem; color:var(--c-text3);" id="dateDisplay"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div id="kycBadge"></div>
+        <div class="avatar" id="userAvatar">E</div>
+        <div style="display:none; flex-direction:column;" id="userInfo">
+          <span style="font-weight:600; font-size:0.9rem;" id="userName">—</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content page-enter">
+      
+      <!-- Section: KYC NON INITIE -->
+      <div id="kycFormSection" style="display:none;">
+        <div id="egliseRejectionAlert" style="display:none;"></div>
+        <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--c-primary);">
+          <div style="display: flex; gap: 16px; align-items: flex-start;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(124, 58, 237, 0.1); display: flex; align-items: center; justify-content: center; color: var(--c-primary);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+            </div>
+            <div>
+              <h2 style="font-size: 1.2rem; margin-bottom: 8px;">Enregistrement de votre Église</h2>
+              <p style="color: var(--c-text2); font-size: 0.9rem; line-height: 1.5;">Veuillez fournir les informations ci-dessous pour finaliser l'enregistrement de votre compte Église. Une fois soumis, notre équipe validera votre dossier.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <form id="churchKycForm" onsubmit="submitChurchKyc(event)">
+            <h3 class="section-title">Informations de l'Église</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom: 16px;">
+              <div class="form-group">
+                <label class="form-label">Nom de l'Église</label>
+                <input type="text" id="churchName" class="form-control" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Numéro de Téléphone (Église)</label>
+                <input type="tel" id="churchPhone" class="form-control" required/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adresse Complète</label>
+              <input type="text" id="churchAddress" class="form-control" placeholder="Avenue, Quartier, Commune, Ville" required/>
+            </div>
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="form-label">Numéro Mobile Money Récepteur (Dons/Dîmes)</label>
+              <input type="tel" id="momoAccount" class="form-control" placeholder="+243..." required/>
+            </div>
+
+            <div class="divider"></div>
+            <h3 class="section-title">Documents Justificatifs</h3>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom: 24px;">
+              <div class="upload-zone" onclick="document.getElementById('pastorIdInput').click()" id="pastorIdZone">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;margin-bottom:12px;color:var(--c-primary);"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <p><strong>ID ou Passeport du Pasteur</strong></p>
+                <p style="font-size:0.75rem; color:var(--c-text3);">Appuyez pour uploader</p>
+              </div>
+              <input type="file" id="pastorIdInput" style="display:none;" accept="image/*,.pdf" onchange="previewChurchUpload(this, 'pastorIdZone')"/>
+
+              <div class="upload-zone" onclick="document.getElementById('churchDocInput').click()" id="churchDocZone">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;margin-bottom:12px;color:var(--c-primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+                <p><strong>Doc. d'enregistrement / Bail / Facture</strong></p>
+                <p style="font-size:0.75rem; color:var(--c-text3);">Appuyez pour uploader</p>
+              </div>
+              <input type="file" id="churchDocInput" style="display:none;" accept="image/*,.pdf" onchange="previewChurchUpload(this, 'churchDocZone')"/>
+              
+              <div class="upload-zone" onclick="document.getElementById('churchLogoInput').click()" id="churchLogoZone" style="grid-column: span 2;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:32px;height:32px;margin-bottom:12px;color:var(--c-primary);"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                <p><strong>Logo de l'Église (Optionnel)</strong></p>
+                <p style="font-size:0.75rem; color:var(--c-text3);">Appuyez pour uploader</p>
+              </div>
+              <input type="file" id="churchLogoInput" style="display:none;" accept="image/*" onchange="previewChurchUpload(this, 'churchLogoZone')"/>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitKycBtn">Soumettre pour vérification</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Section: KYC EN ATTENTE -->
+      <div id="kycPendingSection" style="display:none; text-align: center; padding: 40px 20px;">
+        <div style="font-size:4rem; margin-bottom:16px;">⏳</div>
+        <h3 style="font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:8px;">Dossier en cours d'examen</h3>
+        <p style="color:var(--c-text2); max-width:400px; margin:0 auto 24px;">Votre compte Église est actuellement en cours de vérification par notre équipe. Vous recevrez une notification une fois approuvé.</p>
+        <span class="badge badge-warning" style="font-size:0.9rem; padding:8px 20px;">Statut : En Attente</span>
+      </div>
+
+      <!-- Section: DASHBOARD ACTIF -->
+      <div id="dashboardSection" style="display:none;">
+        <div class="responsive-grid-2-1" style="margin-bottom: 24px;">
+          <!-- QR Code Section -->
+          <div class="card" style="text-align: center;">
+            <h3 class="section-title">QR Code de l'Église</h3>
+            <p style="color: var(--c-text3); font-size: 0.85rem; margin-bottom: 16px;">Imprimez ce QR Code et affichez-le dans votre église pour recevoir les offrandes, dîmes, et dons.</p>
+            <div id="churchStaticQR" style="margin: 0 auto 16px; background: #fff; padding: 16px; border-radius: 12px; display: inline-block;"></div>
+            <div style="font-weight: 600; color: var(--c-text2); margin-bottom: 16px; word-break: break-all;" id="churchPayLink"></div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+              <button class="btn btn-primary" onclick="downloadQR('churchStaticQR', 'QRCode_Eglise')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Télécharger
+              </button>
+              <button class="btn btn-outline" onclick="shareChurchLink()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                Partager
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Stats -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="stat-card" style="--accent-color:#10B981;">
+              <div class="stat-icon" style="background:#10B981;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></div>
+              <div class="stat-label">Total Dons Reçus (Ce mois)</div>
+              <div class="stat-value" id="statDonations">0 CDF</div>
+              <div class="stat-value" style="font-size:1.1rem; color:var(--c-text2); margin-top:4px;" id="statDonationsUSD">0 USD</div>
+            </div>
+            <div class="card" style="flex: 1;">
+              <h3 class="section-title">Détails de l'Église</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: var(--c-text2);">
+                <div style="display: flex; justify-content: space-between;"><span>Nom:</span> <strong id="dashChurchName" style="color: #fff;">—</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>Pasteur:</span> <strong id="dashPastorName" style="color: #fff;">—</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>Contact:</span> <strong id="dashChurchPhone" style="color: #fff;">—</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>Compte MM:</span> <strong id="dashMomoAccount" style="color: var(--c-success);">—</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Campaign Section -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="section-header">
+            <span class="section-title">Créer un Lien de Don Spécifique (Campagne)</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+            <div style="flex: 1; min-width: 250px;">
+              <p style="color: var(--c-text2); font-size: 0.9rem; margin-bottom: 16px;">Générez un QR Code avec un montant et un motif prédéfinis pour une campagne spécifique (ex: "Construction: 100$").</p>
+              <div class="form-group">
+                <label>Motif de la donation (Label)</label>
+                <input type="text" id="campaignMotif" class="form-control" placeholder="Ex: Construction, Achat chaises..." />
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                  <label>Montant (Fixe)</label>
+                  <input type="number" id="campaignAmount" class="form-control" placeholder="100" />
+                </div>
+                <div class="form-group" style="width: 100px;">
+                  <label>Devise</label>
+                  <select id="campaignCurrency" class="form-control">
+                    <option value="USD">USD</option>
+                    <option value="CDF">CDF</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="generateCustomQR()">Générer le QR Code</button>
+            </div>
+            <div id="campaignQRSection" style="display: none; flex-direction: column; align-items: center; background: var(--c-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--c-border); min-width: 200px;">
+              <div id="campaignStaticQR" style="background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 12px;"></div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" onclick="downloadCustomQR()">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                  Télécharger
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="shareCustomQR()">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:4px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                  Partager
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tracing table -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Historique des Dons</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Donateur</th>
+                  <th>Motif (Description)</th>
+                  <th>Montant</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="txTableBody">
+                <tr><td colspan="5" style="text-align:center; color:var(--c-text3); padding:32px;">Chargement...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/dashboard_eglise.js"></script>
+</body>
+</html>

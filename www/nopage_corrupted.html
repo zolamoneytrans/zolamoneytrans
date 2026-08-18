@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super Admin â€” Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"/>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=9"/>
+  <link rel="stylesheet" href="css/components.css?v=9"/>
+  <link rel="stylesheet" href="css/admin-premium.css?v=9"/>
+  
+  <!-- Chart.js CDN for beautiful interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+  <!-- html2pdf.js for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="admin-theme">
+
+<!-- Immersive Admin Credentials page -->
+<div id="adminLogin" class="auth-premium-bg">
+  <div class="auth-premium-card animate-slideUp">
+    <div style="text-align:center; margin-bottom: 32px;">
+      <img src="icons/zolalogo128x128.png" alt="Zola Logo" style="width:72px; margin: 0 auto;"/>
+      <h2 style="color:#fff; margin-top:16px; font-size:1.6rem; letter-spacing:-0.03em;">Super Admin Portal</h2>
+      <p style="color:var(--admin-text-muted); font-size:0.85rem; margin-top:4px;">La plateforme unifiÃ©e de paiement en RDC</p>
+    </div>
+    
+    <div id="adminAlert" style="display:none; padding:12px; border-radius:8px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; font-size:0.82rem; margin-bottom:20px; text-align:center;"></div>
+    
+    <form onsubmit="adminLogin(event)">
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label" style="color:var(--admin-text-muted);">E-mail administrateur</label>
+        <input type="email" id="adminEmail" class="premium-form-control" value="drnduwa@gmail.com" required/>
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label" style="color:var(--admin-text-muted);">Mot de passe</label>
+        <input type="password" id="adminPwd" class="premium-form-control" value="christanne1A" required/>
+      </div>
+      <div class="form-group" style="margin-bottom:28px;">
+        <label class="form-label" style="color:var(--admin-text-muted);">Code PIN de sÃ©curitÃ©</label>
+        <input type="password" id="adminPin" class="premium-form-control" placeholder="Entrez le code PIN (5 chiffres)" maxlength="5" autocomplete="off" required/>
+      </div>
+      <button type="submit" class="btn-premium primary" style="width:100%; padding:14px;" id="adminLoginBtn">
+        Se connecter
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Layout Shell -->
+<div class="admin-app-shell" style="display:none;" id="adminAppShell">
+  
+  <!-- Left Side Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-logo">
+      <img src="icons/zolalogo96x96.png" alt="Zola Logo"/>
+      <div class="brand-name">ZOLA<span>MONEY</span></div>
+    </div>
+    
+    <nav class="admin-sidebar-nav">
+      <!-- Main section -->
+      <div class="nav-category">
+        <div class="nav-category-title">Main Panel</div>
+        <div class="admin-nav-item active" id="navOverview" onclick="window.showAdminTab('overview')">
+          <span class="icon">ðŸ“Š</span>
+          <span class="label">Overview</span>
+        </div>
+        <div class="admin-nav-item" id="navTransactions" onclick="window.showAdminTab('transactions')">
+          <span class="icon">ðŸ’³</span>
+          <span class="label">All Transactions</span>
+        </div>
+        <div class="admin-nav-item" id="navProfit" onclick="window.showAdminTab('profit')">
+          <span class="icon">ðŸ“ˆ</span>
+          <span class="label">Profit</span>
+        </div>
+      </div>
+      
+      <!-- Customers section -->
+      <div class="nav-category">
+        <div class="nav-category-title">Customers</div>
+        <div class="admin-nav-item" id="navAgents" onclick="window.showAdminTab('agents')">
+          <span class="icon">ðŸ‘”</span>
+          <span class="label">Agents Zola</span>
+        </div>
+        <div class="admin-nav-item" id="navUsers" onclick="window.showAdminTab('users')">
+          <span class="icon">ðŸ‘¤</span>
+          <span class="label">Individuals</span>
+        </div>
+        <div class="admin-nav-item" id="navMerchants" onclick="window.showAdminTab('merchants')">
+          <span class="icon">ðŸª</span>
+          <span class="label">Merchants</span>
+        </div>
+        <div class="admin-nav-item" id="navChurches" onclick="window.showAdminTab('churches')">
+          <span class="icon">â›ª</span>
+          <span class="label">Churches & NGOs</span>
+        </div>
+        <div class="admin-nav-item" id="navMarketing" onclick="window.showAdminTab('marketing')">
+          <span class="icon">ðŸŽ¯</span>
+          <span class="label">Marketing & Growth</span>
+        </div>
+      </div>
+      
+      <!-- Services & Actions -->
+      <div class="nav-category">
+        <div class="nav-category-title">Payments & Transfers</div>
+        <div class="admin-nav-item" id="navQR" onclick="window.showAdminTab('qr')">
+          <span class="icon">ðŸ“·</span>
+          <span class="label">QR & Pay Links</span>
+        </div>
+        <div class="admin-nav-item" id="navPayroll" onclick="window.showAdminTab('payroll')">
+          <span class="icon">ðŸ’¼</span>
+          <span class="label">Payroll & Bulk</span>
+        </div>
+      </div>
+      
+      <!-- Security & Operations -->
+      <div class="nav-category">
+        <div class="nav-category-title">Security & Operations</div>
+        <div class="admin-nav-item" id="navKYC" onclick="window.showAdminTab('kyc')">
+          <span class="icon">ðŸ›¡ï¸</span>
+          <span class="label">KYC & Compliance</span>
+        </div>
+        <div class="admin-nav-item" id="navSupport" onclick="window.showAdminTab('support')">
+          <span class="icon">ðŸ’¬</span>
+          <span class="label">Customer Tickets</span>
+        </div>
+        <div class="admin-nav-item" id="navSecurity" onclick="window.showAdminTab('security')">
+          <span class="icon">ðŸ”‘</span>
+          <span class="label">Security Center</span>
+        </div>
+        <div class="admin-nav-item" id="navBroadcasts" onclick="window.showAdminTab('broadcasts')">
+          <span class="icon">ðŸ“¢</span>
+          <span class="label">Smart Broadcast & E-mails</span>
+        </div>
+        <div class="admin-nav-item" id="navLoyalty" onclick="window.showAdminTab('loyalty')">
+          <span class="icon">ðŸŽ</span>
+          <span class="label">Loyalty & Rewards</span>
+        </div>
+        <div class="admin-nav-item" id="navSettings" onclick="window.showAdminTab('settings')">
+          <span class="icon">âš™ï¸</span>
+          <span class="label">Settings</span>
+        </div>
+      </div>
+      <!-- Partners -->
+      <div class="nav-category">
+        <div class="nav-category-title">Partners</div>
+        <div class="admin-nav-item" id="navBendabus" onclick="window.showAdminTab('bendabus')">
+          <span class="icon">ðŸšŒ</span>
+          <span class="label">Benda Bus API</span>
+        </div>
+        <div class="admin-nav-item" id="navZolaapi" onclick="window.showAdminTab('zolaapi')">
+          <span class="icon">ðŸ”Œ</span>
+          <span class="label">Zola Money APIs</span>
+        </div>
+      </div>
+      
+      <!-- Tests -->
+      <div class="nav-category">
+        <div class="nav-category-title">Tests</div>
+        <div class="admin-nav-item" id="navTests" onclick="window.showAdminTab('tests')">
+          <span class="icon">ðŸ§ª</span>
+          <span class="label">Tests API Live</span>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Sidebar Footer -->
+    <div class="admin-sidebar-footer" onclick="toggleAdminProfileMenu()">
+      <div class="admin-avatar-small">A</div>
+      <div class="admin-user-info">
+        <span class="admin-username">Super Admin</span>
+        <span class="admin-role">drnduwa@gmail.com</span>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Sidebar Overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+  
+  <!-- Right Container -->
+  <div class="admin-main-container">
+    
+    <!-- Topbar Header -->
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button class="sidebar-toggle-btn" onclick="toggleMobileSidebar()">â˜°</button>
+        <h1 class="admin-page-title" id="pageTitle">Dashboard Overview</h1>
+      </div>
+      
+      <div class="admin-topbar-right">
+        <!-- Floating search bar -->
+        <div class="admin-search-wrapper">
+          <span class="admin-search-icon">ðŸ”</span>
+          <input type="text" placeholder="Rechercher des flux, utilisateurs, references..." class="admin-search-input" id="globalSearchInput" oninput="triggerGlobalSearch(this.value)"/>
+        </div>
+        
+        <!-- Theme Toggle -->
+        <div class="switch-container active" onclick="toggleDarkLightTheme()" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <span style="font-size:0.8rem; color:var(--admin-text-muted);">Dark</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        
+        <!-- Notifications button -->
+        <div class="admin-profile-dropdown">
+          <button class="admin-icon-btn" onclick="toggleNotificationsMenu(event)">
+            ðŸ””
+            <span class="admin-icon-btn-badge" id="notifBadge"></span>
+          </button>
+          <div class="admin-dropdown-menu" id="notificationsMenu" style="width: 320px; padding: 12px;">
+            <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 12px; border-bottom: 1px solid var(--admin-border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <span>Alertes SystÃ¨me</span>
+              <span style="font-size:0.7rem; color:var(--c-gold); cursor:pointer;" onclick="clearNotifBadge()">Marquer lu</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;" id="notificationsList">
+              <!-- Dynamically rendered notification items -->
+              <div style="font-size:0.78rem; padding:6px; border-bottom:1px solid rgba(255,255,255,0.03);">
+                <span style="color:var(--c-danger);">âš ï¸ AML TRIGGER:</span> Retrait inhabituel de 5,000 USD Ã  Goma.
+              </div>
+              <div style="font-size:0.78rem; padding:6px; border-bottom:1px solid rgba(255,255,255,0.03);">
+                <span style="color:var(--c-success);">âœ… KYC:</span> Odia a soumis ses documents de validation.
+              </div>
+              <div style="font-size:0.78rem; padding:6px;">
+                <span style="color:var(--c-gold);">âš¡ SYSTÃˆME:</span> Connexion API validÃ©e pour la Rawbank.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Profile Dropdown -->
+        <div class="admin-profile-dropdown">
+          <div class="admin-profile-trigger" onclick="toggleProfileDropdown(event)">
+            <div style="width:36px; height:36px; border-radius:50%; background:var(--c-purple); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">A</div>
+            <span style="font-size:0.88rem; font-weight:600; color:#fff;" class="admin-username-top">Admin</span>
+            <span style="font-size:0.7rem;">â–¼</span>
+          </div>
+          
+          <div class="admin-dropdown-menu" id="profileDropdown">
+            <div style="padding: 8px 12px; border-bottom: 1px solid var(--admin-border); margin-bottom: 6px;">
+              <div style="font-weight:700; font-size:0.85rem; color:#fff;">Dr. Nduwa</div>
+              <div style="font-size:0.72rem; color:var(--admin-text-muted);">drnduwa@gmail.com</div>
+            </div>
+            <a class="admin-dropdown-item" onclick="window.showAdminTab('settings')">âš™ï¸ Settings</a>
+            <a class="admin-dropdown-item" onclick="window.showAdminTab('security')">ðŸ›¡ï¸ Security Logs</a>
+            <a class="admin-dropdown-item" onclick="adminLogout()" style="color:var(--c-danger); border-top:1px solid var(--admin-border); margin-top:6px; padding-top:12px;">ðŸšª Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Scrollable Views Content -->
+    <div class="admin-page-content">
+      
+      <!-- 1. DASHBOARD OVERVIEW VIEW -->
+      <div id="viewOverview" style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
+        
+        <!-- Stats cards -->
+        <div class="admin-kpi-grid">
+          <div class="kpi-card" style="--accent-color: var(--c-purple);">
+            <div class="kpi-icon">ðŸ“Š</div>
+            <span class="kpi-label">Total Transactions</span>
+            <span class="kpi-value" id="statsTotalTx">...</span>
+            <span class="kpi-change up" id="statsTotalTxSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-gold);">
+            <div class="kpi-icon">ðŸ’°</div>
+            <span class="kpi-label">Transaction Volume</span>
+            <span class="kpi-value" id="statsVolume">...</span>
+            <span class="kpi-change up" id="statsVolumeSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-success);">
+            <div class="kpi-icon">ðŸ’¸</div>
+            <span class="kpi-label">Total Profit</span>
+            <span class="kpi-value" id="statsRevenue">...</span>
+            <span class="kpi-change up" id="statsRevenueSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-purple);">
+            <div class="kpi-icon">ðŸ‘¥</div>
+            <span class="kpi-label">Active Customers</span>
+            <span class="kpi-value" id="statsActiveClients">...</span>
+            <span class="kpi-change up" id="statsActiveClientsSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-gold);">
+            <div class="kpi-icon">ðŸª</div>
+            <span class="kpi-label">Active Merchants</span>
+            <span class="kpi-value" id="statsMerchants">...</span>
+            <span class="kpi-change up" id="statsMerchantsSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-success);">
+            <div class="kpi-icon">â›ª</div>
+            <span class="kpi-label">Churches & NGOs</span>
+            <span class="kpi-value" id="statsChurches">...</span>
+            <span class="kpi-change up" id="statsChurchesSub"><span style="color:var(--admin-text-muted);">Chargement...</span></span>
+          </div>
+        </div>
+        
+        <!-- Real-Time monitor bar -->
+        <div class="realtime-monitor-bar">
+          <div class="realtime-item">
+            <div class="realtime-indicator"></div>
+            <div>
+              <div class="realtime-label">Active Users Online</div>
+              <div class="realtime-value" id="liveUsersOnline">...</div>
+            </div>
+          </div>
+          <div class="realtime-item">
+            <div class="realtime-indicator"></div>
+            <div>
+              <div class="realtime-label">Transactions Today</div>
+              <div class="realtime-value" id="liveTxToday">...</div>
+            </div>
+          </div>
+          <div class="realtime-item">
+            <div class="realtime-indicator orange"></div>
+            <div>
+              <div class="realtime-label">QR Payments Today</div>
+              <div class="realtime-value" id="liveQRPayments">...</div>
+            </div>
+          </div>
+          <div class="realtime-item">
+            <div class="realtime-indicator"></div>
+            <div>
+              <div class="realtime-label">Active Pay Requests</div>
+              <div class="realtime-value" id="liveActiveRequests">...</div>
+            </div>
+          </div>
+          <div class="realtime-item">
+            <div class="realtime-indicator red"></div>
+            <div>
+              <div class="realtime-label">Failed Transactions (24h)</div>
+              <div class="realtime-value" style="color:var(--c-danger);" id="liveFailedTx">...</div>
+            </div>
+          </div>
+          <div class="realtime-item">
+            <div class="realtime-indicator red" style="background:var(--c-danger); animation-duration:0.6s;"></div>
+            <div>
+              <div class="realtime-label">Active Fraud Alerts</div>
+              <div class="realtime-value" style="color:var(--c-danger);" id="liveFraudAlerts">...</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Interactive Analytics Charts Grid -->
+        <div class="charts-grid">
+          <div class="admin-card chart-card">
+            <div class="chart-card-header">
+              <span class="chart-card-title">Transaction Volume Trend</span>
+              <span style="font-size:0.75rem; color:var(--admin-text-muted);">Flux Hebdomadaire (USD)</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="chartVolTrend"></canvas>
+            </div>
+          </div>
+          
+          <div class="admin-card chart-card">
+            <div class="chart-card-header">
+              <span class="chart-card-title">Revenue Trend</span>
+              <span style="font-size:0.75rem; color:var(--admin-text-muted);">BÃ©nÃ©fice Brut Mensuel (USD)</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="chartRevenueTrend"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment Methods & Geographic Activity Row -->
+        <div class="charts-grid" style="grid-template-columns: 1.2fr 1fr;">
+          <!-- Donut payment stats -->
+          <div class="admin-card chart-card">
+            <div class="chart-card-header">
+              <span class="chart-card-title">Payment Methods Distribution</span>
+              <span style="font-size:0.75rem; color:var(--admin-text-muted);">M-Money vs Banques</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="chartPaymentDistribution"></canvas>
+            </div>
+          </div>
+          
+          <!-- DRC Province activities -->
+          <div class="admin-card chart-card">
+            <div class="chart-card-header">
+              <span class="chart-card-title">Geographic Activity (DRC Province Map)</span>
+              <span style="font-size:0.75rem; color:var(--c-gold);">Survoler les villes</span>
+            </div>
+            <div class="map-canvas-container" style="flex:1; position:relative;">
+              <canvas id="drcMapCanvas" style="width:100%; height:100%; display:block;"></canvas>
+              <div class="map-tooltip" id="drcMapTooltip">
+                <div class="map-tooltip-title" id="drcTooltipTitle">Kinshasa</div>
+                <div style="font-size:0.72rem; display:flex; flex-direction:column; gap:2px;">
+                  <div>Part de transactions: <span style="font-weight:bold; color:#fff;" id="drcTooltipPercent">60%</span></div>
+                  <div>Vol Journalier: <span style="font-weight:bold; color:var(--c-success);" id="drcTooltipVol">$2.8M</span></div>
+                  <div>Statut: <span style="color:var(--c-success); font-weight:bold;">Intense ðŸš€</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Table for latest transactions overview -->
+        <div class="admin-card">
+          <div style="display:flex; justify-content:between; align-items:center; margin-bottom: 20px;">
+            <h2 style="font-size:1.15rem; font-weight:700;">DerniÃ¨res Transactions Globales</h2>
+            <button class="btn-premium secondary" onclick="window.showAdminTab('transactions')">GÃ©rer tout â†’</button>
+          </div>
+          
+          <div class="table-responsive-wrapper">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Tx ID / Ref</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Source / OpÃ©rateur</th>
+                  <th>Destination</th>
+                  <th>Montant</th>
+                  <th>Frais (Fee)</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="overviewTxTableBody">
+                <!-- Populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- 2. TRANSACTIONS HUB VIEW -->
+      <div id="viewTransactions" style="display: none; width: 100%;">
+        <div class="details-split-panel">
+          
+          <!-- Transactions list -->
+          <div class="details-list-side admin-card" style="padding: 16px;">
+            <div style="padding: 8px 12px 16px; border-bottom:1px solid var(--admin-border);">
+              <h2 style="font-size:1.1rem; margin-bottom:12px;">Flux des Transactions</h2>
+              <input type="text" placeholder="Rechercher montant, phone, ref..." class="premium-form-control" style="font-size:0.85rem;" id="txSearchInput" oninput="filterTxList(this.value)"/>
+              
+              <!-- Filter status pill row -->
+              <div style="display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:6px;">
+                <span class="badge-premium success" style="cursor:pointer; font-size:0.7rem;" onclick="filterTxByStatus('succÃ¨s')">Success</span>
+                <span class="badge-premium pending" style="cursor:pointer; font-size:0.7rem;" onclick="filterTxByStatus('en attente')">Pending</span>
+                <span class="badge-premium danger" style="cursor:pointer; font-size:0.7rem;" onclick="filterTxByStatus('Ã©chouÃ©')">Failed</span>
+                <span class="badge-premium" style="cursor:pointer; font-size:0.7rem; background:var(--c-purple); color:#fff;" onclick="filterTxByType('payout')">Payouts</span>
+                <span class="badge-premium secondary" style="cursor:pointer; font-size:0.7rem; background:rgba(255,255,255,0.05); color:#fff;" onclick="filterTxByStatus('all')">Tous</span>
+              </div>
+            </div>
+            
+            <div style="flex:1; overflow-y:auto;" id="adminTxList">
+              <!-- Dynamically populated tx items -->
+            </div>
+          </div>
+          
+          <!-- Transaction details inspector -->
+          <div class="details-main-side">
+            <div class="admin-card" id="adminTxDetailPanel" style="display:none; height:100%;">
+              <!-- Details populated dynamically via selectTx() -->
+            </div>
+            
+            <div id="noTxSelected" class="admin-card premium-empty-state" style="height:100%;">
+              <div class="icon">ðŸ’³</div>
+              <h3>SÃ©lectionner une transaction</h3>
+              <p style="margin-top:6px; font-size:0.85rem;">Cliquez sur un Ã©lÃ©ment de la liste de gauche pour inspecter ses signatures de bloc, mÃ©tadonnÃ©es, frais d'opÃ©rateur et fraud status.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- PROFIT HUB VIEW -->
+      <div id="viewProfit" style="display: none; width: 100%; flex-direction: column; gap: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800;">Profit Tracker</h2>
+            <p style="color:var(--admin-text-muted); font-size: 0.9rem;">Monitor 3% profit from successful PayIn transactions</p>
+          </div>
+          <div style="display:flex; gap: 8px;">
+            <select id="profitPeriodFilter" onchange="renderProfitTab(this.value)" class="premium-form-control" style="width: auto; padding: 6px 12px;">
+              <option value="all">All Time</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="6months">Last 6 Months</option>
+              <option value="year">This Year</option>
+            </select>
+            <button class="btn-premium primary" onclick="downloadProfitPDF()">ðŸ“¥ Download PDF</button>
+          </div>
+        </div>
+
+        <div class="admin-kpi-grid">
+          <div class="kpi-card" style="--accent-color: var(--c-success);">
+            <div class="kpi-icon">âœ…</div>
+            <span class="kpi-label">Successful PayIns</span>
+            <span class="kpi-value" id="profitTxCount">0</span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-purple);">
+            <div class="kpi-icon">ðŸ’°</div>
+            <span class="kpi-label">Total Volume</span>
+            <span class="kpi-value" id="profitTotalVolume">$0</span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-gold);">
+            <div class="kpi-icon">ðŸ“ˆ</div>
+            <span class="kpi-label">Total Profit (3%)</span>
+            <span class="kpi-value" id="profitTotalProfit">$0</span>
+          </div>
+        </div>
+
+        <div class="admin-card" id="profitPrintableArea" style="flex:1; overflow-y:auto; padding: 16px;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 16px; border-bottom: 1px solid var(--admin-border); padding-bottom: 8px;">Detailed Transactions</h3>
+          <table class="premium-table" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Date & Heure</th>
+                <th>Initiateur</th>
+                <th>MÃ©thode</th>
+                <th>Montant</th>
+                <th>Profit (3%)</th>
+              </tr>
+            </thead>
+            <tbody id="profitTxTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- 3. INDIVIDUALS CUSTOMERS VIEW -->
+      <div id="viewUsers" style="display: none; width: 100%;">
+        <div class="details-split-panel">
+          
+          <!-- Users list -->
+          <div class="details-list-side admin-card" style="padding: 16px;">
+            <div style="padding: 8px 12px 16px; border-bottom:1px solid var(--admin-border);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2 style="font-size:1.1rem; margin:0;">Comptes Individuels</h2>
+                <button class="btn-premium primary btn-sm" onclick="downloadUsersCSV()" style="padding: 4px 8px; font-size: 0.75rem;">ðŸ“¥ CSV / XLS</button>
+              </div>
+              <input type="text" placeholder="Rechercher nom, email..." class="premium-form-control" style="font-size:0.85rem;" id="userSearchInput" oninput="filterUsersList(this.value)"/>
+            </div>
+            <div style="flex:1; overflow-y:auto;" id="usersList">
+              <!-- Dynamically populated individuals -->
+            </div>
+          </div>
+          
+          <!-- User details inspector -->
+          <div class="details-main-side">
+            <div class="admin-card" id="userDetailPanel" style="display:none; height:100%;">
+              <!-- Details populated dynamically via selectUser() -->
+            </div>
+            
+            <div id="noUserSelected" class="admin-card premium-empty-state" style="height:100%;">
+              <div class="icon">ðŸ‘¤</div>
+              <h3>SÃ©lectionner un utilisateur</h3>
+              <p style="margin-top:6px; font-size:0.85rem;">SÃ©lectionnez un individu dans le menu latÃ©ral pour voir son identitÃ©, son solde CDF, ses documents d'identitÃ© KYC et modifier ses accÃ¨s.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 3.5 AGENTS MANAGEMENT VIEW -->
+      <div id="viewAgents" style="display: none; width: 100%; flex-direction: column; gap: 20px;">
+        <!-- Demandes de Paiement des Commissions Agent -->
+        <div class="admin-card" style="padding: 18px; border: 1px solid rgba(245, 158, 11, 0.45); background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="color: #FCD34D; font-size: 1.15rem; margin-bottom: 4px;">ðŸ’¸ Demandes de Versement des Commissions Agents (0.4%)</h3>
+              <p style="color: #94A3B8; font-size: 0.85rem; margin: 0;">RÃ¨glement mensuel directement vers la caisse Mobile Money de l'Agent.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Date Demande</th>
+                  <th>Code Agent</th>
+                  <th>Nom Agent</th>
+                  <th>Caisse Mobile Money</th>
+                  <th>Montant Commission</th>
+                  <th>Statut</th>
+                  <th>Action Paiement</th>
+                </tr>
+              </thead>
+              <tbody id="adminCommissionClaimsBody">
+                <tr><td colspan="7" style="text-align: center; padding: 20px; color: #94A3B8;">Chargement des rÃ©clamations de commissions...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="details-split-panel">
+          <!-- Agents list -->
+          <div class="details-list-side admin-card" style="padding: 16px;">
+            <div style="padding: 8px 12px 16px; border-bottom:1px solid var(--admin-border);">
+              <h2 style="font-size:1.1rem; margin-bottom:12px;">RÃ©seau des Agents</h2>
+              <input type="text" placeholder="Rechercher agent, code, tÃ©lÃ©phone..." class="premium-form-control" style="font-size:0.85rem;" id="agentSearchInput" oninput="filterAgentsList(this.value)"/>
+              
+              <!-- Filter status pill row -->
+              <div style="display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:6px;">
+                <span class="badge-premium pending" style="cursor:pointer; font-size:0.7rem;" onclick="filterAgentsByStatus('pending')">Ã€ Valider</span>
+                <span class="badge-premium success" style="cursor:pointer; font-size:0.7rem;" onclick="filterAgentsByStatus('approved')">Actifs</span>
+                <span class="badge-premium danger" style="cursor:pointer; font-size:0.7rem;" onclick="filterAgentsByStatus('suspended')">BloquÃ©s</span>
+                <span class="badge-premium secondary" style="cursor:pointer; font-size:0.7rem; background:rgba(255,255,255,0.05); color:#fff;" onclick="filterAgentsByStatus('all')">Tous</span>
+              </div>
+            </div>
+            
+            <div style="flex:1; overflow-y:auto;" id="adminAgentList">
+              <!-- Dynamically populated agent items -->
+            </div>
+          </div>
+          
+          <!-- Agent details inspector -->
+          <div class="details-main-side">
+            <div class="admin-card" id="adminAgentDetailPanel" style="display:none; height:100%; overflow-y: auto;">
+              <!-- Details populated dynamically via selectAgent() -->
+            </div>
+            
+            <div id="noAgentSelected" class="admin-card premium-empty-state" style="height:100%;">
+              <div class="icon">ðŸ‘”</div>
+              <h3>SÃ©lectionner un Agent</h3>
+              <p style="margin-top:6px; font-size:0.85rem;">Cliquez sur un Agent de la liste pour voir son dossier, valider son KYC ou vÃ©rifier ses commissions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. MERCHANTS MANAGEMENT VIEW -->
+      <div id="viewMerchants" style="display: none; width: 100%;">
+        <!-- Top KPI Bar for Merchants -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Total Marchands</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 4px;" id="merchantsTotalCount">0</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">ðŸª</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 95, 70, 0.3)); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; color: #6EE7B7; text-transform: uppercase; font-weight: 600;">Marchands Actifs / ApprouvÃ©s</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #10B981; margin-top: 4px;" id="merchantsActiveCount">0</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">âœ…</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(180, 83, 9, 0.3)); border: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; color: #FCD34D; text-transform: uppercase; font-weight: 600;">KYC En Attente</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #F59E0B; margin-top: 4px;" id="merchantsPendingCount">0</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">â³</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(153, 27, 27, 0.3)); border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; color: #FCA5A5; text-transform: uppercase; font-weight: 600;">RejetÃ©s / Suspendus</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #EF4444; margin-top: 4px;" id="merchantsRejectedCount">0</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">âŒ</div>
+          </div>
+        </div>
+
+        <div class="details-split-panel">
+          <!-- Merchants list side -->
+          <div class="details-list-side admin-card" style="padding: 16px; display: flex; flex-direction: column;">
+            <div style="padding: 8px 12px 16px; border-bottom:1px solid var(--admin-border);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2 style="font-size:1.1rem; margin:0; color:#fff;">Annuaire des Marchands</h2>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-premium primary btn-sm" onclick="downloadMerchantsCSV()" style="padding: 4px 8px; font-size: 0.75rem;">ðŸ“¥ CSV</button>
+                </div>
+              </div>
+              <input type="text" placeholder="Rechercher commerce, gÃ©rant, email, tÃ©l..." class="premium-form-control" style="font-size:0.85rem; margin-bottom: 10px;" id="merchantSearchInput" oninput="filterMerchantsList(this.value)"/>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="filter-chip active" onclick="filterMerchantsByStatus('all', this)">Tous</button>
+                <button class="filter-chip" onclick="filterMerchantsByStatus('soumis', this)">â³ En Attente</button>
+                <button class="filter-chip" onclick="filterMerchantsByStatus('approuve', this)">âœ… Actifs</button>
+                <button class="filter-chip" onclick="filterMerchantsByStatus('rejete', this)">âŒ RejetÃ©s</button>
+              </div>
+            </div>
+            <div style="flex:1; overflow-y:auto; margin-top: 10px;" id="merchantsList">
+              <!-- Dynamically populated marchands -->
+            </div>
+          </div>
+          
+          <!-- Merchant details inspector -->
+          <div class="details-main-side">
+            <div class="admin-card" id="merchantDetailPanel" style="display:none; height:100%; overflow-y:auto; padding: 24px;">
+              <!-- Details populated dynamically via selectMerchant() -->
+            </div>
+            
+            <div id="noMerchantSelected" class="admin-card premium-empty-state" style="height:100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px;">
+              <div class="icon" style="font-size: 4rem; margin-bottom: 16px;">ðŸª</div>
+              <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 8px;">SÃ©lectionner un Marchand</h3>
+              <p style="color: #94A3B8; font-size: 0.9rem; max-width: 420px; line-height: 1.5;">Cliquez sur un commerce ou point de vente dans la liste de gauche pour afficher son dossier complet : informations lÃ©gales, contacts du gÃ©rant, statut KYC, documents tÃ©lÃ©chargÃ©s, solde et transactions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 5. CHURCHES & NGO DONATIONS VIEW -->
+      <div id="viewChurches" style="display: none; width: 100%;">
+        <div class="charts-grid" style="grid-template-columns: 1fr 2fr;">
+          <!-- Donations overview widget -->
+          <div class="admin-card" style="display:flex; flex-direction:column; gap:16px;">
+            <h3 style="font-size:1.1rem; border-bottom:1px solid var(--admin-border); padding-bottom:8px;">Donations CollectÃ©es</h3>
+            <div>
+              <div style="font-size:0.78rem; color:var(--admin-text-muted);">Aujourd'hui</div>
+              <div style="font-size:2rem; font-weight:700; color:var(--c-gold);" id="churchesKpiToday">0 FC</div>
+            </div>
+            <div>
+              <div style="font-size:0.78rem; color:var(--admin-text-muted);">Ce mois-ci</div>
+              <div style="font-size:1.5rem; font-weight:700; color:#fff;" id="churchesKpiMonth">0 FC</div>
+            </div>
+            <div>
+              <div style="font-size:0.78rem; color:var(--admin-text-muted);">Ã‰glises Actives</div>
+              <div style="font-size:1.5rem; font-weight:700; color:#fff;" id="churchesKpiActive">0</div>
+            </div>
+            
+            <div style="margin-top:20px;">
+              <h4 style="font-size:0.85rem; margin-bottom:10px;">CrÃ©er Lien de Dons Universel</h4>
+              <input type="text" class="premium-form-control" placeholder="Nom de l'ONG / Ã‰glise" style="margin-bottom:10px;" id="churchLinkName"/>
+              <button class="btn-premium primary" style="width:100%;" onclick="generateDonationLink()">CrÃ©er & Copier le lien</button>
+            </div>
+          </div>
+          
+          <!-- Church offerings grid list -->
+          <div class="admin-card">
+            <h3 style="font-size:1.1rem; margin-bottom:16px;">Supervision des Paroisses ConnectÃ©es</h3>
+            <div class="table-responsive-wrapper">
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>Paroisse / Ã‰glise</th>
+                    <th>Contact (E-mail & TÃ©l)</th>
+                    <th>Date CrÃ©ation</th>
+                    <th>Documents Soumis</th>
+                    <th>Compte Mobile Money</th>
+                    <th>Dons CollectÃ©s</th>
+                    <th>Statut</th>
+                    <th style="text-align:center;">Assistance Smart</th>
+                  </tr>
+                </thead>
+                <tbody id="churchesTableBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- MARKETING & GROWTH VIEW -->
+      <div id="viewMarketing" style="display: none; width: 100%; flex-direction: column; gap: 24px;">
+        <div class="kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px;">
+          <!-- Faithful -->
+          <div class="admin-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2);">
+            <div style="font-size:3rem;">ðŸŒŸ</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#fff;" id="mktgFaithfulCount">0</div>
+            <div style="font-size:0.9rem; color:var(--admin-text-muted);">Clients FidÃ¨les</div>
+            <div style="font-size:0.75rem; color:#10B981; margin-top:5px;">(> 5 tx, actifs < 30j)</div>
+          </div>
+          <!-- Regular -->
+          <div class="admin-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; background:rgba(59,130,246,0.05); border:1px solid rgba(59,130,246,0.2);">
+            <div style="font-size:3rem;">ðŸ‘¥</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#fff;" id="mktgRegularCount">0</div>
+            <div style="font-size:0.9rem; color:var(--admin-text-muted);">Clients RÃ©guliers</div>
+            <div style="font-size:0.75rem; color:#3B82F6; margin-top:5px;">(1-5 tx, actifs < 60j)</div>
+          </div>
+          <!-- Dormant -->
+          <div class="admin-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.2);">
+            <div style="font-size:3rem;">ðŸ’¤</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#fff;" id="mktgDormantCount">0</div>
+            <div style="font-size:0.9rem; color:var(--admin-text-muted);">Clients Dormants</div>
+            <div style="font-size:0.75rem; color:#EF4444; margin-top:5px;">(Inactifs > 60j)</div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:1.2rem; margin:0;">Base Clients & Segments</h3>
+            <select id="marketingSegmentFilter" class="premium-form-control" style="width:220px;" onchange="window.renderMarketingTab()">
+              <option value="all">Tous les segments</option>
+              <option value="faithful">ðŸŒŸ Clients FidÃ¨les</option>
+              <option value="regular">ðŸ‘¥ Clients RÃ©guliers</option>
+              <option value="dormant">ðŸ’¤ Clients Dormants</option>
+            </select>
+          </div>
+          <div class="table-responsive-wrapper">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Contact</th>
+                  <th>Segment</th>
+                  <th>DerniÃ¨re ActivitÃ©</th>
+                  <th>Volume & Tx</th>
+                  <th style="text-align:right;">Actions Marketing</th>
+                </tr>
+              </thead>
+              <tbody id="marketingTableBody">
+                <!-- Rows generated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 6. PAYROLL PORTAL VIEW -->
+      <div id="viewPayroll" style="display: none; width: 100%;">
+        <div class="charts-grid" style="grid-template-columns: 1fr 2.5fr;">
+          <!-- Payroll controllers -->
+          <div class="admin-card" style="display:flex; flex-direction:column; gap:20px;">
+            <h3 style="font-size:1.1rem;">Payroll Control Panel</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div>
+                <div style="font-size:0.75rem; color:var(--admin-text-muted);">Total Payroll Mensuel</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#fff;" id="payrollTotalVol">$0.00</div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                  <div style="font-size:0.72rem; color:var(--admin-text-muted);">EmployÃ©s PayÃ©s</div>
+                  <div style="font-weight:700;" id="payrollCount">0</div>
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; color:var(--c-danger);">Ã‰checs Transfert</div>
+                  <div style="font-weight:700; color:var(--c-danger);" id="payrollFailedCount">0</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="border-top:1px solid var(--admin-border); padding-top:16px;">
+              <h4 style="font-size:0.85rem; margin-bottom:10px;">Gestion des Lots</h4>
+              <button class="btn-premium primary" style="width:100%; margin-bottom:10px;" onclick="loadAdminTransactions(); showToast('DonnÃ©es Payroll mises Ã  jour depuis Firestore.', 'success');">
+                ðŸ”„ Actualiser Firestore
+              </button>
+            </div>
+          </div>
+          
+          <!-- Bulk workflow visualization and table -->
+          <div class="admin-card">
+            <h3 style="font-size:1.1rem; margin-bottom:16px;">Flux des Salaires & Lots de Paiement (En direct de Firestore)</h3>
+            
+            <div class="table-responsive-wrapper" style="margin-top:20px;">
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>EmployÃ© / BÃ©nÃ©ficiaire</th>
+                    <th>TÃ©lÃ©phone / Mobile Money</th>
+                    <th>SociÃ©tÃ© Partenaire</th>
+                    <th>Montant Net</th>
+                    <th>OpÃ©rateur</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody id="payrollTableBody">
+                  <!-- Populate dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 7. KYC & COMPLIANCE VIEW -->
+      <div id="viewKYC" style="display: none; width: 100%;">
+        <div class="details-split-panel">
+          
+          <!-- Compliance User queue -->
+          <div class="details-list-side admin-card" style="padding: 16px;">
+            <div style="padding: 8px 12px 16px; border-bottom:1px solid var(--admin-border);">
+              <h2 style="font-size:1.1rem; margin-bottom:12px;">Dossiers KYC Soumis</h2>
+              <p style="font-size:0.75rem; color:var(--admin-text-muted);">File d'attente pour validation nationale.</p>
+            </div>
+            <div style="flex:1; overflow-y:auto;" id="kycQueueList">
+              <!-- Render dynamic pending KYC profiles -->
+            </div>
+          </div>
+          
+          <!-- Document and analysis panel -->
+          <div class="details-main-side">
+            <div class="admin-card" id="kycAnalysisPanel" style="display:none; height:100%; display:flex; flex-direction:column; gap:20px;">
+              <!-- Dynamically populated details -->
+            </div>
+            
+            <div id="noKycSelected" class="admin-card premium-empty-state" style="height:100%;">
+              <div class="icon">ðŸ›¡ï¸</div>
+              <h3>File d'attente KYC</h3>
+              <p style="margin-top:6px; font-size:0.85rem;">SÃ©lectionnez un profil KYC soumis dans la liste de gauche pour inspecter sa carte d'identitÃ©, son selfie de vÃ©rification et nos scores d'alerte anti-fraude (AML).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 8. CUSTOMER SUPPORT VIEW -->
+      <div id="viewSupport" style="display: none; width: 100%;">
+        <div class="details-split-panel">
+          
+          <!-- Ticket listings -->
+          <div class="details-list-side admin-card" style="padding:16px;">
+            <h2 style="font-size:1.1rem; margin-bottom:12px; padding:8px;">Tickets de Support</h2>
+            <div style="flex:1; overflow-y:auto;" id="supportTicketsList">
+              <!-- Populated dynamically via JS -->
+            </div>
+          </div>
+          
+          <!-- Chat widget and profile context -->
+          <div class="details-main-side" style="display:flex; flex-direction:column; gap:24px;">
+            
+            <div id="noTicketSelected" class="admin-card premium-empty-state" style="flex:1;">
+              <div class="icon">ðŸ’¬</div>
+              <h3>SÃ©lectionner un ticket</h3>
+              <p style="margin-top:6px; font-size:0.85rem;">Cliquez sur un ticket client pour ouvrir la console d'assistance en direct et rÃ©pondre en direct au client via Firestore.</p>
+            </div>
+            
+            <div class="admin-card" id="supportChatConsole" style="display:none; flex:1; display:flex; flex-direction:column; gap:20px;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 9. SECURITY CENTER VIEW -->
+      <div id="viewSecurity" style="display: none; width: 100%;">
+        <!-- SOC Header & Quick Actions -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:20px; background:linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.9)); padding:16px 20px; border-radius:14px; border:1px solid rgba(255,255,255,0.08);">
+          <div>
+            <h2 style="font-size:1.3rem; color:#fff; font-weight:800; margin:0; display:flex; align-items:center; gap:10px;">
+              <span>ðŸ›¡ï¸ Security Operations Center (SOC) & AML</span>
+              <span class="badge badge-success" style="font-size:0.7rem; padding:4px 8px;">ðŸŸ¢ SYSTÃˆMES PROTÃ‰GÃ‰S</span>
+            </h2>
+            <p style="color:var(--admin-text-muted); font-size:0.85rem; margin:4px 0 0;">Surveillance en temps rÃ©el des passerelles bancaires, dÃ©tection anti-blanchiment (AML) et contrÃ´le des accÃ¨s.</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn-premium primary btn-sm" onclick="window.runAmlFraudScan()" style="padding: 8px 14px; font-size: 0.8rem; box-shadow: 0 0 12px rgba(123,63,242,0.4);">ðŸš€ Scan AML & Fraude Direct</button>
+            <button class="btn-premium warning btn-sm" onclick="window.exportSocAuditReport()" style="padding: 8px 14px; font-size: 0.8rem;">ðŸ“¥ Exporter Audit SOC</button>
+            <button class="btn-premium danger btn-sm" onclick="window.toggleEmergencyLockdown()" id="btnSocLockdown" style="padding: 8px 14px; font-size: 0.8rem;">ðŸ”’ Verrouillage d'Urgence</button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(153, 27, 27, 0.3)); border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.75rem; color: #FCA5A5; text-transform: uppercase; font-weight: 700;">Comptes BloquÃ©s & Suspects</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #EF4444; margin-top: 4px;" id="socBlockedAccountsCount">0</div>
+              <div style="font-size: 0.75rem; color: #FCA5A5; margin-top: 4px;">â–² Base Firestore en temps rÃ©el</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">ðŸš«</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 95, 70, 0.3)); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.75rem; color: #6EE7B7; text-transform: uppercase; font-weight: 700;">Score Cyber & ConformitÃ©</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #10B981; margin-top: 4px;" id="socCyberScore">98% Safe</div>
+              <div style="font-size: 0.75rem; color: #6EE7B7; margin-top: 4px;">â–² Firewall & WAF Actifs</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">ðŸ›¡ï¸</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(180, 83, 9, 0.3)); border: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.75rem; color: #FCD34D; text-transform: uppercase; font-weight: 700;">Alertes AML & VÃ©locitÃ©</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #F59E0B; margin-top: 4px;" id="socAmlAlertsCount">0</div>
+              <div style="font-size: 0.75rem; color: #FCD34D; margin-top: 4px;">âš ï¸ Surveillance des seuils RDC</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">âš ï¸</div>
+          </div>
+          <div class="admin-card" style="padding: 16px; background: linear-gradient(135deg, rgba(123, 63, 242, 0.15), rgba(88, 28, 135, 0.3)); border: 1px solid rgba(123, 63, 242, 0.3); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.75rem; color: #C4B5FD; text-transform: uppercase; font-weight: 700;">Passerelles Bancaires RDC</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #A78BFA; margin-top: 4px;">100% On</div>
+              <div style="font-size: 0.75rem; color: #C4B5FD; margin-top: 4px;">â–² FreshPay, Notch, M-Pesa</div>
+            </div>
+            <div style="font-size: 2.2rem; opacity: 0.8;">ðŸŒ</div>
+          </div>
+        </div>
+        
+        <div class="charts-grid" style="grid-template-columns: 1.4fr 1.1fr; gap: 20px; margin-bottom: 20px;">
+          <!-- Live log stream -->
+          <div class="admin-card" style="display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <h3 style="font-size:1.05rem; margin:0; color:#fff; display:flex; align-items:center; gap:8px;">
+                <span>âš¡ Visualiseur de Logs & Audit SOC (En Direct)</span>
+              </h3>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-premium secondary btn-sm" onclick="window.toggleSocLogStream(this)" id="btnSocStreamToggle" style="padding: 4px 8px; font-size: 0.72rem;">â¸ï¸ Pause</button>
+                <button class="btn-premium secondary btn-sm" onclick="window.clearSocLogs()" style="padding: 4px 8px; font-size: 0.72rem;">ðŸ§¹ Effacer</button>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;">
+              <button class="filter-chip active" onclick="window.filterSocLogs('all', this)">Tous les flux</button>
+              <button class="filter-chip" onclick="window.filterSocLogs('AML', this)">âš ï¸ AML & Fraude</button>
+              <button class="filter-chip" onclick="window.filterSocLogs('SEC', this)">ðŸ”’ SÃ©curitÃ© & AccÃ¨s</button>
+              <button class="filter-chip" onclick="window.filterSocLogs('API', this)">ðŸŒ Passerelles API</button>
+            </div>
+            <div style="background:#020516; border-radius:10px; padding:16px; font-family:'Courier New', Courier, monospace; font-size:0.8rem; color:#4ade80; height:340px; overflow-y:auto; border:1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.8); display:flex; flex-direction:column; gap:6px;" id="securityConsoleLogs">
+              <div style="color:#6EE7B7; font-style:italic;">[INIT] Initialisation du Security Operations Center (SOC) Zola Money...</div>
+            </div>
+          </div>
+          
+          <!-- Blocked accounts management -->
+          <div class="admin-card" style="display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <h3 style="font-size:1.05rem; margin:0; color:#fff;">ðŸš« Comptes BloquÃ©s & Profils Suspects</h3>
+              <button class="btn-premium danger btn-sm" onclick="window.promptManualBlock()" style="padding: 4px 10px; font-size: 0.75rem;">+ Bloquer un compte</button>
+            </div>
+            <input type="text" placeholder="Rechercher email, tÃ©lÃ©phone, raison..." class="premium-form-control" style="font-size:0.82rem; margin-bottom:12px;" oninput="window.filterBlockedAccountsTable(this.value)"/>
+            <div class="table-responsive-wrapper" style="flex:1; max-height:340px; overflow-y:auto;">
+              <table class="premium-table" style="width:100%; font-size:0.82rem;">
+                <thead>
+                  <tr>
+                    <th>Compte / GÃ©rant</th>
+                    <th>Motif / Alerte</th>
+                    <th>Date</th>
+                    <th style="text-align:right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="blockedAccountsTableBody">
+                  <tr>
+                    <td colspan="4" style="text-align:center; padding:24px; color:var(--admin-text-muted);">Chargement des comptes en cours...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gateway Health & Latency Monitor -->
+        <div class="admin-card">
+          <h3 style="font-size:1.05rem; margin:0 0 14px; color:#fff;">ðŸŒ Surveillance des Passerelles de Paiement RDC (Gateway Heartbeat)</h3>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:14px;" id="socGatewaysGrid">
+            <!-- Dynamically rendered -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- SMART BROADCAST & ANNOUNCEMENTS VIEW -->
+      <div id="viewBroadcasts" style="display: none; width: 100%; flex-direction: column; gap: 24px;">
+        <!-- Header Banner & Quick Templates -->
+        <div class="admin-card" style="background: linear-gradient(135deg, rgba(79,56,133,0.3) 0%, rgba(26,19,43,0.8) 100%); border: 1px solid rgba(243,182,31,0.25);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+            <div>
+              <h3 style="font-size: 1.35rem; color: #fff; margin: 0 0 6px; display: flex; align-items: center; gap: 10px;">
+                <span>ðŸ“¢</span> Centre de Notifications & Annonces E-mails (Smart Broadcast)
+              </h3>
+              <p style="color: var(--admin-text-muted); font-size: 0.92rem; margin: 0;">
+                Diffusez des campagnes e-mail HTML premium et des notifications in-app instantanÃ©es vers vos utilisateurs, marchands et agents.
+              </p>
+            </div>
+            <button type="button" class="btn-premium primary" onclick="loadBroadcastHistory()" style="font-size: 0.85rem; padding: 8px 16px;">
+              ðŸ”„ Actualiser l'historique
+            </button>
+          </div>
+
+          <!-- Smart Templates Selector -->
+          <div style="background: rgba(0,0,0,0.35); padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--c-gold); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+              âš¡ ModÃ¨les Intelligents (SÃ©lection Rapide)
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <button type="button" class="btn-premium" onclick="selectBroadcastTemplate('pwa_update')" style="background: rgba(255,255,255,0.08); font-size: 0.82rem; padding: 6px 14px; border-radius: 20px;">
+                ðŸš€ Nouvelle PWA v2.5
+              </button>
+              <button type="button" class="btn-premium" onclick="selectBroadcastTemplate('kyc_reminder')" style="background: rgba(255,255,255,0.08); font-size: 0.82rem; padding: 6px 14px; border-radius: 20px;">
+                ðŸ’¡ Rappel & Souplesse KYC
+              </button>
+              <button type="button" class="btn-premium" onclick="selectBroadcastTemplate('promo_transfer')" style="background: rgba(255,255,255,0.08); font-size: 0.82rem; padding: 6px 14px; border-radius: 20px;">
+                ðŸŽ Promo Frais 0%
+              </button>
+              <button type="button" class="btn-premium" onclick="selectBroadcastTemplate('security_alert')" style="background: rgba(255,255,255,0.08); font-size: 0.82rem; padding: 6px 14px; border-radius: 20px;">
+                ðŸ”’ Alerte & SÃ©curitÃ©
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Form + Live Preview Split Layout -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; align-items: start;">
+          
+          <!-- Broadcast Composer Form -->
+          <div class="admin-card">
+            <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 18px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px;">
+              âœï¸ Compositeur de Campagne
+            </h3>
+            <form id="broadcastForm" onsubmit="submitBroadcast(event)">
+              
+              <!-- Target Audience -->
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label class="form-label" style="font-weight: 700; color: #fff;">ðŸ‘¥ Public Cible (Segmentation)</label>
+                <select id="broadcastTarget" class="premium-form-control" onchange="toggleSingleTargetInput()" required>
+                  <option value="all">ðŸŒ Tous les Utilisateurs Inscrits (Clients, Marchands, Agents)</option>
+                  <option value="marchands_agents">ðŸª Marchands, Agents & Entreprises uniquement</option>
+                  <option value="pending_kyc">â³ Comptes en attente de validation KYC</option>
+                  <option value="vip">ðŸ¥‡ Clients VIP & Actifs (Solde > 0 ou transactions rÃ©centes)</option>
+                  <option value="single">ðŸŽ¯ Utilisateur spÃ©cifique (E-mail ciblÃ© / Test)</option>
+                </select>
+              </div>
+
+              <!-- Single Target Email input (hidden by default) -->
+              <div id="singleTargetGroup" class="form-group" style="margin-bottom: 16px; display: none;">
+                <label class="form-label" style="color: var(--c-gold);">ðŸŽ¯ Adresse E-mail du destinataire unique</label>
+                <input type="email" id="broadcastSingleEmail" class="premium-form-control" placeholder="ex: client@gmail.com"/>
+              </div>
+
+              <!-- Delivery Channel -->
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label class="form-label" style="font-weight: 700; color: #fff;">ðŸ“¡ Canal de Diffusion</label>
+                <select id="broadcastChannel" class="premium-form-control" required>
+                  <option value="both">ðŸš€ E-mail HTML Premium + Notification In-App (SimultanÃ© - RecommandÃ©)</option>
+                  <option value="email">ðŸ“§ E-mail HTML uniquement (BoÃ®te de rÃ©ception)</option>
+                  <option value="in_app">ðŸ”” Notification In-App uniquement (Cloche du Dashboard)</option>
+                </select>
+              </div>
+
+              <!-- Subject -->
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label class="form-label" style="font-weight: 700; color: #fff;">ðŸ“ Sujet de l'annonce</label>
+                <input type="text" id="broadcastSubject" class="premium-form-control" placeholder="ex: ðŸš€ Mise Ã  jour importante de l'application Zola Money Trans" oninput="updateLivePreview()" required/>
+              </div>
+
+              <!-- Message Body -->
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label class="form-label" style="font-weight: 700; color: #fff;">ðŸ“„ Message / Contenu (HTML supportÃ©)</label>
+                <textarea id="broadcastBody" class="premium-form-control" rows="6" placeholder="RÃ©digez votre message ici. Vous pouvez utiliser des balises HTML (<p>, <strong>, <br>)..." oninput="updateLivePreview()" required></textarea>
+              </div>
+
+              <!-- CTA Button Configuration -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px;">
+                <div class="form-group">
+                  <label class="form-label">Texte du Bouton (Optionnel)</label>
+                  <input type="text" id="broadcastCtaText" class="premium-form-control" placeholder="ex: DÃ©couvrir maintenant" oninput="updateLivePreview()"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Lien URL (Optionnel)</label>
+                  <input type="url" id="broadcastCtaUrl" class="premium-form-control" placeholder="ex: https://zolamoneytransmarchand.web.app" oninput="updateLivePreview()"/>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" id="broadcastSubmitBtn" class="btn-premium success" style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(16,185,129,0.3);">
+                <span>ðŸ“¢</span> Lancer la Diffusion (SecurisÃ© par PIN)
+              </button>
+            </form>
+          </div>
+
+          <!-- Live Interactive Preview Card -->
+          <div class="admin-card" style="background: #0E0C16; border: 1px solid rgba(255,255,255,0.08); position: sticky; top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px;">
+              <span style="font-size: 0.95rem; font-weight: 700; color: var(--c-gold); display: flex; align-items: center; gap: 8px;">
+                <span>ðŸ“±ðŸ’»</span> PrÃ©visualisation en Temps RÃ©el
+              </span>
+              <span style="font-size: 0.75rem; color: var(--admin-text-muted); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;">
+                AperÃ§u Client
+              </span>
+            </div>
+
+            <!-- Preview Box -->
+            <div id="broadcastLivePreview" style="background: #161321; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; min-height: 320px;">
+              <div style="background: linear-gradient(135deg, #4F3885 0%, #1A132B 100%); padding: 24px 18px; text-align: center; border-bottom: 1px solid rgba(243,182,31,0.2);">
+                <div style="display: inline-block; background: rgba(243,182,31,0.15); border: 1px solid #F3B61F; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #F3B61F; text-transform: uppercase; margin-bottom: 8px;">
+                  ðŸ“¢ Annonce Zola Money Trans
+                </div>
+                <h4 id="previewSubject" style="margin: 0; font-size: 1.15rem; color: #fff; font-weight: 800;">Sujet de l'annonce...</h4>
+              </div>
+              <div id="previewBody" style="padding: 24px 20px; line-height: 1.6; font-size: 0.92rem; color: #D3CFE2;">
+                <p style="color: var(--admin-text-muted); font-style: italic;">RÃ©digez votre message Ã  gauche pour voir l'aperÃ§u...</p>
+              </div>
+              <div id="previewCtaContainer" style="text-align: center; padding: 0 20px 24px; display: none;">
+                <a id="previewCtaBtn" href="#" onclick="return false;" style="display: inline-block; background: linear-gradient(135deg, #F3B61F 0%, #D89C0D 100%); color: #0D0B14; font-weight: 800; font-size: 0.92rem; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 6px 16px rgba(243,182,31,0.25);">
+                  Bouton CTA â†’
+                </a>
+              </div>
+              <div style="background: #110E1B; padding: 14px; text-align: center; font-size: 0.72rem; color: #7E7694; border-top: 1px solid rgba(255,255,255,0.05);">
+                Â© Zola Money Trans â€” La RÃ©volution FinanciÃ¨re en RDC
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Broadcast History Table -->
+        <div class="admin-card">
+          <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 16px;">
+            ðŸ“œ Historique des Campagnes & Annonces
+          </h3>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Date & Heure</th>
+                  <th>Sujet / Titre</th>
+                  <th>Cible</th>
+                  <th>Canal</th>
+                  <th>Destinataires</th>
+                  <th>ExpÃ©diteur</th>
+                  <th>Rapport / Statut</th>
+                </tr>
+              </thead>
+              <tbody id="broadcastHistoryTbody">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: var(--admin-text-muted); padding: 24px;">
+                    Chargement de l'historique...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 10. LOYALTY & REWARDS VIEW -->
+      <div id="viewLoyalty" style="display: none; width: 100%;">
+        <div class="admin-kpi-grid">
+          <div class="kpi-card" style="--accent-color: var(--c-gold);">
+            <span class="kpi-label">Loyalty Points Issued</span>
+            <span class="kpi-value">849,200 pts</span>
+            <span class="kpi-change up">â–² +45,000 pts cette semaine</span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-purple);">
+            <span class="kpi-label">Active Promotion Campaigns</span>
+            <span class="kpi-value">4 Actives</span>
+            <span class="kpi-change up">â–² 2 se terminent bientÃ´t</span>
+          </div>
+          <div class="kpi-card" style="--accent-color: var(--c-success);">
+            <span class="kpi-label">Referrals Registered</span>
+            <span class="kpi-value">12,480 users</span>
+            <span class="kpi-change up">â–² +12% ce mois</span>
+          </div>
+        </div>
+        
+        <div class="admin-card" style="margin-top:24px;">
+          <div style="display:flex; justify-content:between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:1.15rem;">Top Clients FidÃ¨les RDC</h3>
+            <button class="btn-premium primary btn-sm" onclick="alert('Promotion gÃ©nÃ©rale envoyÃ©e !')">ðŸš€ Lancer Nouvelle Promotion</button>
+          </div>
+          
+          <div class="table-responsive-wrapper">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>TÃ©lÃ©phone</th>
+                  <th>Nombre Tx</th>
+                  <th>Points CumulÃ©s</th>
+                  <th>Affiliations (Referrals)</th>
+                  <th>Niveau de Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Emmanuel Kabeya</td>
+                  <td>+243819283472</td>
+                  <td>420 tx</td>
+                  <td><span style="color:var(--c-gold); font-weight:bold;">12,400 pts</span></td>
+                  <td>28 inscrits</td>
+                  <td><span class="badge-premium success">ðŸ‘‘ Diamond VIP</span></td>
+                </tr>
+                <tr>
+                  <td>Odia Kabamba</td>
+                  <td>+243977774177</td>
+                  <td>290 tx</td>
+                  <td><span style="color:var(--c-gold); font-weight:bold;">8,900 pts</span></td>
+                  <td>14 inscrits</td>
+                  <td><span class="badge-premium primary">â­ Platinum</span></td>
+                </tr>
+                <tr>
+                  <td>Mbuyi Ndala</td>
+                  <td>+243899283921</td>
+                  <td>110 tx</td>
+                  <td><span style="color:var(--c-gold); font-weight:bold;">3,200 pts</span></td>
+                  <td>4 inscrits</td>
+                  <td><span class="badge-premium secondary" style="color:#fff; background:rgba(255,255,255,0.05);">Gold Member</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 11. SETTINGS HUB VIEW -->
+      <div id="viewSettings" style="display: none; width: 100%;">
+        <div class="charts-grid">
+          
+          <!-- API credentials card -->
+          <div class="admin-card">
+            <h3 style="font-size:1.1rem; margin-bottom:16px;">Platform API Keys</h3>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div>
+                <div style="font-size:0.75rem; color:var(--admin-text-muted); margin-bottom:6px;">Zola Public Key</div>
+                <div style="display:flex; gap:10px;">
+                  <input type="text" class="premium-form-control" value="pk_live_51Opx8ZolaTrans28374972983" readonly style="font-family:monospace; font-size:0.8rem;"/>
+                  <button class="btn-premium secondary" onclick="navigator.clipboard.writeText('pk_live_51Opx8ZolaTrans28374972983'); alert('Clé publique copiée !')">Copy</button>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:0.75rem; color:var(--admin-text-muted); margin-bottom:6px;">Zola Secret Key</div>
+                <div style="display:flex; gap:10px;">
+                  <input type="password" class="premium-form-control" value="sk_live_REDACTED" readonly style="font-family:monospace; font-size:0.8rem;" id="zolaSecretKeyInput"/>
+                  <button class="btn-premium secondary" onclick="toggleSecretKey()">Voir</button>
+                  <button class="btn-premium secondary" onclick="navigator.clipboard.writeText('sk_live_REDACTED'); alert('ClÃ© secrÃ¨te copiÃ©e !')">Copy</button>
+                </div>
+              </div>
+              <button class="btn-premium primary" style="margin-top:10px;" onclick="alert('Nouvelles clÃ©s API gÃ©nÃ©rÃ©es avec succÃ¨s !')">ðŸ”„ RÃ©gÃ©nÃ©rer les ClÃ©s de Production</button>
+            </div>
+          </div>
+          
+          <!-- Role & Access configurations -->
+          <div class="admin-card">
+            <h3 style="font-size:1.1rem; margin-bottom:16px;">RÃ´les & Permissions</h3>
+            <div class="table-responsive-wrapper">
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>RÃ´le Administrateur</th>
+                    <th>Permissions</th>
+                    <th>Membres</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Super Admin</td>
+                    <td><span style="color:var(--c-success);">AccÃ¨s Total (Lect/Ã‰crit/Rules)</span></td>
+                    <td>1 (Dr. Nduwa)</td>
+                  </tr>
+                  <tr>
+                    <td>Agent Support</td>
+                    <td>Tickets, Live Chat, Historique</td>
+                    <td>4 agents</td>
+                  </tr>
+                  <tr>
+                    <td>Agent Compliance</td>
+                    <td>KYC review, Suspension, AML list</td>
+                    <td>2 agents</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ZOLA APIs INTEGRATION VIEW -->
+      <div id="viewZolaapi" style="display: none; flex-direction: column; gap: 36px; width: 100%;">
+        <div class="admin-header-card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h2 style="font-size: 1.5rem; color: #fff; margin-bottom: 8px;">ðŸ”Œ Zola Money APIs</h2>
+            <p style="color: var(--admin-text-muted);">GÃ©rez les intÃ©grations de partenaires externes, gÃ©nÃ©rez des clÃ©s d'accÃ¨s et configurez leurs webhooks.</p>
+          </div>
+          <div>
+            <a href="zola_api_integration_guide.html" download class="btn-premium primary" style="text-decoration:none;">ðŸ“¥ TÃ©lÃ©charger la Documentation API</a>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h3 class="card-title">Ajouter un Client API</h3>
+          <form id="formAddZolaApiClient" style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; gap:16px; flex-wrap:wrap;">
+              <div class="input-group" style="flex:1; min-width:200px;">
+                <label>Nom du Partenaire / Application</label>
+                <input type="text" id="zolaApiName" class="form-input" placeholder="Ex: SuperMarket App" required />
+              </div>
+              <div class="input-group" style="flex:1; min-width:200px;">
+                <label>URL du Webhook (Optionnel)</label>
+                <input type="url" id="zolaApiWebhook" class="form-input" placeholder="https://..." />
+              </div>
+            </div>
+            
+            <h4 style="color:#fff; margin-top:8px; margin-bottom:0;">Configuration des Reversements (Payouts)</h4>
+            <div style="display:flex; gap:16px; flex-wrap:wrap;">
+              <div class="input-group" style="flex:1; min-width:150px;">
+                <label>Frais de Service (%)</label>
+                <input type="number" id="zolaApiFeePercentage" class="form-input" placeholder="Ex: 9.5" value="9.5" step="0.1" required />
+              </div>
+              <div class="input-group" style="flex:1; min-width:200px;">
+                <label>NumÃ©ro Mobile Money</label>
+                <input type="text" id="zolaApiPayoutPhone" class="form-input" placeholder="+243..." />
+              </div>
+              <div class="input-group" style="flex:1; min-width:150px;">
+                <label>RÃ©seau</label>
+                <select id="zolaApiPayoutNetwork" class="form-input">
+                  <option value="AIRTELMONEY">Airtel Money</option>
+                  <option value="MPESA">M-Pesa</option>
+                  <option value="ORANGEMONEY">Orange Money</option>
+                  <option value="AFRICELLMONEY">Africell Money</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:8px;">
+              <label class="switch">
+                <input type="checkbox" id="zolaApiAutoPayout" />
+                <span class="slider"></span>
+              </label>
+              <span style="color:#fff;">Reversement Automatique (Sinon manuel)</span>
+            </div>
+            
+            <div style="text-align:right;">
+              <button type="submit" id="zolaApiAddBtn" class="btn-premium primary">Ajouter le Partenaire</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-card" style="overflow-x:auto;">
+          <h3 class="card-title">Clients API EnregistrÃ©s</h3>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Partenaire</th>
+                <th>ClÃ© API (X-Zola-Api-Key)</th>
+                <th>Webhook</th>
+                <th>Frais</th>
+                <th>Payout Config</th>
+                <th>Type Payout</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="zolaApiClientsList">
+              <tr><td colspan="7" style="text-align:center; padding:20px;">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-card" style="overflow-x:auto;">
+          <h3 class="card-title">Reversements en Attente (Manuel)</h3>
+          <p style="color:var(--admin-text-muted); font-size:0.9rem; margin-bottom:16px;">Approuvez les transferts vers les comptes Mobile Money des partenaires.</p>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Partenaire</th>
+                <th>Ref Marchand</th>
+                <th>Montant Brut</th>
+                <th>Frais PrÃ©levÃ©s</th>
+                <th>Montant Net (Reversement)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="zolaApiPendingPayoutsList">
+              <tr><td colspan="7" style="text-align:center; padding:20px;">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 13. BENDA BUS API VIEW -->
+      <div id="viewBendabus" style="display: none; flex-direction: column; gap: 36px; width: 100%;">
+        <div style="width: 100%;">
+          <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 style="font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; margin: 0;">
+                <span style="background: linear-gradient(135deg, #eab308, #ca8a04); padding: 5px 12px; border-radius: 8px; font-size: 1rem; color: #fff; font-weight: 700;">ðŸšŒ BENDA BUS API</span>
+                Configuration Partenaire
+              </h2>
+              <p style="color: var(--admin-text-muted); font-size: 0.9rem; margin-top: 6px; margin-bottom:0;">GÃ©rez l'intÃ©gration, les clÃ©s API et les reversements de Benda Bus.</p>
+            </div>
+            <div>
+              <a href="bendabus_integration_guide.html" download class="btn-premium primary" style="display:inline-block; text-decoration:none;">ðŸ“„ TÃ©lÃ©charger Documentation API</a>
+            </div>
+          </div>
+          
+          <div class="admin-data-card" style="margin-bottom: 24px;">
+            <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center;">
+              ClÃ©s d'AccÃ¨s API
+              <button class="btn-premium secondary" onclick="bendabusRegenerateKey()" style="padding:6px 12px; font-size:0.8rem;">ðŸ”„ RÃ©gÃ©nÃ©rer la ClÃ©</button>
+            </h3>
+            <div style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 16px;">
+              <div style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 4px;">URL Endpoint Init Payment (POST)</div>
+              <div style="font-family: monospace; color: var(--c-gold); word-break: break-all;">https://us-central1-zolamoneytrans.cloudfunctions.net/bendabusInitPayment</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 4px;">ClÃ© SecrÃ¨te Actuelle (X-Zola-Api-Key)</div>
+              <div style="font-family: monospace; color: #fff; word-break: break-all;" id="bendabusApiKey">Chargement...</div>
+            </div>
+          </div>
+
+          <div class="admin-data-card">
+            <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px;">Configuration des Reversements (Payouts)</h3>
+            <p style="font-size:0.85rem; color:var(--admin-text-muted); margin-bottom:20px;">
+              Zola Money Trans dÃ©duit des frais de <strong>9.5%</strong> sur les paiements Benda Bus. Le montant net sera reversÃ© sur le compte ci-dessous.
+            </p>
+            <form onsubmit="bendabusSaveConfig(event)" style="display:flex; flex-direction:column; gap:16px; max-width:500px;">
+              <div class="form-group">
+                <label class="form-label">NumÃ©ro de TÃ©lÃ©phone Mobile Money</label>
+                <input type="text" id="bbPayoutPhone" class="premium-form-control" placeholder="+243998220632" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">RÃ©seau (OpÃ©rateur)</label>
+                <select id="bbPayoutNetwork" class="premium-form-control" required>
+                  <option value="AIRTELMONEY">Airtel Money</option>
+                  <option value="MPESA">M-Pesa</option>
+                  <option value="ORANGEMONEY">Orange Money</option>
+                  <option value="AFRICELLMONEY">Africell Money</option>
+                </select>
+              </div>
+              <div class="form-group" style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="bbAutoPayout">
+                  <span class="slider round"></span>
+                </label>
+                <div>
+                  <div style="color:#fff; font-weight:600; font-size:0.95rem;">Reversement Automatique</div>
+                  <div style="color:var(--admin-text-muted); font-size:0.8rem;">Si inactif, vous devrez approuver manuellement chaque reversement.</div>
+                </div>
+              </div>
+              <button type="submit" class="btn-premium primary" style="align-self:flex-start; margin-top:8px;" id="bbSaveConfigBtn">Enregistrer la Configuration</button>
+            </form>
+          </div>
+          
+          <div class="admin-data-card" style="margin-top: 24px;">
+            <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px;">Reversements en Attente (Mode Manuel)</h3>
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>RÃ©f. Benda Bus</th>
+                    <th>Montant CollectÃ©</th>
+                    <th>Frais (9.5%)</th>
+                    <th>Montant Ã  Reverser</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="bbPendingPayoutsList">
+                  <tr><td colspan="6" style="text-align:center; padding:20px; color:var(--admin-text-muted);">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- 12. TESTS VIEW -->
+      <div id="viewTests" style="display: none; flex-direction: column; gap: 36px; width: 100%;">
+        
+        <!-- SECTION 1: NOTCH PAY INTEGRATION TEST SUITE -->
+        <div style="width: 100%;">
+          <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 style="font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 10px; margin: 0;">
+                <span style="background: linear-gradient(135deg, #10b981, #059669); padding: 5px 12px; border-radius: 8px; font-size: 1rem; color: #fff; font-weight: 700; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">âš¡ Notch Pay API</span>
+                Suite d'IntÃ©gration LIVE (RDC)
+              </h2>
+              <p style="font-size: 0.88rem; color: var(--admin-text-muted); margin-top: 6px;">IntÃ©gration en Direct (Live API) : Paiements rÃ©els par carte Visa & Mastercard, Pay-In Mobile Money et Pay-Out Mobile Money (Devises RDC : USD & CDF)</p>
+            </div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.5px;">ðŸŸ¢ MODE LIVE (PRODUCTION)</span>
+          </div>
+
+          <div class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
+            
+            <!-- Card 1: Visa Card Payment -->
+            <div class="admin-card" style="border: 1px solid rgba(16, 185, 129, 0.35); background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, rgba(11, 15, 25, 0.9) 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%); pointer-events: none;"></div>
+                <h3 style="font-size: 1.18rem; margin-bottom: 12px; color: #10b981; display: flex; align-items: center; gap: 8px;">
+                  <span>ðŸ’³</span> Paiement Visa Card (Live)
+                </h3>
+                <p style="font-size: 0.83rem; color: var(--admin-text-muted); margin-bottom: 18px;">GÃ©nÃ¨re une session de paiement hÃ©bergÃ©e Notch Pay en mode LIVE pour paiement rÃ©el par carte bancaire.</p>
+                
+                <form onsubmit="testNotchVisaSubmit(event)">
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">Email Client</label>
+                    <input type="email" id="notchVisaEmail" class="premium-form-control" placeholder="ex: client@zolamoneytrans.com" required value="live.rdc@zolamoneytrans.com"/>
+                  </div>
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">Nom du Titulaire</label>
+                    <input type="text" id="notchVisaName" class="premium-form-control" placeholder="ex: Emmanuel Nduwa" required value="Emmanuel Nduwa"/>
+                  </div>
+                  <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                    <div style="flex:1;">
+                      <label class="form-label">Montant</label>
+                      <input type="number" id="notchVisaAmount" class="premium-form-control" placeholder="10" required value="10"/>
+                    </div>
+                    <div style="width:110px;">
+                      <label class="form-label">Devise</label>
+                      <select id="notchVisaCurrency" class="premium-form-control" required>
+                        <option value="USD">USD ($)</option>
+                        <option value="CDF">CDF (FC)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-premium success" style="width:100%; background: linear-gradient(135deg, #10b981, #059669); font-weight: 600;" id="btnNotchVisa">
+                    ðŸ’³ Lancer Paiement Visa (Live)
+                  </button>
+                </form>
+              </div>
+              <div id="notchVisaResult" style="margin-top: 16px; display: none;"></div>
+            </div>
+
+            <!-- Card 2: Mobile Money Pay-In -->
+            <div class="admin-card" style="border: 1px solid rgba(59, 130, 246, 0.35); background: linear-gradient(180deg, rgba(59, 130, 246, 0.06) 0%, rgba(11, 15, 25, 0.9) 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%); pointer-events: none;"></div>
+                <h3 style="font-size: 1.18rem; margin-bottom: 12px; color: #60a5fa; display: flex; align-items: center; gap: 8px;">
+                  <span>ðŸ“²</span> Pay-In Mobile Money (Live)
+                </h3>
+                <p style="font-size: 0.83rem; color: var(--admin-text-muted); margin-bottom: 18px;">DÃ©clenche une notification push USSD rÃ©elle en direct sur le tÃ©lÃ©phone mobile en RDC via Notch Pay.</p>
+                
+                <form onsubmit="testNotchPayInSubmit(event)">
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">NumÃ©ro Mobile (avec indicatif RDC)</label>
+                    <input type="text" id="notchInPhone" class="premium-form-control" placeholder="ex: +243812345678" required value="+243812345678"/>
+                  </div>
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">OpÃ©rateur Mobile Money (Live)</label>
+                    <select id="notchInChannel" class="premium-form-control" required>
+                      <option value="cd.vodacom">M-Pesa (Vodacom RDC - Live)</option>
+                      <option value="cd.orange">Orange Money (RDC - Live)</option>
+                      <option value="cd.airtel">Airtel Money (RDC - Live)</option>
+                      <option value="cm.mtn">MTN Mobile Money (Cameroun - Actif sur votre compte)</option>
+                      <option value="cm.orange">Orange Money (Cameroun - Actif sur votre compte)</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                    <div style="flex:1;">
+                      <label class="form-label">Montant</label>
+                      <input type="number" id="notchInAmount" class="premium-form-control" placeholder="10" required value="10"/>
+                    </div>
+                    <div style="width:110px;">
+                      <label class="form-label">Devise</label>
+                      <select id="notchInCurrency" class="premium-form-control" required>
+                        <option value="USD">USD ($)</option>
+                        <option value="CDF">CDF (FC)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-premium" style="width:100%; background: linear-gradient(135deg, #3b82f6, #2563eb); font-weight: 600;" id="btnNotchPayIn">
+                    ðŸ“² Lancer Pay-In Mobile (Live)
+                  </button>
+                </form>
+              </div>
+              <div id="notchPayInResult" style="margin-top: 16px; display: none;"></div>
+            </div>
+
+            <!-- Card 3: Mobile Money Pay-Out -->
+            <div class="admin-card" style="border: 1px solid rgba(239, 68, 68, 0.35); background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, rgba(11, 15, 25, 0.9) 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(239,68,68,0.18) 0%, transparent 70%); pointer-events: none;"></div>
+                <h3 style="font-size: 1.18rem; margin-bottom: 12px; color: #f87171; display: flex; align-items: center; gap: 8px;">
+                  <span>ðŸ’¸</span> Pay-Out Mobile Money (Live)
+                </h3>
+                <p style="font-size: 0.83rem; color: var(--admin-text-muted); margin-bottom: 18px;">ExÃ©cute un dÃ©caissement (retrait) rÃ©el vers un compte Mobile Money en RDC via l'API Live Notch Pay.</p>
+                
+                <form onsubmit="testNotchPayOutSubmit(event)">
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">NumÃ©ro BÃ©nÃ©ficiaire (avec indicatif RDC)</label>
+                    <input type="text" id="notchOutPhone" class="premium-form-control" placeholder="ex: +243812345678" required value="+243812345678"/>
+                  </div>
+                  <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">OpÃ©rateur Mobile Money (Live)</label>
+                    <select id="notchOutChannel" class="premium-form-control" required>
+                      <option value="cd.vodacom">M-Pesa (Vodacom RDC - Live)</option>
+                      <option value="cd.orange">Orange Money (RDC - Live)</option>
+                      <option value="cd.airtel">Airtel Money (RDC - Live)</option>
+                      <option value="cm.mtn">MTN Mobile Money (Cameroun - Actif sur votre compte)</option>
+                      <option value="cm.orange">Orange Money (Cameroun - Actif sur votre compte)</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                    <div style="flex:1;">
+                      <label class="form-label">Montant</label>
+                      <input type="number" id="notchOutAmount" class="premium-form-control" placeholder="10" required value="10"/>
+                    </div>
+                    <div style="width:110px;">
+                      <label class="form-label">Devise</label>
+                      <select id="notchOutCurrency" class="premium-form-control" required>
+                        <option value="USD">USD ($)</option>
+                        <option value="CDF">CDF (FC)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-premium danger" style="width:100%; background: linear-gradient(135deg, #ef4444, #dc2626); font-weight: 600;" id="btnNotchPayOut">
+                    ðŸ’¸ Tester Pay-Out Mobile Money
+                  </button>
+                </form>
+              </div>
+              <div id="notchPayOutResult" style="margin-top: 16px; display: none;"></div>
+            </div>
+
+          </div>
+
+          <!-- Terminal Logs Box for Notch Pay -->
+          <div class="admin-card" style="border: 1px solid rgba(255,255,255,0.1); background: #080c14; width: 100%;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <h3 style="font-size:1.05rem; color:#e2e8f0; display:flex; align-items:center; gap:8px; margin: 0;">
+                <span>ðŸ–¥ï¸</span> Terminal de RÃ©ponses Notch Pay (API Live Logs)
+              </h3>
+              <button class="btn-premium secondary" style="padding: 6px 14px; font-size: 0.78rem;" onclick="document.getElementById('notchConsoleLog').innerHTML = '<div style=\'color:#64748b;\'>En attente des rÃ©ponses API Live Notch Pay...</div>'">Effacer Logs</button>
+            </div>
+            <div id="notchConsoleLog" style="font-family: 'Courier New', Courier, monospace; font-size: 0.83rem; background: #04070c; padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); max-height: 320px; overflow-y: auto; color: #a5b4fc; word-break: break-all;">
+              <div style="color: #64748b;">En attente des rÃ©ponses API Live Notch Pay...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: OTHER API SIMULATIONS (LOCAL CASH IN / CASH OUT) -->
+        <div style="width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 28px;">
+          <div style="margin-bottom: 20px;">
+            <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">âš™ï¸ Tests Directs API MokoAfrica / FreshPay</h2>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">Consoles de test direct pour les flux de paiement Cash In / Cash Out rÃ©els via API</p>
+          </div>
+
+          <div class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+            <!-- Cash In Test Form -->
+            <div class="admin-card">
+              <h3 style="font-size:1.18rem; margin-bottom: 18px; color: var(--c-success);">ðŸ“¥ Cash In Test (Direct)</h3>
+              <form onsubmit="testCashInSubmit(event)">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">NumÃ©ro Mobile Money</label>
+                  <input type="text" id="testInPhone" class="premium-form-control" placeholder="ex: 0812345678" required/>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">RÃ©seau (OpÃ©rateur)</label>
+                  <select id="testInNetwork" class="premium-form-control" required>
+                    <option value="visa">ðŸ’³ Visa / Mastercard (MokoAfrica Platform)</option>
+                    <option value="moko">âš¡ Compte MokoAfrica / GoFreshPay</option>
+                    <option value="mpesa">M-Pesa (Vodacom)</option>
+                    <option value="orangemoney">Orange Money</option>
+                    <option value="airtelmoney">Airtel Money</option>
+                    <option value="afrimoney">Afrimoney</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                  <div style="flex:1;">
+                    <label class="form-label">Montant</label>
+                    <input type="number" id="testInAmount" class="premium-form-control" placeholder="10" required/>
+                  </div>
+                  <div style="width:110px;">
+                    <label class="form-label">Devise</label>
+                    <select id="testInCurrency" class="premium-form-control" required>
+                      <option value="USD">USD ($)</option>
+                      <option value="CDF">CDF (FC)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-premium success" style="width:100%;" id="testInBtn">Confirmer Cash In</button>
+              </form>
+            </div>
+
+            <!-- Cash Out Test Form -->
+            <div class="admin-card">
+              <h3 style="font-size:1.18rem; margin-bottom: 18px; color: var(--c-danger);">ðŸ“¤ Cash Out Test (Direct)</h3>
+              <form onsubmit="testCashOutSubmit(event)">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">NumÃ©ro BÃ©nÃ©ficiaire</label>
+                  <input type="text" id="testOutPhone" class="premium-form-control" placeholder="ex: 0812345678" required/>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">RÃ©seau (OpÃ©rateur)</label>
+                  <select id="testOutNetwork" class="premium-form-control" required>
+                    <option value="visa">ðŸ’³ Visa / Mastercard (MokoAfrica Platform)</option>
+                    <option value="moko">âš¡ Compte MokoAfrica / GoFreshPay</option>
+                    <option value="mpesa">M-Pesa (Vodacom)</option>
+                    <option value="orangemoney">Orange Money</option>
+                    <option value="airtelmoney">Airtel Money</option>
+                    <option value="afrimoney">Afrimoney</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                  <div style="flex:1;">
+                    <label class="form-label">Montant</label>
+                    <input type="number" id="testOutAmount" class="premium-form-control" placeholder="10" required/>
+                  </div>
+                  <div style="width:110px;">
+                    <label class="form-label">Devise</label>
+                    <select id="testOutCurrency" class="premium-form-control" required>
+                      <option value="USD">USD ($)</option>
+                      <option value="CDF">CDF (FC)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-premium danger" style="width:100%;" id="testOutBtn">Confirmer Cash Out</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: SERDIPAY API SIMULATIONS -->
+        <div style="width: 100%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 28px; margin-top: 28px;">
+          <div style="margin-bottom: 20px;">
+            <h2 style="font-size: 1.25rem; color: #fff; margin: 0;">ðŸŸ£ Tests Directs API SerdiPay</h2>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">Consoles de test direct pour les flux de paiement Cash In / Cash Out rÃ©els via SerdiPay</p>
+          </div>
+
+          <div class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+            <!-- SerdiPay Cash In Test Form -->
+            <div class="admin-card">
+              <h3 style="font-size:1.18rem; margin-bottom: 18px; color: var(--c-success);">ðŸ“¥ SerdiPay Cash In (C2B)</h3>
+              <form onsubmit="testSerdiPayInSubmit(event)">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">NumÃ©ro Mobile Money</label>
+                  <input type="text" id="testSerdiInPhone" class="premium-form-control" placeholder="ex: 0812345678" required/>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">RÃ©seau (OpÃ©rateur)</label>
+                  <select id="testSerdiInNetwork" class="premium-form-control" required>
+                    <option value="AM">Airtel Money (AM)</option>
+                    <option value="OM">Orange Money (OM)</option>
+                    <option value="MP">Vodacom M-Pesa (MP)</option>
+                    <option value="AF">Afrimoney (AF)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                  <div style="flex:1;">
+                    <label class="form-label">Montant</label>
+                    <input type="number" id="testSerdiInAmount" class="premium-form-control" placeholder="10" required/>
+                  </div>
+                  <div style="width:110px;">
+                    <label class="form-label">Devise</label>
+                    <select id="testSerdiInCurrency" class="premium-form-control" required>
+                      <option value="USD">USD ($)</option>
+                      <option value="CDF">CDF (FC)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-premium success" style="width:100%;" id="testSerdiInBtn">DÃ©clencher PayIn SerdiPay</button>
+              </form>
+            </div>
+
+            <!-- SerdiPay Cash Out Test Form -->
+            <div class="admin-card">
+              <h3 style="font-size:1.18rem; margin-bottom: 18px; color: var(--c-danger);">ðŸ“¤ SerdiPay Cash Out (B2C)</h3>
+              <form onsubmit="testSerdiPayOutSubmit(event)">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">NumÃ©ro BÃ©nÃ©ficiaire</label>
+                  <input type="text" id="testSerdiOutPhone" class="premium-form-control" placeholder="ex: 0812345678" required/>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">RÃ©seau (OpÃ©rateur)</label>
+                  <select id="testSerdiOutNetwork" class="premium-form-control" required>
+                    <option value="AM">Airtel Money (AM)</option>
+                    <option value="OM">Orange Money (OM)</option>
+                    <option value="MP">Vodacom M-Pesa (MP)</option>
+                    <option value="AF">Afrimoney (AF)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:18px; display:flex; gap:12px;">
+                  <div style="flex:1;">
+                    <label class="form-label">Montant</label>
+                    <input type="number" id="testSerdiOutAmount" class="premium-form-control" placeholder="10" required/>
+                  </div>
+                  <div style="width:110px;">
+                    <label class="form-label">Devise</label>
+                    <select id="testSerdiOutCurrency" class="premium-form-control" required>
+                      <option value="USD">USD ($)</option>
+                      <option value="CDF">CDF (FC)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-premium danger" style="width:100%;" id="testSerdiOutBtn">DÃ©clencher PayOut SerdiPay</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- General simulated items placeholders for other tabs requested by sidebar options -->
+      <div id="viewGeneralSimulated" style="display:none; width:100%;">
+        <div class="admin-card premium-empty-state">
+          <div class="icon">âš¡</div>
+          <h3 id="simulatedTabTitle">Section</h3>
+          <p style="margin-top:6px; font-size:0.85rem;" id="simulatedTabDescription">DÃ©tails de la supervision en cours.</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Smart Church Assistance Hub Modal -->
+<div id="churchAssistanceModal" class="modal-overlay" style="z-index: 9999;">
+  <div class="modal" style="max-width: 720px; background: #0b0f19; border: 1px solid rgba(124, 58, 237, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); max-height: 90vh; overflow-y: auto;">
+    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px;">
+      <div>
+        <h3 class="modal-title" id="churchModalTitle" style="font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 8px;">ðŸ¤ Assistant Paroisse Zola</h3>
+        <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-top: 4px;" id="churchModalSubtitle">Accompagnement et gestion technique du compte</p>
+      </div>
+      <button class="modal-close" onclick="closeChurchAssistanceModal()" style="font-size: 1.5rem; color: #fff;">&times;</button>
+    </div>
+    
+    <!-- Modal Navigation / Tabs -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+      
+      <!-- Panel 1: Contact Rapide & Statut -->
+      <div class="admin-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+        <h4 style="font-size: 0.95rem; color: var(--c-purple); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">ðŸ’¬ Contact & ContrÃ´le</h4>
+        <div style="font-size: 0.82rem; margin-bottom: 14px; color: #e2e8f0;">
+          <div><strong>E-mail:</strong> <span id="churchModalEmail" style="color: var(--c-gold);">â€”</span></div>
+          <div style="margin-top:4px;"><strong>TÃ©lÃ©phone:</strong> <span id="churchModalPhone">â€”</span></div>
+          <div style="margin-top:4px;"><strong>CrÃ©Ã© le:</strong> <span id="churchModalCreated">â€”</span></div>
+          <div style="margin-top:4px;"><strong>Statut actuel:</strong> <span id="churchModalStatusBadge">â€”</span></div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-premium success btn-sm" id="btnContactWa" onclick="adminContactChurchWhatsApp()" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 0.8rem;">
+              ðŸ’¬ WhatsApp
+            </button>
+            <button class="btn-premium primary btn-sm" onclick="window.openAdminEmailModal(window.currentAssistedChurch?.email || '', window.currentAssistedChurch?.kycData?.churchName || window.currentAssistedChurch?.nom || 'Paroisse', window.currentAssistedChurch?.id)" style="flex: 1; background: var(--c-purple); border-color: var(--c-purple); display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 0.8rem;">
+              âœ‰ï¸ E-mail Officiel
+            </button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-premium primary btn-sm" style="flex:1;" onclick="adminChangeChurchStatus('approuve')">âœ… Approuver</button>
+            <button class="btn-premium danger btn-sm" style="flex:1;" onclick="adminChangeChurchStatus('suspendu')">â¸ï¸ Suspendre</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Panel 2: QR Code Officiel -->
+      <div class="admin-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); text-align: center;">
+        <h4 style="font-size: 0.95rem; color: var(--c-gold); margin-bottom: 12px;">âš¡ QR Code Zola Link</h4>
+        <div id="churchModalQR" style="background: #fff; padding: 12px; border-radius: 8px; display: inline-block; margin-bottom: 12px; width: 144px; height: 144px; margin-left: auto; margin-right: auto;"></div>
+        <div style="font-family: monospace; font-size: 0.72rem; color: var(--c-purple); word-break: break-all; margin-bottom: 10px;" id="churchModalLinkText"></div>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn-premium secondary btn-sm" style="flex:1; font-size:0.75rem;" onclick="adminDownloadChurchQR()">ðŸ“¥ TÃ©lÃ©charger PNG</button>
+          <button class="btn-premium secondary btn-sm" style="flex:1; font-size:0.75rem;" onclick="adminCopyChurchLink()">ðŸ“‹ Copier Lien</button>
+        </div>
+      </div>
+      
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+      <!-- Panel 3: Configuration Mobile Money -->
+      <div class="admin-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+        <h4 style="font-size: 0.95rem; color: #38bdf8; margin-bottom: 8px;">ðŸ“± Mobile Money (DÃ®mes/Offrandes)</h4>
+        <p style="font-size: 0.75rem; color: var(--admin-text-muted); margin-bottom: 10px;">Assister l'Ã©glise Ã  lier son numÃ©ro M-Pesa / Airtel / Orange.</p>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <input type="text" id="churchModalMomo" class="premium-form-control" placeholder="ex: 0812345678 (M-Pesa)" style="font-size:0.85rem; padding: 8px 12px;"/>
+        </div>
+        <button class="btn-premium primary btn-sm" style="width: 100%; background: #0284c7;" onclick="adminSaveChurchMomo()">
+          ðŸ’¾ Configurer & Lier le numÃ©ro
+        </button>
+      </div>
+
+      <!-- Panel 4: Documents KYC & Logo -->
+      <div class="admin-card" style="padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+        <h4 style="font-size: 0.95rem; color: #a855f7; margin-bottom: 8px;">ðŸ“‚ Audit Documents & Logo</h4>
+        <div id="churchModalDocsList" style="font-size: 0.8rem; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px;">
+          <!-- Loaded dynamically -->
+        </div>
+        <button class="btn-premium secondary btn-sm" style="width: 100%;" onclick="adminGuideLogoUpload()">
+          ðŸš€ Guider pour l'upload du Logo (SMS/WA)
+        </button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Marketing Customer Details Modal -->
+<div id="mktgCustomerModal" class="modal-overlay" style="z-index: 9999; display: none; background: rgba(0,0,0,0.85); position:fixed; top:0; left:0; width:100%; height:100%; align-items:center; justify-content:center;">
+  <div class="modal" style="width: 100%; max-width: 720px; background: #0b0f19; border: 1px solid rgba(124, 58, 237, 0.5); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); max-height: 90vh; overflow-y: auto; padding: 24px;">
+    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div id="mktgModalAvatar" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, var(--c-purple), #4F46E5); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:18px;">A</div>
+        <div>
+          <h3 class="modal-title" id="mktgModalName" style="font-size: 1.3rem; color: #fff; margin:0;">Client Name</h3>
+          <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin: 4px 0 0 0;" id="mktgModalSegment">Segment</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="window.closeMktgCustomerModal()" style="font-size: 1.8rem; color: #fff; background:none; border:none; cursor:pointer;">&times;</button>
+    </div>
+    
+    <div class="modal-body" style="padding-top: 16px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+          <div style="font-size:0.75rem; color:var(--admin-text-muted);">Email</div>
+          <div style="font-size:0.95rem; color:#fff; font-weight:500; word-break:break-all;" id="mktgModalEmail">-</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+          <div style="font-size:0.75rem; color:var(--admin-text-muted);">TÃ©lÃ©phone</div>
+          <div style="font-size:0.95rem; color:#fff; font-weight:500;" id="mktgModalPhone">-</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+          <div style="font-size:0.75rem; color:var(--admin-text-muted);">Total Transactions</div>
+          <div style="font-size:1.2rem; color:#fff; font-weight:700;" id="mktgModalTotalTx">0</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:8px;">
+          <div style="font-size:0.75rem; color:var(--admin-text-muted);">Volume Historique</div>
+          <div style="font-size:1.2rem; color:var(--c-gold); font-weight:700;" id="mktgModalTotalVol">0,00 USD</div>
+        </div>
+      </div>
+      
+      <h4 style="font-size:1.1rem; color:#fff; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">Historique des Transactions</h4>
+      <div class="table-responsive-wrapper" style="max-height:300px; overflow-y:auto; border:1px solid rgba(255,255,255,0.05); border-radius:8px;">
+        <table class="premium-table" style="margin:0;">
+          <thead style="position:sticky; top:0; background:#0f1522; z-index:2;">
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Statut</th>
+              <th style="text-align:right;">Montant</th>
+            </tr>
+          </thead>
+          <tbody id="mktgModalTxBody">
+            <!-- Transactions listed here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Official Send Email Modal -->
+<div id="adminSendEmailModal" class="modal-overlay" style="z-index: 9999; display: none; background: rgba(0,0,0,0.85); position:fixed; top:0; left:0; width:100%; height:100%; align-items:center; justify-content:center;">
+  <div class="modal" style="width: 100%; max-width: 620px; background: #0b0f19; border: 1px solid rgba(124, 58, 237, 0.5); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); max-height: 90vh; overflow-y: auto; padding: 24px;">
+    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h3 class="modal-title" style="font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 8px; margin:0;">âœ‰ï¸ Envoyer un E-mail Officiel</h3>
+        <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">Communication directe et sÃ©curisÃ©e au client depuis Zola</p>
+      </div>
+      <button class="modal-close" onclick="closeAdminEmailModal()" style="font-size: 1.8rem; color: #fff; background:none; border:none; cursor:pointer;">&times;</button>
+    </div>
+    
+    <div style="padding: 20px 0;">
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 0.8rem; color: var(--admin-text-muted); display: block; margin-bottom: 6px;">Destinataire :</label>
+        <input type="email" id="adminEmailRecipient" class="premium-form-control" style="width: 100%; background: rgba(255,255,255,0.05); color: var(--c-gold); font-weight: 600; padding:10px; border:1px solid var(--admin-border); border-radius:8px;"/>
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 0.8rem; color: var(--admin-text-muted); display: block; margin-bottom: 6px;">Objet / Sujet de l'E-mail :</label>
+        <input type="text" id="adminEmailSubject" class="premium-form-control" placeholder="ex: Notification importante concernant votre compte Zola Money" style="width: 100%; color: #fff; padding:10px; border:1px solid var(--admin-border); border-radius:8px;"/>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="font-size: 0.8rem; color: var(--admin-text-muted); display: block; margin-bottom: 6px;">Message :</label>
+        <textarea id="adminEmailBody" class="premium-form-control" rows="6" placeholder="RÃ©digez votre message officiel au client ici..." style="width: 100%; color: #fff; font-family: inherit; line-height: 1.5; resize: vertical; padding:10px; border:1px solid var(--admin-border); border-radius:8px; background: rgba(0,0,0,0.3);"></textarea>
+      </div>
+      
+      <div style="background: rgba(123, 63, 242, 0.1); border-left: 3px solid var(--c-purple); padding: 12px; border-radius: 4px; margin-bottom: 24px;">
+        <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin: 0;">
+          â„¹ï¸ <strong>Note :</strong> Ce message sera enregistrÃ© dans Firestore et notifiÃ© directement au client dans son application Zola Money.
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn-premium secondary" onclick="closeAdminEmailModal()" style="padding: 10px 20px;">Annuler</button>
+        <button class="btn-premium primary" onclick="sendAdminEmailAction()" style="min-width: 160px; background: var(--c-purple); color: #fff; padding: 10px 24px; font-weight: 600;">
+          ðŸš€ Envoyer l'E-mail
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Smart Broadcast Reception & Delivery Report Modal -->
+<div id="broadcastReportModal" class="modal-overlay" style="z-index: 9999; display: none; background: rgba(0,0,0,0.85); position:fixed; top:0; left:0; width:100%; height:100%; align-items:center; justify-content:center;">
+  <div class="modal" style="width: 100%; max-width: 720px; background: #0b0f19; border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85); max-height: 90vh; overflow-y: auto; padding: 24px;">
+    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h3 class="modal-title" id="reportModalTitle" style="font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 8px; margin:0;">ðŸ“Š Rapport de RÃ©ception E-mails</h3>
+        <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin: 4px 0 0 0;" id="reportModalSubtitle">Statut et accusÃ© de rÃ©ception dÃ©taillÃ© de la campagne</p>
+      </div>
+      <button class="modal-close" onclick="closeBroadcastReportModal()" style="font-size: 1.8rem; color: #fff; background:none; border:none; cursor:pointer;">&times;</button>
+    </div>
+    
+    <div style="padding: 20px 0;">
+      <!-- KPI stats grid for report -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--admin-text-muted);">Cible Totale</div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: #fff;" id="reportTotalCount">â€”</div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 0.75rem; color: #10B981;">âœ… E-mails ReÃ§us</div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: #10B981;" id="reportSuccessCount">â€”</div>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 0.75rem; color: #EF4444;">âŒ Ã‰checs / Non reÃ§us</div>
+          <div style="font-size: 1.4rem; font-weight: 800; color: #EF4444;" id="reportFailedCount">â€”</div>
+        </div>
+      </div>
+      
+      <!-- Tabs / Switch view -->
+      <div style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
+        <button id="tabSuccessBtn" onclick="switchReportTab('success')" class="btn-premium success btn-sm" style="flex: 1; font-weight: 700; background: rgba(16,185,129,0.2); border: 1px solid #10B981; color: #fff;">
+          âœ… ReÃ§us avec succÃ¨s (<span id="tabSuccessNum">0</span>)
+        </button>
+        <button id="tabFailedBtn" onclick="switchReportTab('failed')" class="btn-premium danger btn-sm" style="flex: 1; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc;">
+          âŒ Ã‰checs de livraison (<span id="tabFailedNum">0</span>)
+        </button>
+      </div>
+
+      <!-- Success List Panel -->
+      <div id="reportSuccessList" style="max-height: 280px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;"></div>
+
+      <!-- Failed List Panel -->
+      <div id="reportFailedList" style="display: none; max-height: 280px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;"></div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+        <button class="btn-premium secondary" onclick="closeBroadcastReportModal()" style="padding: 10px 24px; font-weight:600;">Fermer le rapport</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js" type="module"></script>
+<script type="module" src="js/admin.js?v=14"></script>
+<script type="module" src="js/bendabus_admin.js"></script>
+<script type="module" src="js/zola_api_admin.js"></script>
+
+<!-- Inline script for quick navbar interaction to avoid script racing -->
+<script>
+  function toggleAdminProfileMenu() {
+    const el = document.getElementById('profileDropdown');
+    if (el) el.classList.toggle('show');
+  }
+  
+  function toggleProfileDropdown(event) {
+    event.stopPropagation();
+    const el = document.getElementById('profileDropdown');
+    if (el) el.classList.toggle('show');
+  }
+  
+  function toggleNotificationsMenu(event) {
+    event.stopPropagation();
+    const el = document.getElementById('notificationsMenu');
+    if (el) el.classList.toggle('show');
+  }
+  
+  document.addEventListener('click', () => {
+    const drop = document.getElementById('profileDropdown');
+    const notif = document.getElementById('notificationsMenu');
+    if (drop) drop.classList.remove('show');
+    if (notif) notif.classList.remove('show');
+  });
+  
+  function toggleSecretKey() {
+    const el = document.getElementById('zolaSecretKeyInput');
+    if (el) {
+      if (el.type === 'password') {
+        el.type = 'text';
+      } else {
+        el.type = 'password';
+      }
+    }
+  }
+  
+  function clearNotifBadge() {
+    const badge = document.getElementById('notifBadge');
+    if (badge) badge.style.display = 'none';
+  }
+  
+  function toggleMobileSidebar() {
+    const bar = document.getElementById('adminSidebar');
+    const over = document.getElementById('sidebarOverlay');
+    if (bar && over) {
+      bar.classList.toggle('open');
+      over.classList.toggle('open');
+    }
+  }
+</script>
+
+</body>
+</html>

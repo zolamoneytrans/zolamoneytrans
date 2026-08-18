@@ -2,36 +2,105 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Utilisateurs ──
-    match /users/{uid} {
-      allow read, write: if request.auth != null && (request.auth.uid == uid || request.auth.token.admin == true || request.auth.token.email == "drnduwa@gmail.com");
+    // ── Helper : Vérification Admin ──
+    function isAdmin() {
+      return request.auth != null && (request.auth.token.admin == true || request.auth.token.email == "drnduwa@gmail.com");
     }
 
-    // ── Transactions (créées uniquement par Cloud Functions) ──
+    // ── Utilisateurs ──
+    match /users/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow create: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == uid &&
+          (!request.resource.data.keys().hasAny(['admin']) || request.resource.data.admin == false) &&
+          (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role != 'admin') &&
+          (!request.resource.data.keys().hasAny(['balance']) || request.resource.data.balance == 0) &&
+          (!request.resource.data.keys().hasAny(['soldeCDF']) || request.resource.data.soldeCDF == 0) &&
+          (!request.resource.data.keys().hasAny(['soldeUSD']) || request.resource.data.soldeUSD == 0) &&
+          (!request.resource.data.keys().hasAny(['blocked']) || request.resource.data.blocked == false) &&
+          (!request.resource.data.keys().hasAny(['email']) || (request.resource.data.email != 'zolamoneytrans@gmail.com' && request.resource.data.email != 'drnduwa@gmail.com' && request.resource.data.email != 'zolamoneytransmarchand@gmail.com'))
+        )
+      );
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == uid &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['blocked', 'status', 'balance', 'role', 'admin', 'email', 'blockReason']) &&
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['kycStatus']) || request.resource.data.kycStatus in ['soumis', 'en_attente']) &&
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['kycLevel']) || request.resource.data.kycLevel in ['basique', 'avance', 'marchand'])
+        )
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ── Agents ──
+    match /agents/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow create: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == uid &&
+          (!request.resource.data.keys().hasAny(['admin']) || request.resource.data.admin == false) &&
+          (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role != 'admin') &&
+          (!request.resource.data.keys().hasAny(['balance', 'commission', 'soldeCDF', 'soldeUSD']) || 
+            (request.resource.data.balance == 0 && request.resource.data.commission == 0 && request.resource.data.soldeCDF == 0 && request.resource.data.soldeUSD == 0)
+          ) &&
+          (!request.resource.data.keys().hasAny(['blocked']) || request.resource.data.blocked == false) &&
+          (!request.resource.data.keys().hasAny(['email']) || (request.resource.data.email != 'zolamoneytrans@gmail.com' && request.resource.data.email != 'drnduwa@gmail.com' && request.resource.data.email != 'zolamoneytransmarchand@gmail.com'))
+        )
+      );
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == uid &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['blocked', 'status', 'balance', 'role', 'admin', 'email', 'blockReason', 'commission']) &&
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['kycStatus']) || request.resource.data.kycStatus in ['soumis', 'en_attente']) &&
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['kycLevel']) || request.resource.data.kycLevel in ['basique', 'avance', 'marchand'])
+        )
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ── Transactions ──
     match /transactions/{txId} {
       allow read: if request.auth != null && (
         resource.data.userId == request.auth.uid ||
-        request.auth.token.admin == true
+        resource.data.agentUid == request.auth.uid ||
+        isAdmin()
       );
-      // Seules les Cloud Functions écrivent les transactions (via Admin SDK)
-      allow create, update: if false;
+      // STRICT : Seuls les Cloud Functions et les Admins vérifiés peuvent créer ou modifier des transactions
+      allow create, update, delete: if isAdmin();
     }
 
-    // ── Alertes AML (admin seulement) ──
+    // ── Alertes AML (Admin seulement) ──
     match /aml_alerts/{alertId} {
-      allow read, write: if request.auth != null && request.auth.token.admin == true;
-      allow create: if false; // seul Cloud Function peut créer
+      allow read, write: if isAdmin();
+      allow create: if false; // Seul Cloud Function ou Admin via SDK peut créer
     }
 
-    // ── Notifications (lecture utilisateur propriétaire) ──
+    // ── Journal de Sécurité Anti-Fraude ──
+    match /security_logs/{logId} {
+      allow read, write: if isAdmin();
+      allow create: if false; // Seul Cloud Function ou Admin via SDK peut créer
+    }
+
+    // ── Paramètres & Configuration Système ──
+    match /settings/{settingId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ── Notifications (lecture & update par propriétaire) ──
     match /notifications/{notifId} {
       allow read, update: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if false;
+      allow create, delete: if isAdmin();
     }
 
-    // ── Admin — lecture globale ──
+    // ── Admin — lecture & écriture globale ──
     match /{document=**} {
-      allow read, write: if request.auth != null && (request.auth.token.admin == true || request.auth.token.email == "drnduwa@gmail.com");
+      allow read, write: if isAdmin();
     }
   }
 }

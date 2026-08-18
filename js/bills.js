@@ -197,6 +197,10 @@ window.lookupBill = function(e) {
 window.payBill = async function() {
   if (!currentBill || !currentUser) return;
 
+  // Intercept utility payments as the partnership is still under integration
+  showUtilityNotAvailableModal(currentBill.service);
+  return;
+
   const op = document.getElementById('billOp')?.value || 'mpesa';
 
   // Si Visa, valider les informations
@@ -327,7 +331,7 @@ async function pollBillStatus(reference, firestoreId, serviceName, attempts = 0)
     if (statut === 'succès') {
       showToast(`✅ Facture ${serviceName} payée avec succès !`, 'success');
     } else if (statut === 'échoué') {
-      showToast(`❌ Paiement ${serviceName} refusé. Vérifiez votre solde et réessayez.`, 'error');
+      showToast(`❌ Paiement ${serviceName} refusé. Raisons : fonds insuffisants, compte invalide ou opérateur erroné. Support WhatsApp : +243 857767040.`, 'error');
     } else {
       pollBillStatus(reference, firestoreId, serviceName, attempts + 1);
     }
@@ -411,8 +415,46 @@ function showPinModal(message, callback) {
   document.getElementById('pinClose').addEventListener('click', () => modal.remove());
 }
 
+// ── Service Indisponible Modal ──
+function showUtilityNotAvailableModal(serviceName) {
+  let existing = document.getElementById('utilityModal');
+  if (existing) existing.remove();
+  
+  const modal = document.createElement('div');
+  modal.id = 'utilityModal';
+  modal.className = 'modal-overlay open';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:400px; text-align:center; position:relative;">
+      <div style="font-size:3.5rem; margin-bottom:16px;" class="animate-pulse">🚧</div>
+      <h3 class="modal-title" style="font-size:1.4rem; margin-bottom:12px; color:var(--c-gold);">Service en cours d'intégration</h3>
+      <p style="font-size:0.95rem; color:var(--c-text); margin-bottom:16px; line-height:1.5;">
+        Le paiement des factures pour <strong>${serviceName}</strong> n'est pas encore disponible, mais il le sera très bientôt !
+      </p>
+      <p style="font-size:0.88rem; color:var(--c-text2); margin-bottom:24px; line-height:1.5; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--c-border); border-radius: var(--radius-sm);">
+        Nous finalisons activement nos partenariats officiels avec la <strong>REGIDESO</strong>, la <strong>SNEL</strong>, la <strong>DGRAD</strong>, <strong>CANAL+</strong>, et bien d'autres pour vous assurer des transactions directes et sécurisées.
+      </p>
+      <button class="btn btn-gold btn-block" id="utilityCloseBtn" style="font-weight:700;">Compris</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  const closeBtn = document.getElementById('utilityCloseBtn');
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('open');
+    setTimeout(() => modal.remove(), 300);
+  });
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('open');
+      setTimeout(() => modal.remove(), 300);
+    }
+  });
+}
+
 onAuthStateChanged(auth, user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   currentUser = user;
   userDocRef = doc(db, 'users', user.uid);
   onSnapshot(userDocRef, (snap) => {

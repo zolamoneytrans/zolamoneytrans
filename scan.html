@@ -133,6 +133,9 @@
         <div class="scanner-container">
           <div class="scanner-corners"></div>
           <div class="scanner-corners-2"></div>
+          <button onclick="toggleCamera()" style="position:absolute; top:10px; right:10px; z-index:20; background:rgba(0,0,0,0.5); border:none; border-radius:50%; width:40px; height:40px; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Changer de caméra">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          </button>
           <div id="reader"></div>
         </div>
 
@@ -205,10 +208,8 @@
   };
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = 'auth.html';
-      return;
-    }
+    if (!user) { window.location.href = 'auth.html'; return; }
+    if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
     try {
       const userSnap = await getDoc(doc(db, 'users', user.uid));
       const u = userSnap.exists() ? userSnap.data() : {};
@@ -260,44 +261,75 @@
   window.promptMerchantCode = function() {
     const code = prompt("Saisissez le code marchand :");
     if (code && code.trim() !== '') {
-      window.location.href = `pay.html?merchant=${encodeURIComponent(code.trim())}`;
+      window.location.href = `smart_pay.html?merchant=${encodeURIComponent(code.trim())}`;
     }
   };
 
-  let html5QrcodeScanner = null;
+  let html5QrCode = null;
+  let currentFacingMode = "environment";
+
   window.startScanner = function() {
-    if(html5QrcodeScanner) return; // Already started
+    if (!html5QrCode) {
+      html5QrCode = new window.Html5Qrcode("reader");
+    }
+    if (html5QrCode.isScanning) return;
     
-    html5QrcodeScanner = new window.Html5QrcodeScanner(
-      "reader",
-      { fps: 10, qrbox: { width: 200, height: 200 }, facingMode: "environment" },
-      /* verbose= */ false
-    );
-    
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    html5QrCode.start(
+      { facingMode: currentFacingMode },
+      { fps: 10, qrbox: { width: 200, height: 200 } },
+      onScanSuccess,
+      onScanFailure
+    ).catch(err => {
+      console.warn("Erreur de démarrage scanner:", err);
+      // Tentative de repli si la caméra demandée n'est pas dispo
+      if (currentFacingMode === "environment") {
+        currentFacingMode = "user";
+        html5QrCode.start({ facingMode: currentFacingMode }, { fps: 10, qrbox: { width: 200, height: 200 } }, onScanSuccess, onScanFailure).catch(e => console.error(e));
+      }
+    });
+  };
+
+  window.toggleCamera = function() {
+    if (html5QrCode && html5QrCode.isScanning) {
+      html5QrCode.stop().then(() => {
+        currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+        startScanner();
+      }).catch(err => console.error(err));
+    }
   };
 
   function onScanSuccess(decodedText, decodedResult) {
-    if(html5QrcodeScanner) {
-      html5QrcodeScanner.clear().catch(err => console.log(err));
-      html5QrcodeScanner = null;
+    if (html5QrCode && html5QrCode.isScanning) {
+      html5QrCode.stop().catch(err => console.log(err));
     }
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+
     try {
       const url = new URL(decodedText);
-      if(url.pathname.includes('pay.html') || url.protocol === 'zolamoney:') {
+      if(url.pathname.includes('pay.html') || url.pathname.includes('smart_pay.html') || url.protocol === 'zolamoney:') {
+        if (mode === 'pay_agent_visa' && url.protocol === 'zolamoney:') {
+          const phone = url.searchParams.get('phone') || '';
+          window.location.href = `smart_pay.html?merchant=${encodeURIComponent(phone)}&way=card`;
+          return;
+        }
         window.location.href = decodedText;
       } else {
         alert("Ce QR code n'est pas un code de paiement Zola Money valide.");
         startScanner();
       }
     } catch(e) {
-      // If it's just a raw merchant code, pass it to pay.html
-      window.location.href = `pay.html?merchant=${encodeURIComponent(decodedText)}`;
+      if (mode === 'pay_agent_visa') {
+        window.location.href = `smart_pay.html?merchant=${encodeURIComponent(decodedText)}&way=card`;
+      } else {
+        // If it's just a raw merchant code, pass it to smart_pay.html
+        window.location.href = `smart_pay.html?merchant=${encodeURIComponent(decodedText)}`;
+      }
     }
   }
 
   function onScanFailure(error) {
-    // console.warn(error);
+    // ignoré
   }
 </script>
 </body>

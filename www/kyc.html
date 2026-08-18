@@ -86,6 +86,7 @@
       <!-- Étapes de vérification -->
       <div class="card" style="margin-bottom:24px;">
         <div class="section-title" style="margin-bottom:24px;">Compléter votre vérification</div>
+        <div id="kycRejectionAlert" style="display:none;"></div>
         <div class="steps-bar" id="kycStepsBar">
           <div class="step done" data-step="1"><div class="step-dot">✓</div><div class="step-label">E-mail</div></div>
           <div class="step done" data-step="2"><div class="step-dot">✓</div><div class="step-label">Téléphone</div></div>
@@ -154,30 +155,22 @@
         <!-- Step 5: Adresse -->
         <div id="stepPanel5" style="display:none;">
           <h3 style="font-size:1rem; font-weight:700; margin-bottom:8px;">🏠 Vérification d'adresse</h3>
-          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Fournissez un justificatif de domicile récent (moins de 3 mois).</p>
+          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Indiquez simplement votre adresse de résidence actuelle pour finaliser votre dossier KYC.</p>
           <div class="form-group">
             <label class="form-label">Adresse complète</label>
             <input type="text" class="form-control" id="adresseRue" placeholder="N° et nom de la rue / avenue"/>
           </div>
           <div class="responsive-grid" style="gap:14px;">
             <div class="form-group">
-              <label class="form-label">Commune</label>
-              <input type="text" class="form-control" id="adresseCommune" placeholder="Ex: Gombe"/>
+              <label class="form-label">Commune / Quartier</label>
+              <input type="text" class="form-control" id="adresseCommune" placeholder="Ex: Gombe / Jan Celliers Park"/>
             </div>
             <div class="form-group">
-              <label class="form-label">Ville</label>
-              <input type="text" class="form-control" id="adresseVille" placeholder="Ex: Kinshasa"/>
+              <label class="form-label">Ville / Pays</label>
+              <input type="text" class="form-control" id="adresseVille" placeholder="Ex: Kinshasa / Welkom, South Africa"/>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Justificatif de domicile</label>
-            <div class="upload-zone" onclick="triggerUpload('proofFile')" id="proofZone">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <p><span>Facture SNEL/REGIDESO</span> ou relevé bancaire</p>
-            </div>
-            <input type="file" id="proofFile" accept="image/*,application/pdf" style="display:none;" onchange="previewUpload(this,'proofZone')"/>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
             <button class="btn btn-outline" onclick="goToStep(4)">← Retour</button>
             <button class="btn btn-gold" onclick="submitKYC()">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>

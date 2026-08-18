@@ -131,6 +131,7 @@ window.handleLogout = async () => { await signOut(auth); window.location.href = 
 
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   window._dashUser = user.uid;
 
   document.getElementById('loadingScreen').style.display = 'none';
@@ -146,18 +147,99 @@ onAuthStateChanged(auth, async user => {
     const userSnap = await getDoc(doc(db, 'users', user.uid));
     if (userSnap.exists()) {
       const u = userSnap.data();
+      if (u.blocked === true) {
+        await signOut(auth);
+        window.location.href = 'auth.html';
+        return;
+      }
       const uType = u.type || 'particulier';
       document.querySelectorAll('a[href="merchant.html"]').forEach(link => {
         link.style.display = (uType === 'marchand') ? 'flex' : 'none';
       });
       if (uType === 'marchand') { window.location.href = 'dashboard_marchand.html'; return; }
       if (uType === 'entreprise') { window.location.href = 'dashboard_entreprise.html'; return; }
+      if (uType === 'eglise') { window.location.href = 'dashboard_eglise.html'; return; }
 
       const kycLevels = { basique:'badge-warning', avance:'badge-primary', marchand:'badge-success' };
       const kycLabels = { basique:'KYC Basique', avance:'KYC Avancé', marchand:'KYC Marchand' };
       const kl = u.kycLevel || 'basique';
       const kb = document.getElementById('kycBadge');
       if (kb) kb.innerHTML = `<span class="badge ${kycLevels[kl]||'badge-warning'}">${kycLabels[kl]||'KYC Basique'}</span>`;
+
+      const kycTextEl = document.getElementById('kycStatusText');
+      if (kycTextEl) {
+        if (u.kycStatus === 'soumis') {
+          kycTextEl.textContent = 'En examen (KYC)';
+          kycTextEl.style.color = '#F59E0B';
+        } else if (u.kycStatus === 'rejete') {
+          kycTextEl.textContent = 'KYC Refusé';
+          kycTextEl.style.color = '#EF4444';
+        } else if (u.kycStatus === 'approuve' || kl !== 'basique') {
+          kycTextEl.textContent = kycLabels[kl] || 'KYC Vérifié';
+          kycTextEl.style.color = '#10B981';
+        } else {
+          kycTextEl.textContent = 'KYC Basique';
+          kycTextEl.style.color = 'var(--c-text2)';
+        }
+      }
+
+      if (window.checkAndShowKycReminder) window.checkAndShowKycReminder(u);
+
+      // ── Onboarding Checklist Logic ──
+      const hasInfoPin = !!(u.phone && u.pin);
+      const hasPayout = !!(u.cardAttached || (u.autoSettlementEnabled && u.autoSettlementTarget));
+      const hasKyc = kl !== 'basique';
+      
+      let completedSteps = 0;
+      if (hasInfoPin) completedSteps++;
+      if (hasPayout) completedSteps++;
+      if (hasKyc) completedSteps++;
+      
+      const light = document.getElementById('accountStatusLight');
+      const obWidget = document.getElementById('onboardingWidget');
+      
+      if (completedSteps < 3) {
+        if (light) {
+          light.style.backgroundColor = '#EF4444';
+          light.style.boxShadow = '0 0 8px rgba(239, 68, 68, 0.6)';
+          light.title = 'Compte non prêt pour les transactions';
+        }
+        if (obWidget) {
+          obWidget.style.display = 'block';
+          
+          const progressPct = Math.round((completedSteps / 3) * 100);
+          document.getElementById('obProgressText').textContent = `${progressPct}%`;
+          setTimeout(() => {
+            const pb = document.getElementById('obProgressBar');
+            if(pb) pb.style.width = `${progressPct}%`;
+          }, 300);
+          
+          const markCompleted = (stepId, iconId) => {
+            const el = document.getElementById(stepId);
+            const icon = document.getElementById(iconId);
+            if (el && icon) {
+              el.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+              el.style.background = 'rgba(16, 185, 129, 0.05)';
+              icon.style.background = 'rgba(16, 185, 129, 0.2)';
+              icon.style.color = '#10B981';
+              icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            }
+          };
+
+          if (hasInfoPin) markCompleted('obStepInfo', 'obIconInfo');
+          if (hasPayout) markCompleted('obStepPayout', 'obIconPayout');
+          if (hasKyc) markCompleted('obStepKyc', 'obIconKyc');
+        }
+      } else {
+        if (light) {
+          light.style.backgroundColor = '#10B981';
+          light.style.boxShadow = '0 0 8px rgba(16, 185, 129, 0.6)';
+          light.title = 'Compte prêt pour les transactions';
+        }
+        if (obWidget) {
+          obWidget.style.display = 'none';
+        }
+      }
     }
   } catch(e) { console.warn('[Dashboard] KYC badge:', e); }
 

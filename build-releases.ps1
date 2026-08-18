@@ -50,9 +50,7 @@ if (-not (Test-Path $releasesDir)) {
 
 # Define the targets: Version Code (Int), Version Name (String), Output filename
 $targets = @(
-    @{ Code = 106; Name = "1.0.6"; File = "releases/zola-pay-v1.0.6-b106.aab" },
-    @{ Code = 107; Name = "1.0.7"; File = "releases/zola-pay-v1.0.7-b107.aab" },
-    @{ Code = 108; Name = "1.0.8"; File = "releases/zola-pay-v1.0.8-b108.aab" }
+    @{ Code = 109; Name = "1.0.9"; File = "releases/zola-pay-v1.0.9-b109.aab" }
 )
 
 # Move into Android directory to execute Gradle commands

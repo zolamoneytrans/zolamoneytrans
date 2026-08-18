@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moko Africa / FreshPay — Paiement Sécurisé Visa & Mastercard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0B0F19;
+      --card-bg: rgba(17, 24, 39, 0.88);
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --accent: #10B981;
+      --warning: #F59E0B;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(59, 130, 246, 0.35);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 14px;
+    }
+    .checkout-container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      backdrop-filter: blur(16px);
+      position: relative;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .header .logo-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(59, 130, 246, 0.15);
+      padding: 8px 16px;
+      border-radius: 100px;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      margin-bottom: 14px;
+    }
+    .header h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #FFF;
+      margin-bottom: 4px;
+    }
+    .header p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .bank-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(148, 163, 184, 0.25);
+    }
+    .bank-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .summary-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 22px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+    }
+    .summary-row:last-child {
+      margin-bottom: 0;
+    }
+    .summary-row .label {
+      color: var(--text-muted);
+    }
+    .summary-row .val {
+      font-weight: 700;
+      color: #FFF;
+    }
+    .total-row {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total-row .val {
+      font-size: 1.25rem;
+      color: #60A5FA;
+      font-weight: 850;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .form-input {
+      width: 100%;
+      background: #1E293B;
+      color: #FFF;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 0.98rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+    .row-2 {
+      display: flex;
+      gap: 12px;
+    }
+    .row-2 .form-group {
+      flex: 1;
+    }
+    .btn-pay {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #1D4ED8);
+      color: #FFF;
+      font-weight: 750;
+      font-size: 1.05rem;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(59, 130, 246, 0.5);
+    }
+    .btn-pay:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .security-notice {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.76rem;
+      color: #6EE7B7;
+      margin-top: 18px;
+    }
+    /* 3D Secure Modal */
+    .modal-3d {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 7, 18, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-3d-content {
+      background: #111528;
+      border: 1px solid #3B82F6;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      padding: 30px 24px;
+      text-align: center;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.9);
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(59, 130, 246, 0.2);
+      border-top-color: #3B82F6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 18px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Success screen */
+    #successScreen {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-container">
+    <div id="checkoutFormArea">
+      <div class="header">
+        <div class="logo-wrapper">
+          <i class="fas fa-shield-alt" style="color: #60A5FA;"></i>
+          <span style="font-weight: 800; font-size: 0.85rem; color: #60A5FA;">MOKO AFRICA / FRESHPAY</span>
+        </div>
+        <h1>Passerelle Visa & Mastercard</h1>
+        <p>Propulsé par CyberSource Secure Acceptance (Visa Inc.)</p>
+      </div>
+
+      <div class="bank-badges">
+        <span class="bank-badge" style="background: #1E3A8A; color: #60A5FA;">VISA</span>
+        <span class="bank-badge" style="background: #991B1B; color: #FCA5A5;">MASTERCARD</span>
+        <span class="bank-badge" style="background: #065F46; color: #6EE7B7;">EQUITY BCDC</span>
+        <span class="bank-badge" style="background: #1E40AF; color: #93C5FD;">ECOBANK</span>
+        <span class="bank-badge" style="background: #7C2D12; color: #FDBA74;">RAWBANK</span>
+        <span class="bank-badge" style="background: #581C87; color: #D8B4FE;">TMB</span>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-row">
+          <span class="label">Bénéficiaire :</span>
+          <span class="val" id="dispAgent">Agent Zola Money Trans</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Banque Émettrice :</span>
+          <span class="val" id="dispBank">Carte Visa / MC</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Référence :</span>
+          <span class="val" id="dispRef" style="font-family: monospace; font-size: 0.78rem;">CB_PAYMENT</span>
+        </div>
+        <div class="total-row">
+          <span class="label" style="font-weight: 700; color: #FFF;">Total à débiter :</span>
+          <span class="val" id="dispTotal">0.00 USD</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(30, 58, 138, 0.35); border: 1px solid rgba(96, 165, 250, 0.4); padding: 16px; border-radius: 14px; margin-bottom: 22px; text-align: left;">
+        <p style="color: #93C5FD; font-size: 0.86rem; margin: 0; line-height: 1.5;">
+          ℹ️ Vous allez être redirigé vers la plateforme sécurisée <strong>Moko Africa / CyberSource</strong> pour saisir en toute confidentialité vos coordonnées bancaires et valider votre code <strong>3D-Secure (OTP)</strong>.
+        </p>
+      </div>
+
+      <form id="visaForm">
+        <div class="form-group">
+          <label>Nom & Prénom du Client</label>
+          <input type="text" id="inputHolder" class="form-input" placeholder="EX: JEAN DUPONT" required style="text-transform: uppercase;">
+        </div>
+
+        <button type="submit" class="btn-pay" id="btnPay">
+          🔒 Procéder au paiement sécurisé
+        </button>
+      </form>
+
+      <div class="security-notice">
+        <i class="fas fa-lock"></i> Transaction chiffrée SSL 256-bit • Protection anti-fraude
+      </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="successScreen">
+      <div style="background: rgba(16, 185, 129, 0.15); width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 2px solid #10B981;">
+        <i class="fas fa-check" style="font-size: 2rem; color: #10B981;"></i>
+      </div>
+      <h2 style="color: #FFF; font-size: 1.4rem; font-weight: 800; margin-bottom: 10px;">Paiement Réussi !</h2>
+      <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 24px;">
+        Votre transaction bancaire a été validée par <strong id="succBank" style="color: #FFF;">votre banque</strong>.<br>
+        La caisse Mobile Money de l'Agent <strong id="succAgent" style="color: #60A5FA;">Zola</strong> a été immédiatement créditée.
+      </p>
+      <div style="background: #1E293B; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-family: monospace; font-size: 0.85rem; color: #FCD34D;">
+        STATUT : CONFIRMÉ & CRÉDITÉ
+      </div>
+      <button onclick="if(window.opener){window.close();}else{window.location.href='index.html';}" style="background: #3B82F6; color: #FFF; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer;">
+        Fermer (Retour à l'accueil)
+      </button>
+    </div>
+  </div>
+
+  <!-- 3D Secure Authentication Modal -->
+  <div id="modal3D" class="modal-3d">
+    <div class="modal-3d-content">
+      <div class="spinner"></div>
+      <h3 style="color: #FFF; font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Redirection en cours...</h3>
+      <p style="color: #94A3B8; font-size: 0.85rem; line-height: 1.4; margin-bottom: 16px;">
+        Connexion sécurisée en cours avec <strong id="secBankName" style="color:#FFF;">Moko Africa</strong>.<br>
+        Veuillez patienter pendant le chargement de la page de paiement.
+      </p>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 10px; border-radius: 10px; font-size: 0.78rem; color: #60A5FA;">
+        🛡️ Protection Verified by Visa / Mastercard SecureCode
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { db, doc, getDoc } from './js/firebase.js';
+
+    // Parse URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    let agentCode = params.get('agent') || 'ZMT-AG-MARCHAND';
+    let amtVal = parseFloat(params.get('amt')) || 1.09;
+    let baseAmtVal = parseFloat(params.get('baseAmt')) || Number((amtVal / 1.095).toFixed(2));
+    let currVal = params.get('curr') || 'USD';
+    let bankVal = params.get('bank') || 'Rawbank';
+    let refVal = params.get('ref') || `CB_${Date.now()}`;
+    const txId = params.get('txId');
+
+    // Populate UI
+    function updateUI() {
+      document.getElementById('dispAgent').innerText = `Agent ${agentCode}`;
+      document.getElementById('dispBank').innerText = bankVal;
+      document.getElementById('dispRef').innerText = refVal;
+      document.getElementById('dispTotal').innerText = `${amtVal.toFixed(2)} ${currVal}`;
+      document.getElementById('btnPay').innerText = `🔒 Procéder au Paiement (${amtVal.toFixed(2)} ${currVal})`;
+    }
+    
+    updateUI();
+
+    if (txId) {
+      getDoc(doc(db, 'transactions', txId)).then(snap => {
+        if (snap.exists()) {
+          const data = snap.data();
+          const allowed = data.allowedMethod || 'ALL';
+          if (allowed === 'MOBILE_MONEY') {
+            alert("Mode de paiement non autorisé. Seul le Mobile Money est autorisé pour cette transaction.");
+            window.location.href = `smart_pay.html?txId=${txId}`;
+            return;
+          }
+          agentCode = data.partnerId || agentCode;
+          amtVal = data.montant;
+          currVal = data.currency;
+          baseAmtVal = data.amountBase || Number((amtVal / 1.095).toFixed(2));
+          refVal = data.reference || data.merchantReference || refVal;
+          updateUI();
+        }
+      }).catch(err => console.error("Error loading txId:", err));
+    }
+
+    // Form Submit
+    document.getElementById('visaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('secBankName').innerText = bankVal;
+      const mTitle = document.querySelector('#modal3D h3');
+      if (mTitle) mTitle.innerText = "Redirection vers FreshPay / CyberSource...";
+      const mDesc = document.querySelector('#modal3D p');
+      if (mDesc) mDesc.innerHTML = "Création de la session sécurisée Moko Africa.<br>Vous allez être redirigé vers la passerelle bancaire pour saisir votre carte et le code OTP de votre banque.";
+      document.getElementById('modal3D').style.display = 'flex';
+
+      const holder = document.getElementById('inputHolder').value || 'CLIENT CB';
+
+      try {
+        const res = await fetch('https://us-central1-zolamoneytransmarchand.cloudfunctions.net/processCardCheckout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agentCode: agentCode,
+            amount: amtVal,
+            baseAmt: baseAmtVal,
+            currency: currVal,
+            bank: bankVal,
+            cardHolder: holder,
+            reference: refVal,
+            txId: txId
+          })
+        });
+        const outData = await res.json();
+        console.log("processCardCheckout backend:", outData);
+        if (outData && outData.success && outData.paymentUrl) {
+          window.location.href = outData.paymentUrl;
+        } else {
+          alert("Erreur passerelle : " + (outData.message || "Impossible de rediriger vers la plateforme bancaire."));
+          document.getElementById('modal3D').style.display = 'none';
+        }
+      } catch (backendErr) {
+        console.error("Erreur API backend:", backendErr);
+        alert("Erreur de connexion à la passerelle de paiement.");
+        document.getElementById('modal3D').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

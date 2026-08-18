@@ -1,0 +1,1 @@
+const SERDIPAY_PWD = "$2y$12$XNmMCt/8g2ov6X0/ha1/5atLqFI1Mthw7kZXMUJY.Tj0FMzBQPPpe";

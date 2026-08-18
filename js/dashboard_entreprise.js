@@ -156,6 +156,7 @@ window.handleLogout = async () => { await signOut(auth); window.location.href = 
 
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   window._dashUser = user.uid;
 
   document.getElementById('loadingScreen').style.display = 'none';
@@ -171,6 +172,11 @@ onAuthStateChanged(auth, async user => {
     const userSnap = await getDoc(doc(db, 'users', user.uid));
     if (userSnap.exists()) {
       const u = userSnap.data();
+      if (u.blocked === true) {
+        await signOut(auth);
+        window.location.href = 'auth.html';
+        return;
+      }
       const uType = u.type || 'particulier';
       if (uType === 'particulier') { window.location.href = 'dashboard.html'; return; }
       if (uType === 'marchand') { window.location.href = 'dashboard_marchand.html'; return; }
@@ -180,6 +186,7 @@ onAuthStateChanged(auth, async user => {
       const kl = u.kycLevel || 'basique';
       const kb = document.getElementById('kycBadge');
       if (kb) kb.innerHTML = `<span class="badge ${kycLevels[kl]||'badge-warning'}">${kycLabels[kl]||'KYC Basique'}</span>`;
+      if (window.checkAndShowKycReminder) window.checkAndShowKycReminder(u);
     }
   } catch(e) { console.warn('[Dashboard] KYC badge:', e); }
 

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /dashboard.html
+Disallow: /dashboard_entreprise.html
+Disallow: /dashboard_marchand.html
+Disallow: /settings.html
+Sitemap: https://zolamoneypay.com/sitemap.xml

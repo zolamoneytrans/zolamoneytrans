@@ -6,10 +6,28 @@
   <title>Tableau de Bord — Zola Money Trans</title>
   <link rel="icon" href="icons/zolalogo96x96.png"/>
   <meta name="theme-color" content="#7C3AED"/>
-  <link rel="stylesheet" href="css/main.css?v=6"/>
-  <link rel="stylesheet" href="css/components.css?v=6"/>
-  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <link rel="stylesheet" href="css/main.css?v=7"/>
+  <link rel="stylesheet" href="css/components.css?v=7"/>
+  <link rel="stylesheet" href="css/animations.css?v=7"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .ob-step {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .ob-step:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 <body>
 
@@ -43,6 +61,10 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
         Factures
       </a>
+      <a href="history.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Historique
+      </a>
       <div class="nav-section-title" style="margin-top:8px;">Compte</div>
       <a href="kyc.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
@@ -51,6 +73,10 @@
       <a href="settings.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Paramètres
+      </a>
+      <a href="javascript:void(0)" onclick="shareZolaApp(); toggleSidebar();" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Partager l'application
       </a>
       <a href="help.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
@@ -68,24 +94,29 @@
 
   <!-- Main -->
   <main class="main-content">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="toggleSidebar()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <header class="topbar" style="padding: 20px 24px; border: none; background: #0a0a0f;">
+      <div class="topbar-left" style="gap: 20px;">
+        <button class="hamburger" onclick="toggleSidebar()" style="display: flex;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="16" y1="18" y2="18"/></svg>
         </button>
         <div>
-          <div class="topbar-title">Tableau de Bord <span style="font-size: 0.65rem; padding: 2px 6px; background: var(--c-surface2); color: var(--c-primary); border-radius: 4px; vertical-align: middle; margin-left: 8px;">PARTICULIER</span></div>
-          <div style="font-size:0.78rem; color:var(--c-text3);" id="dateDisplay"></div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div class="topbar-title" style="font-size: 1.4rem;">Tableau de Bord</div>
+            <div id="accountStatusLight" style="width: 12px; height: 12px; border-radius: 50%; background-color: #EF4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); margin-left: 4px; transition: all 0.3s;" title="Compte en configuration"></div>
+            <button onclick="showZolaTutorial()" style="background: none; border: none; color: var(--c-text3); cursor: pointer; display: flex; padding: 2px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
+            </button>
+          </div>
+          <div style="font-size:0.8rem; color:var(--c-text3); font-weight: 500;" id="dateDisplay"></div>
         </div>
       </div>
       <div class="topbar-right">
-        <div id="kycBadge"></div>
-        <div class="avatar" id="userAvatar">Z</div>
-        <div style="display:none; flex-direction:column;" id="userInfo">
-          <span style="font-weight:600; font-size:0.9rem;" id="userName">—</span>
-          <span style="font-size:0.75rem; color:var(--c-text3);" id="userEmail">—</span>
-          <span style="font-size:0.7rem; color:var(--c-primary); font-weight:700; text-transform:uppercase; margin-top:2px;">Particulier</span>
+        <div class="topbar-badge-stack" id="kycBadgeContainer">
+          <span style="font-size: 0.65rem; color: #8B5CF6; font-weight: 700;">PARTICULIER</span>
+          <span style="font-size: 0.75rem; color: var(--c-text2); font-weight: 600;" id="kycStatusText">KYC Avancé</span>
         </div>
+        <div class="avatar" id="userAvatar" style="background: linear-gradient(135deg, #9333EA, #F59E0B); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">J</div>
+        <div style="display:none;" id="userInfo"><span id="userName">—</span><span id="userEmail">—</span></div>
       </div>
     </header>
 
@@ -96,43 +127,311 @@
         <span id="amlMessage">Alerte de conformité en attente de traitement.</span>
       </div>
 
+      <!-- Onboarding Checklist -->
+      <div id="onboardingWidget" class="card" style="display:none; margin-bottom: 24px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(124, 58, 237, 0.2); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(124, 58, 237, 0.1); filter: blur(40px); border-radius: 50%;"></div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; position: relative; z-index: 1;">
+          <div>
+            <h2 style="font-size: 1.25rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              Finalisez votre configuration
+            </h2>
+            <p style="color: var(--c-text3); font-size: 0.9rem; margin: 0;">Débloquez toutes les fonctionnalités de Zola en complétant votre profil.</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: #8B5CF6;" id="obProgressText">0%</div>
+          </div>
+        </div>
+
+        <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 20px; overflow: hidden; position: relative; z-index: 1;">
+          <div id="obProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #8B5CF6, #F59E0B); border-radius: 4px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; position: relative; z-index: 1;" id="obStepsContainer">
+          <a href="settings.html" class="ob-step" id="obStepInfo">
+            <div class="ob-icon" id="obIconInfo" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: var(--c-text3);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">Infos & PIN</div>
+              <div style="color: var(--c-text3); font-size: 0.75rem;">Sécurisez votre compte</div>
+            </div>
+          </a>
+          <a href="settings.html" class="ob-step" id="obStepPayout">
+            <div class="ob-icon" id="obIconPayout" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: var(--c-text3);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">Moyen de retrait</div>
+              <div style="color: var(--c-text3); font-size: 0.75rem;">Mobile Money ou Visa</div>
+            </div>
+          </a>
+          <a href="kyc.html" class="ob-step" id="obStepKyc">
+            <div class="ob-icon" id="obIconKyc" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: var(--c-text3);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">Vérification KYC</div>
+              <div style="color: var(--c-text3); font-size: 0.75rem;">Pièce d'identité</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
       <!-- Actions Rapides -->
-      <div class="card" style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
-        <div class="section-title" style="margin-bottom:4px;">Actions rapides</div>
-        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;">
-          <a href="scan.html" class="btn btn-primary" style="white-space:normal; height:auto; padding:12px 8px; font-size:0.85rem; line-height:1.3; text-align:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
-            Scanner et Payer
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; margin-left: 4px;">Actions rapides</h2>
+        <div class="responsive-grid" style="gap: 12px;">
+          <a href="scan.html" class="btn-action-card btn-action-primary">
+            <div class="btn-action-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+            </div>
+            <div class="btn-action-text">Scanner et<br>Payer</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
           </a>
-          <a href="request_payment.html" class="btn btn-outline" style="white-space:normal; height:auto; padding:12px 8px; font-size:0.85rem; line-height:1.3; text-align:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            Demander un paiement
+          <a href="request_payment.html" class="btn-action-card btn-action-secondary">
+            <div class="btn-action-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="btn-action-text">Demander un<br>paiement</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
           </a>
-          <a href="transfer.html" class="btn btn-outline" style="white-space:normal; height:auto; padding:12px 8px; font-size:0.85rem; line-height:1.3; text-align:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
-            Nouveau transfert
+          <a href="transfer.html" class="btn-action-card btn-action-secondary">
+            <div class="btn-action-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </div>
+            <div class="btn-action-text">Nouveau<br>transfert</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
           </a>
-          <a href="bills.html" class="btn btn-outline" style="white-space:normal; height:auto; padding:12px 8px; font-size:0.85rem; line-height:1.3; text-align:center;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-            Payer une facture
+          <a href="bills.html" class="btn-action-card btn-action-secondary">
+            <div class="btn-action-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div class="btn-action-text">Payer une<br>facture</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Opérations Simplifiées: Depuis Ma Banque -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; margin-left: 4px;">Depuis Ma Banque vers Mobile Money</h2>
+        <div class="responsive-grid" style="gap: 12px;">
+          <a href="transfer.html?from=bank&to=mpesa" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <circle cx="50" cy="40" r="28" fill="white" stroke="#ccc" stroke-width="1"/>
+                <path d="M50 15 C65 40 65 60 50 60 C35 60 35 40 50 15 Z" fill="#E60000"/>
+                <text x="50" y="85" fill="#E60000" font-family="Arial, sans-serif" font-weight="bold" font-size="16" text-anchor="middle">vodacom</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Ma Banque<br>&rarr; Mpesa</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=bank&to=orange" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <rect x="25" y="15" width="50" height="50" fill="#F16E00"/>
+                <text x="50" y="85" fill="#F16E00" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">orange</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Ma Banque<br>&rarr; OrangeMoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=bank&to=airtel" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <path d="M25 40 C25 20 75 20 75 40 C75 70 25 70 40 40 C45 25 55 25 60 45" stroke="#FF0000" stroke-width="12" stroke-linecap="round" fill="none"/>
+                <text x="50" y="85" fill="#FF0000" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">airtel</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Ma Banque<br>&rarr; AirtelMoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=bank&to=afri" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <path d="M40 30 Q50 15 60 30" stroke="#8B5CF6" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <path d="M45 42 Q50 32 55 42" stroke="#8B5CF6" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <circle cx="50" cy="52" r="4" fill="#F97316"/>
+                <text x="50" y="85" fill="#F97316" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">africell</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Ma Banque<br>&rarr; Afrimoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Opérations Simplifiées: Depuis Mon Numéro -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; margin-left: 4px;">Depuis Mon Numéro vers Mobile Money</h2>
+        <div class="responsive-grid" style="gap: 12px;">
+          <a href="transfer.html?from=phone&to=mpesa" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <circle cx="50" cy="40" r="28" fill="white" stroke="#ccc" stroke-width="1"/>
+                <path d="M50 15 C65 40 65 60 50 60 C35 60 35 40 50 15 Z" fill="#E60000"/>
+                <text x="50" y="85" fill="#E60000" font-family="Arial, sans-serif" font-weight="bold" font-size="16" text-anchor="middle">vodacom</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Mon numéro<br>&rarr; Mpesa</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=phone&to=orange" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <rect x="25" y="15" width="50" height="50" fill="#F16E00"/>
+                <text x="50" y="85" fill="#F16E00" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">orange</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Mon numéro<br>&rarr; OrangeMoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=phone&to=airtel" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <path d="M25 40 C25 20 75 20 75 40 C75 70 25 70 40 40 C45 25 55 25 60 45" stroke="#FF0000" stroke-width="12" stroke-linecap="round" fill="none"/>
+                <text x="50" y="85" fill="#FF0000" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">airtel</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Mon numéro<br>&rarr; AirtelMoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="transfer.html?from=phone&to=afri" class="btn-action-card btn-action-secondary">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <svg viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <path d="M40 30 Q50 15 60 30" stroke="#8B5CF6" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <path d="M45 42 Q50 32 55 42" stroke="#8B5CF6" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <circle cx="50" cy="52" r="4" fill="#F97316"/>
+                <text x="50" y="85" fill="#F97316" font-family="Arial, sans-serif" font-weight="bold" font-size="20" text-anchor="middle">africell</text>
+              </svg>
+            </div>
+            <div class="btn-action-text">Mon numéro<br>&rarr; Afrimoney</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Opérations Simplifiées: Autres actions -->
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; margin-left: 4px;">Autres opérations simplifiées</h2>
+        <div class="responsive-grid" style="gap: 12px;">
+          <a href="scan.html?mode=pay_agent_visa" class="btn-action-card card-zola btn-action-secondary">
+            <div class="btn-action-icon icon-zola">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/></svg>
+            </div>
+            <div class="btn-action-text">Payer Banque<br>&rarr; Agent Zola</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="request_payment.html?type=link" class="btn-action-card card-info btn-action-secondary">
+            <div class="btn-action-icon icon-info">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="btn-action-text">Créer un lien<br>de paiement</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </a>
+          <a href="request_payment.html?type=qr" class="btn-action-card card-purple btn-action-secondary">
+            <div class="btn-action-icon icon-purple">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+            </div>
+            <div class="btn-action-text">Créer un QR code<br>pour recevoir paiement</div>
+            <div class="btn-action-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
           </a>
         </div>
       </div>
 
       <!-- Stat cards -->
-      <div class="stat-grid stagger" id="statsGrid">
-        <div class="stat-card" style="--accent-color:#7C3AED;">
-          <div class="stat-icon" style="background:#7C3AED;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <div class="stat-label">Transactions aujourd'hui</div>
-          <div class="stat-value" id="statTx">—</div>
-          <div class="stat-change up" id="statTxChange">+0 vs hier</div>
+
+      <div id="statsGrid">
+        <div class="stat-card-horizontal">
+          <div class="stat-sparkline-container">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none" style="width: 100%; height: 100%; opacity: 0.5;">
+              <path d="M0,35 Q10,35 20,35 T40,35 Q50,35 60,30 T75,15 Q85,0 100,0 L100,40 L0,40 Z" fill="url(#purpleGrad)"/>
+              <path d="M0,35 Q10,35 20,35 T40,35 Q50,35 60,30 T75,15 Q85,0 100,0" fill="none" stroke="#8B5CF6" stroke-width="2"/>
+              <defs>
+                <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="38" x2="100" y2="38" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2,2" stroke-width="0.5"/>
+            </svg>
+          </div>
+          <div class="stat-card-left">
+            <div class="stat-card-icon-lg bg-purple-glow">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div>
+              <div class="stat-card-title">Transactions aujourd'hui</div>
+              <div class="stat-card-val" id="statTx">0</div>
+              <div class="stat-card-change text-green" id="statTxChange">+0 vs hier</div>
+            </div>
+          </div>
         </div>
-        <div class="stat-card" style="--accent-color:#F59E0B;">
-          <div class="stat-icon" style="background:#F59E0B;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <div class="stat-label">Volume (ce mois)</div>
-          <div class="stat-value" id="statVolume">—</div>
-          <div class="stat-value" style="font-size:1.1rem; color:var(--c-text2); margin-top:4px;" id="statVolumeUSD">—</div>
-          <div class="stat-change up" id="statVolumeChange">+0%</div>
+
+        <div class="stat-card-horizontal">
+          <div class="stat-sparkline-container">
+            <svg viewBox="0 0 100 50" preserveAspectRatio="none" style="width: 100%; height: 100%; opacity: 0.6;">
+              <rect x="5" y="40" width="6" height="10" fill="url(#goldGrad)" rx="2" />
+              <rect x="18" y="35" width="6" height="15" fill="url(#goldGrad)" rx="2" />
+              <rect x="31" y="32" width="6" height="18" fill="url(#goldGrad)" rx="2" />
+              <rect x="44" y="25" width="6" height="25" fill="url(#goldGrad)" rx="2" />
+              <rect x="57" y="20" width="6" height="30" fill="url(#goldGrad)" rx="2" />
+              <rect x="70" y="10" width="6" height="40" fill="url(#goldGrad)" rx="2" />
+              <rect x="83" y="5" width="6" height="45" fill="url(#goldGrad)" rx="2" />
+              <rect x="96" y="0" width="6" height="50" fill="url(#goldGrad)" rx="2" />
+              <defs>
+                <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#F59E0B" stop-opacity="1"/>
+                  <stop offset="100%" stop-color="#D97706" stop-opacity="0.1"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="stat-card-left">
+            <div class="stat-card-icon-lg bg-gold-glow">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div>
+              <div class="stat-card-title">Volume (ce mois)</div>
+              <div class="stat-card-val" id="statVolume">0 CDF</div>
+              <div class="stat-card-change text-green" id="statVolumeChange">+0% vs mois dernier</div>
+              <div style="display:none;" id="statVolumeUSD"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Banner -->
+      <div class="security-card">
+        <div class="security-card-content">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            Sécurisé & Fiable
+          </h3>
+          <p>Vos transactions sont protégées avec le plus haut niveau de sécurité.</p>
+        </div>
+        <div class="security-card-img">
+          <!-- Shield 3D-like illustration -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Pedestal -->
+            <ellipse cx="100" cy="150" rx="60" ry="20" fill="#2E1065"/>
+            <ellipse cx="100" cy="140" rx="60" ry="20" fill="#4C1D95"/>
+            <!-- Shield glow -->
+            <circle cx="90" cy="90" r="50" fill="#8B5CF6" opacity="0.4" filter="blur(20px)"/>
+            <!-- Shield body -->
+            <path d="M90 30 L40 50 L40 100 C40 140 90 170 90 170 C90 170 140 140 140 100 L140 50 Z" fill="#6D28D9"/>
+            <path d="M90 30 L90 170 C90 170 140 140 140 100 L140 50 Z" fill="#8B5CF6"/>
+            <!-- Checkmark -->
+            <path d="M70 100 L85 115 L110 85" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Mini Padlock -->
+            <rect x="120" y="120" width="30" height="25" rx="4" fill="#3B0764"/>
+            <rect x="120" y="120" width="15" height="25" rx="4" fill="#4C1D95"/>
+            <path d="M125 120 V110 C125 100 145 100 145 110 V120" fill="none" stroke="#3B0764" stroke-width="5"/>
+            <circle cx="135" cy="132" r="3" fill="#fff"/>
+          </svg>
         </div>
       </div>
 
@@ -154,10 +453,16 @@
       <div class="card">
         <div class="section-header">
           <span class="section-title">Transactions récentes</span>
-          <button class="btn btn-outline btn-sm" onclick="exportCSV()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-            Export CSV
-          </button>
+          <div>
+            <a href="history.html" class="btn btn-outline btn-sm" style="margin-right:8px; text-decoration:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Voir tout
+            </a>
+            <button class="btn btn-outline btn-sm" onclick="exportCSV()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
         </div>
         <div class="table-wrap">
           <table>
@@ -210,5 +515,6 @@
 <div id="toast-container"></div>
 <script src="js/app.js" type="module"></script>
 <script type="module" src="js/dashboard.js"></script>
+<script src="js/tutorial.js"></script>
 </body>
 </html>

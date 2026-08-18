@@ -4,7 +4,7 @@
   "description": "Zola Money Trans PWA and Mobile App",
   "main": "index.html",
   "scripts": {
-    "build": "powershell -Command \"Remove-Item -Recurse -Force www -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Path www; Copy-Item *.html, manifest.json, sw.js www/; Copy-Item -Recurse css, js, icons www/\"",
+    "build": "powershell -Command \"Remove-Item -Recurse -Force www -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Path www; Copy-Item *.html, manifest.json, sw.js, sitemap.xml, robots.txt www/ -ErrorAction SilentlyContinue; Copy-Item -Recurse css, js, icons, assets www/ -ErrorAction SilentlyContinue\"",
     "cap:sync": "npm run build && npx cap sync",
     "cap:copy": "npm run build && npx cap copy",
     "cap:open": "npx cap open android"

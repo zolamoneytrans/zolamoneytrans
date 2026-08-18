@@ -1,5 +1,5 @@
 {
-  "appId": "com.zolamoneytrans.app",
+  "appId": "com.zolamoneytrans.web",
   "appName": "Zola Money Trans",
   "webDir": "www",
   "bundledWebRuntime": false,

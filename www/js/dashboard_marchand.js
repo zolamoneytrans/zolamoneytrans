@@ -16,7 +16,7 @@ const statusBadge = s => {
   return `<span class="badge badge-${map[s]||'info'}">${labels[s]||s}</span>`;
 };
 
-const opColor = { 'mpesa':'#e31e24','airtel':'#FF0000','orange':'#FF6600','M-Pesa':'#e31e24','Airtel Money':'#FF0000','Orange Money':'#FF6600' };
+const opColor = { 'mpesa':'#e31e24','airtel':'#FF0000','orange':'#FF6600','afrimoney':'#6D28D9','M-Pesa':'#e31e24','Airtel Money':'#FF0000','Orange Money':'#FF6600','Afrimoney':'#6D28D9' };
 
 // ── Table des transactions ──
 function renderTxTable(docs) {
@@ -27,7 +27,12 @@ function renderTxTable(docs) {
   }
   tbody.innerHTML = docs.map((d, i) => {
     const tx = d.data ? d.data() : d;
-    const dateVal = tx.createdAt?.toDate ? tx.createdAt.toDate() : (tx.date || new Date());
+    let dateVal = new Date();
+    if (tx.createdAt?.toDate) {
+      dateVal = tx.createdAt.toDate();
+    } else if (tx.date) {
+      dateVal = new Date(tx.date);
+    }
     const op = tx.operateur || '—';
     const benef = tx.beneficiaire || tx.customerNumber || '—';
     return `
@@ -126,6 +131,7 @@ window.handleLogout = async () => { await signOut(auth); window.location.href = 
 
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   window._dashUser = user.uid;
 
   document.getElementById('loadingScreen').style.display = 'none';
@@ -141,6 +147,11 @@ onAuthStateChanged(auth, async user => {
     const userSnap = await getDoc(doc(db, 'users', user.uid));
     if (userSnap.exists()) {
       const u = userSnap.data();
+      if (u.blocked === true) {
+        await signOut(auth);
+        window.location.href = 'auth.html';
+        return;
+      }
       const uType = u.type || 'particulier';
       if (uType === 'particulier') { window.location.href = 'dashboard.html'; return; }
       if (uType === 'entreprise') { window.location.href = 'dashboard_entreprise.html'; return; }
@@ -150,6 +161,7 @@ onAuthStateChanged(auth, async user => {
       const kl = u.kycLevel || 'basique';
       const kb = document.getElementById('kycBadge');
       if (kb) kb.innerHTML = `<span class="badge ${kycLevels[kl]||'badge-warning'}">${kycLabels[kl]||'KYC Basique'}</span>`;
+      if (window.checkAndShowKycReminder) window.checkAndShowKycReminder(u);
     }
   } catch(e) { console.warn('[Dashboard] KYC badge:', e); }
 

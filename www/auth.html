@@ -3,8 +3,52 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connexion — Zola Money Trans</title>
-  <meta name="description" content="Connectez-vous ou créez votre compte Zola Money Trans."/>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Zola Money Trans — Agrégateur de Paiement en RDC">
+  <meta name="description" content="Zola Money Trans est le premier agrégateur de paiement marchand inter-opérateurs de la RDC. Acceptez M-Pesa, Airtel Money et Orange Money avec un seul QR code.">
+  <meta name="keywords" content="Zola Money, Paiement RDC, Mobile Money RDC, M-Pesa, Airtel Money, Orange Money, Fintech Afrique, Transfert d'argent, Agrégateur de paiement, Zola">
+  <meta name="author" content="Swazi Appli Lab SARL">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zolamoneypay.com/">
+  <meta property="og:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="og:description" content="Acceptez tous les paiements Mobile Money (M-Pesa, Airtel, Orange) en RDC avec un seul compte.">
+  <meta property="og:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://zolamoneypay.com/">
+  <meta property="twitter:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="twitter:description" content="Acceptez tous les paiements Mobile Money en RDC avec un seul compte.">
+  <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+
+
+  <!-- Primary Meta Tags -->
+  
+  
+  <meta name="keywords" content="Zola Money, Paiement RDC, Mobile Money RDC, M-Pesa, Airtel Money, Orange Money, Fintech Afrique, Transfert d'argent, Agrégateur de paiement, Zola">
+  <meta name="author" content="Swazi Appli Lab SARL">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zolamoneypay.com/">
+  <meta property="og:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="og:description" content="Acceptez tous les paiements Mobile Money (M-Pesa, Airtel, Orange) en RDC avec un seul compte.">
+  <meta property="og:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://zolamoneypay.com/">
+  <meta property="twitter:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="twitter:description" content="Acceptez tous les paiements Mobile Money en RDC avec un seul compte.">
+  <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+
+  
+  
   <link rel="manifest" href="manifest.json"/>
   <link rel="icon" href="icons/zolalogo96x96.png"/>
   <meta name="theme-color" content="#7C3AED"/>
@@ -90,10 +134,12 @@
       </div>
       <div class="form-group">
         <label class="form-label">Type de compte</label>
-        <select id="regType" class="form-control">
+        <select id="regType" class="form-control" onchange="if(this.value === 'agent') window.location.href = 'agent_signup.html';">
           <option value="particulier">Particulier</option>
           <option value="marchand">Commerçant / Marchand</option>
           <option value="entreprise">Entreprise / PME</option>
+          <option value="eglise">Eglise / Ministère</option>
+          <option value="agent" style="font-weight:bold; color:var(--c-primary);">Agent Zola</option>
         </select>
       </div>
       <div class="form-group">
@@ -106,7 +152,7 @@
       </div>
       <label style="display:flex; gap:10px; align-items:flex-start; font-size:0.82rem; color:var(--c-text2); margin-bottom:20px; cursor:pointer;">
         <input type="checkbox" id="regTerms" required style="margin-top:2px; accent-color:var(--c-primary);"/>
-        J'accepte les <a href="#" style="margin:0 4px;">Conditions d'utilisation</a> et la <a href="privacy.html">Politique de confidentialité</a>
+        J'accepte les <a href="terms.html" target="_blank" style="margin:0 4px;">Conditions d'utilisation</a> et la <a href="privacy.html" target="_blank">Politique de confidentialité</a>
       </label>
       <button type="submit" class="btn btn-primary btn-block btn-lg" id="registerBtn">
         <span id="regBtnText">Créer mon compte</span>
@@ -150,7 +196,7 @@
 <div id="toast-container"></div>
 
 <script type="module">
-import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, setDoc, doc, serverTimestamp, isAdmin, RecaptchaVerifier, signInWithPhoneNumber, getDoc } from './js/firebase.js';
+import { auth, db, functions, httpsCallable, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, setDoc, doc, serverTimestamp, isAdmin, RecaptchaVerifier, signInWithPhoneNumber, getDoc, signOut, sendEmailVerification } from './js/firebase.js';
 
 let confirmationResult = null; // Firebase Phone Auth confirmation
 
@@ -182,13 +228,40 @@ window.handleLogin = async function(e) {
   try {
     const cred = await signInWithEmailAndPassword(auth, email, pass);
     if (isAdmin(cred.user)) { window.location.href = 'admin.html'; return; }
+    
+    if (!cred.user.emailVerified) {
+      await sendEmailVerification(cred.user);
+      await signOut(auth);
+      showAlert('Veuillez vérifier votre adresse e-mail avant d\'accéder à votre compte. Un lien vous a été envoyé.', 'warning');
+      setLoading('loginBtn','loginSpinner','loginBtnText',false);
+      return;
+    }
+
     const docSnap = await getDoc(doc(db, 'users', cred.user.uid));
     if (docSnap.exists()) {
+      if (docSnap.data().blocked === true) {
+        await signOut(auth);
+        showAlert('Votre compte a été bloqué par l\'administrateur. Accès refusé.', 'danger');
+        setLoading('loginBtn','loginSpinner','loginBtnText',false);
+        return;
+      }
       const uType = docSnap.data().type;
+      
+      try {
+        const notifyFn = httpsCallable(functions, 'notifyUserLogin');
+        notifyFn({ userAgent: navigator.userAgent, role: uType || 'Utilisateur' }).catch(e => console.warn(e));
+      } catch (e) {}
+
       if (uType === 'marchand') window.location.href = 'dashboard_marchand.html';
       else if (uType === 'entreprise') window.location.href = 'dashboard_entreprise.html';
+      else if (uType === 'eglise') window.location.href = 'dashboard_eglise.html';
+      else if (uType === 'agent') window.location.href = 'agent_dashboard.html';
       else window.location.href = 'dashboard.html';
     } else {
+      try {
+        const notifyFn = httpsCallable(functions, 'notifyUserLogin');
+        notifyFn({ userAgent: navigator.userAgent, role: 'Utilisateur' }).catch(e => console.warn(e));
+      } catch (e) {}
       window.location.href = 'dashboard.html';
     }
   } catch(err) {
@@ -221,12 +294,12 @@ window.handleRegister = async function(e) {
       createdAt: serverTimestamp(), role: 'user'
     });
 
-    // Envoyer SMS OTP si numéro fourni
-    if (tel && tel.startsWith('+')) {
-      await sendPhoneOtp(tel, cred.user.uid);
-    } else {
-      window.location.href = 'kyc.html';
-    }
+    await sendEmailVerification(cred.user);
+    await signOut(auth);
+    showAlert('Un lien de vérification a été envoyé à votre adresse e-mail. Veuillez vérifier votre boîte de réception avant de vous connecter.', 'success');
+    switchTab('login');
+    setLoading('registerBtn','regSpinner','regBtnText',false);
+    return;
   } catch(err) {
     let msg = "Erreur lors de l'inscription.";
     if (err.code === 'auth/email-already-in-use') msg = 'Cet e-mail est déjà utilisé.';
@@ -255,7 +328,9 @@ async function sendPhoneOtp(phoneNumber, uid) {
   } catch(err) {
     console.error('[Phone Auth]', err);
     // Si l'OTP ne peut pas être envoyé (ex: numéro non vérifié en test), aller au KYC
-    window.location.href = 'kyc.html';
+    const type = document.getElementById('regType').value;
+    if (type === 'eglise') window.location.href = 'dashboard_eglise.html';
+    else window.location.href = 'kyc.html';
   }
 }
 
@@ -274,10 +349,21 @@ window.verifyOtp = async function() {
   if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Vérification…'; }
   try {
     if (confirmationResult) {
-      await confirmationResult.confirm(code);
+      const cred = await confirmationResult.confirm(code);
+      if (cred && cred.user) {
+        const docSnap = await getDoc(doc(db, 'users', cred.user.uid));
+        if (docSnap.exists() && docSnap.data().blocked === true) {
+          await signOut(auth);
+          showAlert('Votre compte a été bloqué par l\'administrateur. Accès refusé.', 'danger');
+          if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Vérifier'; }
+          return;
+        }
+      }
     }
     document.getElementById('otpModal').classList.remove('open');
-    window.location.href = 'kyc.html';
+    const type = document.getElementById('regType').value;
+    if (type === 'eglise') window.location.href = 'dashboard_eglise.html';
+    else window.location.href = 'kyc.html';
   } catch(err) {
     showAlert('Code incorrect ou expiré. Réessayez.', 'danger');
     if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Vérifier'; }
@@ -300,15 +386,29 @@ window.showForgot = function() {
 // Check hash for auto-switch to register
 if (location.hash === '#register') switchTab('register');
 
+if (location.search.includes('unverified=1')) {
+  showAlert('Veuillez vérifier votre adresse e-mail avant d\'accéder à votre compte.', 'warning');
+}
+
 // Auth guard - redirect if already logged in
 onAuthStateChanged(auth, async user => {
   if (user) { 
     if (isAdmin(user)) { window.location.href = 'admin.html'; return; }
+    if (!user.emailVerified) {
+      await signOut(auth);
+      return;
+    }
     const docSnap = await getDoc(doc(db, 'users', user.uid));
     if (docSnap.exists()) {
+      if (docSnap.data().blocked === true) {
+        await signOut(auth);
+        return;
+      }
       const uType = docSnap.data().type;
       if (uType === 'marchand') window.location.href = 'dashboard_marchand.html';
       else if (uType === 'entreprise') window.location.href = 'dashboard_entreprise.html';
+      else if (uType === 'eglise') window.location.href = 'dashboard_eglise.html';
+      else if (uType === 'agent') window.location.href = 'agent_dashboard.html';
       else window.location.href = 'dashboard.html';
     } else {
       window.location.href = 'dashboard.html';

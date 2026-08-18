@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Guide d'Int&eacute;gration Zola Money API</title>
+  <style>
+    :root {
+      --primary: #9B59F5;
+      --bg: #0f0a1e;
+      --card: rgba(255, 255, 255, 0.05);
+      --text: #F1F0F6;
+      --muted: #A89FC0;
+    }
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(135deg, #1f113a, #0f0a1e);
+      padding: 40px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    h1 { color: var(--primary); margin-bottom: 10px; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .section {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+    h2 { color: #fff; margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block; }
+    h3 { color: #F59E0B; margin-top: 30px; }
+    code {
+      background-color: rgba(0,0,0,0.5);
+      color: #10B981;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    pre code { background: none; color: #60A5FA; padding: 0; }
+    .badge {
+      background-color: var(--primary);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    th { color: var(--muted); font-weight: normal; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Zola Money Trans API <span class="badge">V1</span></h1>
+  <p style="color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+    Guide complet d'int&eacute;gration pour les partenaires et les marchands.
+  </p>
+</header>
+
+<div class="container">
+
+  <div class="section">
+    <h2>1. Introduction</h2>
+    <p>
+      L'API Zola Money vous permet d'int&eacute;grer facilement les paiements Mobile Money (Airtel, M-Pesa, Orange, Africell, Cartes Bancaires) directement dans votre application web ou mobile.
+    </p>
+    <p>
+      <strong>Authentification :</strong> Toutes les requ&ecirc;tes vers l'API n&eacute;cessitent une cl&eacute; secr&egrave;te (<code>X-Zola-Api-Key</code>) qui vous sera fournie par l'administrateur Zola Money.
+    </p>
+    <p>
+      <strong>Base URL :</strong> <code>https://us-central1-zolamoneytrans.cloudfunctions.net</code>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>2. Initialiser un Paiement</h2>
+    <p>
+      Pour d&eacute;marrer un paiement, vous devez appeler l'endpoint d'initialisation. Cet appel vous retournera une URL de paiement s&eacute;curis&eacute;e (<code>checkoutUrl</code>) vers laquelle vous devrez rediriger votre client.
+    </p>
+    <h3>Endpoint</h3>
+    <p><code>POST /zolaApiInitPayment</code></p>
+    
+    <h3>En-t&ecirc;tes (Headers)</h3>
+    <pre><code>Content-Type: application/json
+X-Zola-Api-Key: zola_live_xxxxxxxxxxxxxxxxxxxxxxxxxxx</code></pre>
+
+    <h3>Corps de la requ&ecirc;te (JSON)</h3>
+    <pre><code>{
+  "merchantReference": "CMD-2026-8945",
+  "amount": 50.00,
+  "currency": "USD",
+  "allowedMethod": "ALL" 
+}</code></pre>
+    <p>
+      Le param&egrave;tre <code>allowedMethod</code> est optionnel. Valeurs possibles : <code>"ALL"</code> (D&eacute;faut, Mobile Money + Carte Bancaire), <code>"MOBILE_MONEY"</code> ou <code>"BANK_CARD"</code>.
+    </p>
+
+    <h3>R&eacute;ponse de Succ&egrave;s (200 OK)</h3>
+    <pre><code>{
+  "success": true,
+  "transactionId": "txn_8f9da2...",
+  "checkoutUrl": "https://zolamoneytrans.com/pay.html?txId=txn_8f9da2...",
+  "amount": 50,
+  "currency": "USD",
+  "fee": 4.75,
+  "feePercentage": 9.5
+}</code></pre>
+    <p>
+      <strong>Action requise :</strong> Redirigez l'utilisateur vers la <code>checkoutUrl</code> pour finaliser le paiement sur l'interface s&eacute;curis&eacute;e Zola Money.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>3. Webhooks (Callbacks)</h2>
+    <p>
+      Une fois que le client a finalis&eacute; le paiement, Zola Money enverra une notification asynchrone (Webhook) &agrave; votre serveur.
+    </p>
+    <p>
+      Fournissez votre <strong>URL de Webhook</strong> &agrave; l'administrateur Zola Money pour l'enregistrer dans votre configuration.
+    </p>
+    
+    <h3>Requ&ecirc;te Webhook envoy&eacute;e par Zola Money</h3>
+    <p><code>POST {Votre Webhook URL}</code></p>
+    <pre><code>Headers:
+Content-Type: application/json
+X-Zola-Callback-Token: {Votre ID Partenaire}
+
+Body (JSON):
+{
+  "eventId": "PAY-txn_8f9da2-PAID",
+  "merchantReference": "CMD-2026-8945",
+  "providerReference": "txn_8f9da2...",
+  "status": "PAID",
+  "amount": 50.00,
+  "currency": "USD",
+  "paymentMethod": "AIRTELMONEY",
+  "sourcePlatform": "ZOLA_MONEY",
+  "paidAt": "2026-07-23T10:00:00.000Z"
+}</code></pre>
+
+    <h3>Statuts Possibles</h3>
+    <table>
+      <tr><th>Statut</th><th>Description</th></tr>
+      <tr><td><code>PAID</code></td><td>Le paiement a &eacute;t&eacute; effectu&eacute; avec succ&egrave;s. Vous pouvez livrer la commande.</td></tr>
+      <tr><td><code>FAILED</code></td><td>Le paiement a &eacute;chou&eacute; (Fonds insuffisants, erreur op&eacute;rateur).</td></tr>
+      <tr><td><code>CANCELLED</code></td><td>Le client a annul&eacute; la transaction.</td></tr>
+    </table>
+    <p>
+      <strong>S&eacute;curit&eacute; :</strong> V&eacute;rifiez toujours que <code>X-Zola-Callback-Token</code> correspond bien &agrave; votre ID Partenaire (fourni par l'administrateur).
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>4. Reversements (Payouts)</h2>
+    <p>
+      Les reversements correspondent &agrave; l'argent que Zola Money vous transf&egrave;re (Montant initial moins les frais de service).
+    </p>
+    <ul>
+      <li><strong>Reversement Automatique :</strong> Si configur&eacute;, d&egrave;s qu'un paiement est <code>PAID</code>, le montant net est imm&eacute;diatement envoy&eacute; sur votre compte Mobile Money.</li>
+      <li><strong>Reversement Manuel :</strong> Les reversements sont cumul&eacute;s et approuv&eacute;s manuellement par l'administrateur de Zola Money.</li>
+    </ul>
+    <p>
+      Discutez avec l'administrateur pour d&eacute;finir vos pr&eacute;f&eacute;rences (Num&eacute;ro, R&eacute;seau et Mode).
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

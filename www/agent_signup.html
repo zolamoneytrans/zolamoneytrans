@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Devenir Agent Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#6B4EFF"/>
+  
+  <link rel="stylesheet" href="css/main.css?v=6"/>
+  <link rel="stylesheet" href="css/components.css?v=6"/>
+  <link rel="stylesheet" href="css/animations.css?v=6"/>
+  <style>
+    /* Agent Portal Specific Styles */
+    :root {
+      --agent-navy: #002B5C;
+      --agent-purple: #6B4EFF;
+      --agent-gold: #C9991A;
+    }
+    
+    .wizard-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+    }
+
+    .wizard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .wizard-header img {
+      width: 64px;
+      margin-bottom: 15px;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--c-border);
+      z-index: 1;
+      transform: translateY(-50%);
+    }
+
+    .progress-step {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c-surface);
+      border: 3px solid var(--c-border);
+      color: var(--c-text3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      z-index: 2;
+      position: relative;
+    }
+
+    .progress-step.active {
+      border-color: var(--agent-purple);
+      color: var(--agent-purple);
+      background: var(--white);
+    }
+    
+    .progress-step.completed {
+      background: var(--agent-purple);
+      border-color: var(--agent-purple);
+      color: var(--white);
+    }
+
+    .wizard-step-content {
+      display: none;
+    }
+
+    .wizard-step-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Operator Cards */
+    .operator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .operator-card {
+      border: 2px solid var(--c-border);
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .operator-card.selected {
+      border-color: var(--agent-purple);
+      background: rgba(107, 78, 255, 0.05);
+      position: relative;
+    }
+
+    .operator-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--success);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .operator-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed var(--c-border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--agent-purple);
+    }
+    
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--c-border);
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s, background-color 0.3s;
+    }
+    
+    .file-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        background: var(--light-grey);
+        padding: 8px;
+        border-radius: 6px;
+    }
+    .file-preview img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    @media (max-width: 600px) {
+      .wizard-container {
+        margin: 0;
+        min-height: 100vh;
+        border-radius: 0;
+      }
+    }
+    
+    /* Overrides for better visibility */
+    .wizard-container h3 {
+      color: var(--agent-navy);
+      font-weight: 800;
+      border-bottom: 2px solid rgba(107, 78, 255, 0.1);
+      padding-bottom: 10px;
+    }
+    .form-label {
+      color: #334155; /* Dark gray for visibility */
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-control {
+      border: 1px solid #CBD5E1;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      border-radius: 8px;
+      padding: 12px 16px;
+      width: 100%;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--agent-purple);
+      box-shadow: 0 0 0 3px rgba(107, 78, 255, 0.2);
+      background-color: #FFFFFF;
+      outline: none;
+    }
+    .input-group-custom {
+      display: flex;
+      align-items: center;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #F8FAFC;
+      transition: all 0.2s ease;
+    }
+    .input-group-custom:focus-within {
+      border-color: var(--agent-purple);
+      box-shadow: 0 0 0 3px rgba(107, 78, 255, 0.2);
+      background-color: #FFFFFF;
+    }
+    .input-group-custom .input-prefix {
+      padding: 12px 16px;
+      background: #E2E8F0;
+      color: #334155;
+      font-weight: 600;
+      border-right: 1px solid #CBD5E1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .input-group-custom input {
+      border: none;
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      color: #0F172A;
+      font-size: 1rem;
+      outline: none;
+    }
+  </style>
+</head>
+<body style="background-color: var(--agent-navy); background-image: linear-gradient(135deg, #002B5C 0%, #6B4EFF 100%);">
+
+<div class="wizard-container animate-slideUp">
+  <div class="wizard-header">
+    <img src="icons/zolalogo128x128.png" alt="Zola Money Trans"/>
+    <h1 style="color: var(--agent-navy);">Inscription Agent</h1>
+    <p>Rejoignez le réseau Zola Money Trans</p>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-step active" id="step-ind-1">1</div>
+    <div class="progress-step" id="step-ind-2">2</div>
+    <div class="progress-step" id="step-ind-3">3</div>
+    <div class="progress-step" id="step-ind-4">4</div>
+  </div>
+
+  <div id="authAlert" style="display:none;" class="alert"></div>
+
+  <form id="agentWizardForm">
+    
+    <!-- STEP 1: Personal Info -->
+    <div class="wizard-step-content active" id="step-1">
+      <h3 style="margin-bottom: 20px;">Informations Personnelles</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Prénom <span style="color:red">*</span></label>
+          <input type="text" id="agentFirstName" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom <span style="color:red">*</span></label>
+          <input type="text" id="agentLastName" class="form-control" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de téléphone <span style="color:red">*</span></label>
+        <div class="input-group-custom">
+          <div class="input-prefix">🇨🇩 +243</div>
+          <input type="tel" id="agentPhone" placeholder="8XX XXX XXX" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp (Optionnel)</label>
+        <div class="input-group-custom">
+          <div class="input-prefix">💬 +243</div>
+          <input type="tel" id="agentWhatsapp" placeholder="Idem que téléphone si vide"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Adresse e-mail <span style="color:red">*</span></label>
+        <input type="email" id="agentEmail" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe <span style="color:red">*</span></label>
+        <input type="password" id="agentPassword" class="form-control" minlength="8" required onkeyup="checkPasswordStrength()"/>
+        <div class="password-strength">
+          <div class="password-strength-bar" id="pwdStrengthBar"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmer mot de passe <span style="color:red">*</span></label>
+        <input type="password" id="agentConfirmPassword" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type de pièce d'identité <span style="color:red">*</span></label>
+        <select id="agentIdType" class="form-control" required>
+          <option value="Carte Nationale d'Identité">Carte Nationale d'Identité (Electeur)</option>
+          <option value="Passeport">Passeport</option>
+          <option value="Permis de conduire">Permis de conduire</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de la pièce <span style="color:red">*</span></label>
+        <input type="text" id="agentIdNumber" class="form-control" required/>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Pièce d'identité (Recto & Verso) <span style="color:red">*</span></label>
+        <div class="upload-zone" onclick="document.getElementById('agentIdUpload').click()">
+          <span style="font-size: 24px;">📸</span>
+          <p>Cliquez pour uploader (Max 5MB)</p>
+          <input type="file" id="agentIdUpload" accept="image/*" multiple style="display:none;" required onchange="handleFileUpload(this, 'previewId')"/>
+        </div>
+        <div id="previewId"></div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <a href="auth.html" class="btn btn-secondary">Déjà inscrit ?</a>
+        <button type="button" class="btn btn-primary" onclick="nextStep(1)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Business Info -->
+    <div class="wizard-step-content" id="step-2">
+      <h3 style="margin-bottom: 20px;">Point de Vente</h3>
+      <div class="form-group">
+        <label class="form-label">Enseigne / Nom commercial <span style="color:red">*</span></label>
+        <input type="text" id="agentBusinessName" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type d'activité <span style="color:red">*</span></label>
+        <select id="agentBusinessType" class="form-control" required>
+          <option value="Kiosque">Kiosque</option>
+          <option value="Boutique">Boutique</option>
+          <option value="Pharmacie">Pharmacie</option>
+          <option value="Épicerie">Épicerie</option>
+          <option value="Supermarché">Supermarché</option>
+          <option value="Salon">Salon</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Province <span style="color:red">*</span></label>
+        <select id="agentProvince" class="form-control" required>
+          <option value="Kinshasa">Kinshasa</option>
+          <option value="Lubumbashi">Haut-Katanga (Lubumbashi)</option>
+          <option value="Goma">Nord-Kivu (Goma)</option>
+          <option value="Bukavu">Sud-Kivu (Bukavu)</option>
+          <option value="Mbuji-Mayi">Kasaï-Oriental (Mbuji-Mayi)</option>
+          <option value="Kisangani">Tshopo (Kisangani)</option>
+          <option value="Matadi">Kongo Central (Matadi)</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Commune <span style="color:red">*</span></label>
+          <input type="text" id="agentCommune" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quartier <span style="color:red">*</span></label>
+          <input type="text" id="agentQuartier" class="form-control" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Adresse physique complète <span style="color:red">*</span></label>
+        <textarea id="agentAddress" class="form-control" rows="2" required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Heures d'ouverture</label>
+        <input type="text" id="agentHours" class="form-control" placeholder="ex: Lun–Sam 7h–20h"/>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">← Précédent</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Commission Account -->
+    <div class="wizard-step-content" id="step-3">
+      <h3 style="margin-bottom: 20px;">Compte de Commission</h3>
+      <p style="font-size: 0.9rem; color: var(--c-text2); margin-bottom: 15px;">Sélectionnez l'opérateur pour recevoir vos commissions hebdomadaires.</p>
+      
+      <div class="operator-grid" id="operatorGrid">
+        <div class="operator-card" data-op="mpesa" onclick="selectOperator('mpesa')">
+          <div class="operator-logo" style="background:#00923F;">M</div>
+          <strong>M-PESA</strong>
+          <div style="font-size:0.8rem; color:var(--c-text3);">Vodacom DRC</div>
+        </div>
+        <div class="operator-card" data-op="airtel" onclick="selectOperator('airtel')">
+          <div class="operator-logo" style="background:#C8102E;">A</div>
+          <strong>AIRTEL MONEY</strong>
+          <div style="font-size:0.8rem; color:var(--c-text3);">Airtel DRC</div>
+        </div>
+        <div class="operator-card" data-op="orange" onclick="selectOperator('orange')">
+          <div class="operator-logo" style="background:#FF7900;">O</div>
+          <strong>ORANGE MONEY</strong>
+          <div style="font-size:0.8rem; color:var(--c-text3);">Orange RDC</div>
+        </div>
+        <div class="operator-card" data-op="afrimoney" onclick="selectOperator('afrimoney')">
+          <div class="operator-logo" style="background:#4B3FBF;">Af</div>
+          <strong>AFRIMONEY</strong>
+          <div style="font-size:0.8rem; color:var(--c-text3);">Africell DRC</div>
+        </div>
+      </div>
+      <input type="hidden" id="agentSelectedOperator" required/>
+
+      <div class="form-group" id="mmPhoneGroup" style="display:none;">
+        <label class="form-label">Numéro de compte <span style="color:red">*</span></label>
+        <div class="input-group-custom">
+          <div class="input-prefix">📱 +243</div>
+          <input type="tel" id="agentMmPhone" placeholder="8XX XXX XXX" required/>
+        </div>
+        <p style="font-size:0.8rem; color:var(--agent-gold); margin-top:5px;">Vos commissions seront créditées sur ce compte.</p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">← Précédent</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep(3)">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Documents & Submission -->
+    <div class="wizard-step-content" id="step-4">
+      <h3 style="margin-bottom: 20px;">Documents & Validation</h3>
+      
+      <div class="form-group">
+        <label class="form-label">Selfie avec pièce d'identité <span style="color:red">*</span></label>
+        <div class="upload-zone" onclick="document.getElementById('agentSelfie').click()">
+          <span>🤳</span> <p>Cliquez pour uploader</p>
+          <input type="file" id="agentSelfie" accept="image/*" style="display:none;" required onchange="handleFileUpload(this, 'previewSelfie')"/>
+        </div>
+        <div id="previewSelfie"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Photo du point de vente (Façade) <span style="color:red">*</span></label>
+        <div class="upload-zone" onclick="document.getElementById('agentShopPhoto').click()">
+          <span>🏪</span> <p>Cliquez pour uploader</p>
+          <input type="file" id="agentShopPhoto" accept="image/*" style="display:none;" required onchange="handleFileUpload(this, 'previewShop')"/>
+        </div>
+        <div id="previewShop"></div>
+      </div>
+
+      <div class="form-group" style="margin-top: 20px;">
+        <strong style="color: var(--agent-navy);">Engagements Agent :</strong>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-size:0.85rem; margin-top:10px; color: #334155;">
+          <input type="checkbox" id="chk1" required/>
+          J'ai lu et j'accepte le Guide de Commission Agent Zola
+        </label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-size:0.85rem; margin-top:10px; color: #334155;">
+          <input type="checkbox" id="chk2" required/>
+          Je m'engage à respecter la grille tarifaire officielle
+        </label>
+        <label style="display:flex; gap:10px; align-items:flex-start; font-size:0.85rem; margin-top:10px; color: #334155;">
+          <input type="checkbox" id="chk3" required/>
+          Je certifie que toutes les informations fournies sont exactes
+        </label>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:30px;">
+        <button type="button" class="btn btn-secondary" onclick="prevStep(4)">← Précédent</button>
+        <button type="submit" class="btn btn-primary" style="background:var(--agent-purple);" id="submitBtn">
+          <span id="submitBtnText">Soumettre ma candidature →</span>
+          <span id="submitSpinner" class="spinner" style="display:none; width:18px; height:18px;"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success View -->
+    <div class="wizard-step-content" id="step-success" style="text-align:center; padding: 30px 0;">
+      <div style="font-size: 64px; color: var(--success); margin-bottom: 20px;">✅</div>
+      <h2 style="color: var(--agent-navy); margin-bottom: 10px;">Candidature Reçue !</h2>
+      <p style="color: var(--c-text2); margin-bottom: 20px;">
+        Votre dossier est en cours d'examen. Vous recevrez une réponse sous 24 à 48 heures par SMS et email.
+      </p>
+      <div style="background: var(--light-grey); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 1.2rem; margin-bottom: 30px;">
+        Réf: <strong id="successRef"></strong>
+      </div>
+      <a href="https://wa.me/243857767040" target="_blank" class="btn btn-primary" style="background: #25D366; color: white;">
+        Contacter le Support WhatsApp
+      </a>
+      <br><br>
+      <a href="auth.html" style="color: var(--agent-purple); text-decoration: underline;">Retour à l'accueil</a>
+    </div>
+
+  </form>
+</div>
+
+<script type="module" src="./js/agent_signup.js"></script>
+
+</body>
+</html>

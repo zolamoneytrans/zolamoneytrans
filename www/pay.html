@@ -3,7 +3,51 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Paiement Sécurisé — Zola Money</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Zola Money Trans — Agrégateur de Paiement en RDC">
+  <meta name="description" content="Zola Money Trans est le premier agrégateur de paiement marchand inter-opérateurs de la RDC. Acceptez M-Pesa, Airtel Money et Orange Money avec un seul QR code.">
+  <meta name="keywords" content="Zola Money, Paiement RDC, Mobile Money RDC, M-Pesa, Airtel Money, Orange Money, Fintech Afrique, Transfert d'argent, Agrégateur de paiement, Zola">
+  <meta name="author" content="Swazi Appli Lab SARL">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zolamoneypay.com/">
+  <meta property="og:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="og:description" content="Acceptez tous les paiements Mobile Money (M-Pesa, Airtel, Orange) en RDC avec un seul compte.">
+  <meta property="og:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://zolamoneypay.com/">
+  <meta property="twitter:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="twitter:description" content="Acceptez tous les paiements Mobile Money en RDC avec un seul compte.">
+  <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+
+
+  <!-- Primary Meta Tags -->
+  
+  
+  <meta name="keywords" content="Zola Money, Paiement RDC, Mobile Money RDC, M-Pesa, Airtel Money, Orange Money, Fintech Afrique, Transfert d'argent, Agrégateur de paiement, Zola">
+  <meta name="author" content="Swazi Appli Lab SARL">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zolamoneypay.com/">
+  <meta property="og:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="og:description" content="Acceptez tous les paiements Mobile Money (M-Pesa, Airtel, Orange) en RDC avec un seul compte.">
+  <meta property="og:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://zolamoneypay.com/">
+  <meta property="twitter:title" content="Zola Money Trans — Paiement Mobile Unifié">
+  <meta property="twitter:description" content="Acceptez tous les paiements Mobile Money en RDC avec un seul compte.">
+  <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
+
+
+  
   <link rel="icon" href="icons/zolalogo96x96.png"/>
   <meta name="theme-color" content="#7C3AED"/>
   <link rel="stylesheet" href="css/main.css?v=6"/>
@@ -31,8 +75,12 @@
           <option value="USD">USD</option>
         </select>
       </div>
-    </div>
     <div style="font-size:0.9rem; color:var(--c-text2);" id="displayDesc"></div>
+    <div id="payFeeSummary" style="display:none; margin-top:14px; padding-top:12px; border-top:1px dashed var(--c-border); font-size:0.88rem; text-align:left; color:var(--c-text2);">
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Montant initial :</span><span id="payBaseDisplay" style="font-weight:600;">—</span></div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Frais de transaction :</span><span id="payFeeDisplay" style="color:var(--c-gold); font-weight:600;">—</span></div>
+      <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--c-text); font-size:0.95rem;"><span>Total à payer :</span><span id="payTotalDisplay" style="color:var(--c-gold);">—</span></div>
+    </div>
   </div>
 
   <div class="form-group" id="paymentMethodGroup" style="display:none;">
@@ -52,6 +100,7 @@
         <option value="mpesa">M-Pesa</option>
         <option value="airtel">Airtel Money</option>
         <option value="orange">Orange Money</option>
+        <option value="afrimoney">Afrimoney</option>
       </select>
     </div>
   </div>
@@ -76,6 +125,10 @@
     Chargement...
   </button>
   
+  <button class="btn btn-outline btn-block" onclick="window.location.href='smart_pay.html' + window.location.search" style="margin-top:12px; border:1px solid var(--c-gold); color:var(--c-gold); font-weight:bold; border-radius:8px; padding:12px;">
+    ⚡ Payer en tant qu'invité (Sans Compte ni PIN)
+  </button>
+  
   <div style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--c-text3);">
     Transactions sécurisées par Moko Africa & Zola Money
   </div>
@@ -96,11 +149,39 @@
   let currentUserAuth = null;
   let merchantDoc = null;
 
+  window.updatePayFee = function() {
+    let amt = amount;
+    let cur = currency;
+    if (!amt) {
+      amt = document.getElementById('customAmount')?.value;
+      cur = document.getElementById('customCurrency')?.value || 'CDF';
+    }
+    const parsed = parseFloat(amt) || 0;
+    const box = document.getElementById('payFeeSummary');
+    if (parsed > 0) {
+      const fee = cur === 'USD' ? parseFloat((parsed * 0.095).toFixed(2)) : Math.round(parsed * 0.095);
+      const total = cur === 'USD' ? parseFloat((parsed + fee).toFixed(2)) : parsed + fee;
+      window.payinTotalDebited = total;
+      window.payinFeeAmount = fee;
+      document.getElementById('payBaseDisplay').textContent = `${parsed.toLocaleString('fr-FR')} ${cur}`;
+      document.getElementById('payFeeDisplay').textContent = `${fee.toLocaleString('fr-FR')} ${cur}`;
+      document.getElementById('payTotalDisplay').textContent = `${total.toLocaleString('fr-FR')} ${cur}`;
+      if (box) box.style.display = 'block';
+    } else {
+      window.payinTotalDebited = 0;
+      window.payinFeeAmount = 0;
+      if (box) box.style.display = 'none';
+    }
+  };
+
   if(amount) {
     document.getElementById('displayAmount').textContent = window.formatMoney ? window.formatMoney(amount, currency) : amount + " " + currency;
+    updatePayFee();
   } else {
     document.getElementById('displayAmount').style.display = 'none';
     document.getElementById('customAmountGroup').style.display = 'block';
+    document.getElementById('customAmount').addEventListener('input', updatePayFee);
+    document.getElementById('customCurrency').addEventListener('change', updatePayFee);
   }
 
   if(desc) {
@@ -110,8 +191,8 @@
   // Handle Auth State
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      alert("Veuillez vous connecter pour effectuer un paiement.");
-      window.location.href = 'auth.html?redirect=' + encodeURIComponent(window.location.href);
+      // Rediriger vers la page de paiement intelligent sans compte et sans PIN
+      window.location.href = 'smart_pay.html' + window.location.search;
       return;
     }
     currentUserAuth = user;
@@ -236,7 +317,7 @@
       }
     }
 
-    if (!operator || (operator !== 'Visa' && !['mpesa', 'airtel', 'orange'].includes(operator))) {
+    if (!operator || (operator !== 'Visa' && !['mpesa', 'airtel', 'orange', 'afrimoney'].includes(operator))) {
       alert("Veuillez sélectionner un opérateur Mobile Money valide.");
       return;
     }
@@ -245,8 +326,12 @@
     btn.textContent = "Traitement en cours...";
 
     try {
+      const totalDebited = window.payinTotalDebited || parsedAmount;
+      const feeAmount = window.payinFeeAmount || 0;
       const payload = {
-        amount: parsedAmount,
+        amount: totalDebited,
+        amountBase: parsedAmount,
+        frais: feeAmount,
         currency: finalCurrency,
         customerNumber: customerNumber,
         method: operator,

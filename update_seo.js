@@ -23,7 +23,7 @@ const seoBlock = `
   <meta property="twitter:image" content="https://zolamoneypay.com/icons/og_image_zola.png">
 `;
 
-const files = ['index.html', 'auth.html', 'help.html', 'privacy.html', 'pay.html'];
+const files = ['index.html', 'auth.html', 'help.html', 'privacy.html', 'terms.html', 'refund.html', 'pay.html'];
 
 files.forEach(file => {
   const filePath = path.join(__dirname, file);

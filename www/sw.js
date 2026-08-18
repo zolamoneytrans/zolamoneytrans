@@ -1,30 +1,37 @@
 // sw.js — Service Worker Zola Money Trans (Network First)
-const CACHE_NAME = 'zola-v19';
+const CACHE_NAME = 'zola-v68';
 const STATIC_ASSETS = [
   '/js/tutorial.js',
   '/',
   '/index.html',
   '/auth.html',
+  '/agent_dashboard.html',
   '/dashboard.html',
+  '/dashboard_eglise.html',
   '/transfer.html',
   '/bills.html',
   '/kyc.html',
   '/merchant.html',
-  '/admin.html',
+  '/nopage.html',
+  '/history.html',
   '/help.html',
   '/settings.html',
   '/transfer_processing.html',
   '/css/main.css',
   '/css/components.css',
   '/css/animations.css',
+  '/css/admin-premium.css',
   '/js/app.js',
   '/js/firebase.js',
+  '/js/agent_dashboard.js',
   '/js/dashboard.js',
+  '/js/dashboard_eglise.js',
   '/js/transfer.js',
   '/js/bills.js',
   '/js/kyc.js',
   '/js/merchant.js',
   '/js/admin.js',
+  '/js/history.js',
   '/js/help.js',
   '/js/settings.js',
   '/js/transfer_processing.js',
@@ -36,8 +43,12 @@ const STATIC_ASSETS = [
 
 // Installation — pré-cacher les assets statiques
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('Cache opened');
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
 });
 
@@ -60,6 +71,7 @@ self.addEventListener('activate', event => {
 // Stratégie : Network First (fallback cache)
 // Les requêtes Firebase (googleapis) ne passent jamais par le cache
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
   // Ne jamais intercepter les requêtes Firebase, CDN, ou cross-origin

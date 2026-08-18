@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement Marchand Sécurisé — Zola Money Trans</title>
+  <link rel="icon" href="icons/zolalogo96x96.png"/>
+  <meta name="theme-color" content="#7C3AED"/>
+  
+  <meta name="title" content="Zola Money Trans — Paiement Marchand Sécurisé">
+  <meta name="description" content="Payez instantanément par QR Code via Mobile Money (M-Pesa, Airtel, Orange, Afrimoney) ou Carte Visa/Mastercard.">
+  <meta property="og:title" content="Zola Money Trans — Paiement Marchand Sécurisé">
+  <meta property="og:description" content="Scannez et payez en quelques secondes en toute sécurité.">
+  <meta property="og:image" content="icons/zolalogo192x192.png">
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090C15;
+      --surface: rgba(17, 24, 39, 0.88);
+      --surface2: rgba(30, 41, 59, 0.75);
+      --primary: #7C3AED;
+      --primary-hover: #6D28D9;
+      --gold: #F59E0B;
+      --gold-hover: #D97706;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(124, 58, 237, 0.35);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --error: #EF4444;
+      --success: #10B981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+
+    body {
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.16) 0%, transparent 45%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .smart-container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-badge-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.18);
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #C4B5FD;
+    }
+    .guest-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6EE7B7;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Beneficiary Card */
+    .beneficiary-card {
+      text-align: center;
+      padding: 20px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-light);
+      border-radius: 18px;
+      margin-bottom: 22px;
+    }
+    .beneficiary-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      background: #1E293B;
+      border: 3px solid var(--primary);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+    }
+    .beneficiary-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .beneficiary-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 4px;
+    }
+    .beneficiary-tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Amount Section */
+    .amount-display-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .amount-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    /* Currency Switcher Tabs (Very Prominent) */
+    .currency-switcher-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .curr-btn {
+      background: #0F172A;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #94A3B8;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .curr-btn:hover { border-color: rgba(245, 158, 11, 0.5); color: #FFF; }
+    .curr-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--gold);
+      color: #FCD34D;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+    }
+
+    /* Custom Amount Input with Fixed Currency Label right beside it */
+    .custom-amount-wrapper {
+      display: flex;
+      align-items: center;
+      background: #0F172A;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      margin-top: 6px;
+    }
+    .custom-amount-wrapper:focus-within {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+    }
+    .custom-amount-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #FFF;
+      font-size: 1.8rem;
+      font-weight: 800;
+      padding: 14px 16px;
+      text-align: right;
+      outline: none;
+    }
+    .custom-amount-input::placeholder { color: #475569; }
+    .currency-badge-label {
+      background: #1E293B;
+      color: var(--gold);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      padding: 16px 20px;
+      border-left: 2px solid rgba(255, 255, 255, 0.15);
+      min-width: 95px;
+      text-align: center;
+    }
+
+    .quick-chips {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #FFF;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover { background: var(--primary); border-color: var(--primary); }
+
+    /* Payment Way Option Selector (Card vs Mobile Money) */
+    .section-header-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #E2E8F0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .payment-way-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .way-tab {
+      background: var(--surface2);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 14px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .way-tab:hover { border-color: rgba(124, 58, 237, 0.5); }
+    .way-tab.active {
+      background: rgba(124, 58, 237, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+    .way-tab-icon { font-size: 1.6rem; }
+    .way-tab-title { font-size: 0.9rem; font-weight: 700; color: #FFF; }
+    .way-tab-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* Operators Mobile Money Selector */
+    .operator-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .op-btn {
+      background: #1E293B;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #CBD5E1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .op-btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+    .op-btn.active[data-op="mpesa"] { background: rgba(230, 0, 0, 0.2); border-color: #E60000; color: #FFF; }
+    .op-btn.active[data-op="airtel"] { background: rgba(237, 28, 36, 0.2); border-color: #ED1C24; color: #FFF; }
+    .op-btn.active[data-op="orange"] { background: rgba(255, 102, 0, 0.2); border-color: #FF6600; color: #FFF; }
+    .op-btn.active[data-op="afrimoney"] { background: rgba(107, 33, 168, 0.25); border-color: #A855F7; color: #FFF; }
+
+    /* Bank Badges for Card */
+    .bank-badges-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 18px;
+      background: #1E293B;
+      padding: 12px;
+      border-radius: 12px;
+    }
+    .bank-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #E2E8F0;
+      margin-bottom: 6px;
+    }
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #0F172A;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+    }
+    .input-icon {
+      padding: 0 14px;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+    .form-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #FFF;
+      font-size: 0.96rem;
+      padding: 13px 14px 13px 0;
+      outline: none;
+    }
+    .form-input::placeholder { color: #475569; }
+
+    /* Main Pay Button */
+    .btn-pay-smart {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold), #D97706);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.35);
+      transition: all 0.25s;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-pay-smart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5);
+      background: linear-gradient(135deg, #FCD34D, var(--gold));
+    }
+    .btn-pay-smart:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .footer-secure {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .footer-secure a { color: var(--gold); text-decoration: none; font-weight: 600; }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 7, 18, 0.88);
+      backdrop-filter: blur(14px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content {
+      background: #111628;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 520px;
+      padding: 30px 24px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.95);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* USSD Push Sandclock / Phone pulse */
+    .ussd-pulse-icon {
+      width: 86px; height: 86px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.18);
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.4);
+      animation: pulseGold 2s infinite;
+    }
+    @keyframes pulseGold {
+      0% { transform: scale(0.98); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(245, 158, 11, 0.6); }
+      100% { transform: scale(0.98); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+    }
+
+    /* Viral Ad Card inside Success */
+    .viral-ad-card {
+      background: linear-gradient(135deg, #1E1B4B 0%, #311A6E 100%);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-top: 24px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .viral-badge {
+      background: var(--gold);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .viral-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 8px;
+    }
+    .viral-desc {
+      font-size: 0.85rem;
+      color: #DDD6FE;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .viral-checklist {
+      text-align: left;
+      font-size: 0.85rem;
+      color: #E2E8F0;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      list-style: none;
+    }
+    .viral-checklist li { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+    .btn-download-app {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--gold);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 380px;
+    }
+    .btn-download-app:hover { transform: scale(1.03); background: #FCD34D; }
+
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Stepper UI */
+    .stepper-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .stepper-container::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      z-index: 1;
+    }
+    .stepper-step {
+      position: relative;
+      z-index: 2;
+      background: var(--surface);
+      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .stepper-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+    .stepper-step.active {
+      color: var(--gold);
+    }
+    .stepper-step.active .stepper-circle {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+    .stepper-step.completed .stepper-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #FFF;
+    }
+    .stepper-step.completed {
+      color: var(--primary);
+    }
+    
+    .form-step {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .form-step.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .btn-step {
+      background: rgba(255,255,255,0.1);
+      color: #FFF;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex: 1;
+      transition: all 0.2s;
+    }
+    .btn-step:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .btn-step-next {
+      background: var(--primary);
+    }
+    .btn-step-next:hover {
+      background: var(--primary-hover);
+    }
+    .step-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="smart-container">
+    <!-- Top Badge Bar -->
+    <div class="top-badge-bar">
+      <div class="brand-pill">
+        <img src="icons/zolalogo96x96.png" style="width:18px;height:18px;border-radius:50%;" alt="Zola"/>
+        Zola Money Trans
+      </div>
+      <div class="guest-pill">
+        <span>⚡ Paiement Sécurisé Zola</span>
+      </div>
+    </div>
+
+    <!-- Stepper UI -->
+    <div class="stepper-container">
+      <div class="stepper-step active" id="stepperStep1">
+        <div class="stepper-circle">1</div>
+        <span>Montant</span>
+      </div>
+      <div class="stepper-step" id="stepperStep2">
+        <div class="stepper-circle">2</div>
+        <span>Paiement</span>
+      </div>
+      <div class="stepper-step" id="stepperStep3">
+        <div class="stepper-circle">3</div>
+        <span>Validation</span>
+      </div>
+    </div>
+
+    <!-- Beneficiary Card -->
+    <div class="beneficiary-card">
+      <div class="beneficiary-avatar">
+        <img src="icons/zolalogo96x96.png" id="merchantAvatarImg" alt="Bénéficiaire"/>
+      </div>
+      <h2 class="beneficiary-name" id="merchantNameDisplay">Bénéficiaire Zola</h2>
+      <p class="beneficiary-tagline" id="merchantTaglineDisplay">Paiement Marchand Sécurisé Zola</p>
+      <div style="margin-top:10px;">
+        <span style="background:rgba(124, 58, 237, 0.25); color:#DDD6FE; font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:50px; border:1px solid rgba(124, 58, 237, 0.5);" id="merchantKycBadge">
+          ✓ Bénéficiaire Vérifié
+        </span>
+      </div>
+      <div class="beneficiary-account-info" style="margin-top:14px; font-size:0.85rem; color:#CBD5E1; background:rgba(0,0,0,0.25); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); display:inline-block; text-align:left;">
+        <div style="margin-bottom:4px;">Fonds destinés au compte : <strong id="merchantReceiverOpVal" style="color:var(--gold);">...</strong></div>
+        <div>Numéro de compte : <strong id="merchantReceiverPhoneVal" style="color:#FFF;">...</strong></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Amount Section -->
+    <div id="step1" class="form-step active">
+      <div class="amount-display-box">
+        <div class="amount-label">Choisissez la devise & saisissez le montant :</div>
+      
+      <!-- Currency Switcher Bar -->
+      <div class="currency-switcher-bar">
+        <div class="curr-btn active" id="btnCurrCDF" onclick="selectCurrency('CDF')">
+          <span>💵</span><span>CDF (FC)</span>
+        </div>
+        <div class="curr-btn" id="btnCurrUSD" onclick="selectCurrency('USD')">
+          <span>💵</span><span>USD ($)</span>
+        </div>
+      </div>
+
+      <!-- Amount Input + Currency Badge -->
+      <div class="custom-amount-wrapper">
+        <input type="number" id="customAmountInput" class="custom-amount-input" placeholder="0" step="any"/>
+        <div class="currency-badge-label" id="currencyBadgeDisplay">CDF</div>
+      </div>
+
+      <div class="quick-chips" id="quickChipsBox"></div>
+
+      <!-- Fee Breakdown (Frais de transaction) -->
+      <div id="feeBreakdownBox" style="display:none; margin-top:14px; background: rgba(30,41,59,0.75); border: 1px dashed rgba(245,158,11,0.45); padding: 12px 14px; border-radius: 12px; font-size: 0.88rem; color: #E2E8F0; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="color: #94A3B8;">Montant initial :</span>
+          <span id="displayBaseAmount" style="font-weight: 600;">0 CDF</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="color: #94A3B8;">Frais de transaction :</span>
+          <span id="displayFeeAmount" style="color: #FCD34D; font-weight: 700;">0 CDF</span>
+        </div>
+        <div style="height: 1px; background: rgba(148,163,184,0.18); margin: 6px 0;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+          <span style="font-weight: 700; color: #FFFFFF;">Total à payer :</span>
+          <span id="displayTotalAmount" style="color: #60A5FA; font-weight: 800; font-size: 1.05rem;">0 CDF</span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <input type="text" id="customDescInput" class="form-input" style="background:#0F172A; border:1px solid rgba(255,255,255,0.18); border-radius:10px; padding:12px 14px; width:100%; text-align:center; font-size:0.88rem;" placeholder="Motif ou Description (facultatif)"/>
+      </div>
+      
+      <div class="step-actions">
+        <button class="btn-step btn-step-next" onclick="nextStep(2)">Continuer ➔</button>
+      </div>
+    </div>
+    </div>
+
+    <!-- STEP 2: Payment Way Switcher -->
+    <div id="step2" class="form-step">
+      <div class="section-header-title">
+        <span>⚙️</span> Choisissez votre moyen de paiement :
+      </div>
+    <div class="payment-way-tabs">
+      <div class="way-tab active" id="tabMobile" onclick="switchPaymentWay('mobile')">
+        <span class="way-tab-icon">📱</span>
+        <span class="way-tab-title">Mobile Money</span>
+        <span class="way-tab-sub">M-Pesa, Airtel, Orange</span>
+      </div>
+      <div class="way-tab" id="tabCard" onclick="switchPaymentWay('card')">
+        <span class="way-tab-icon">💳</span>
+        <span class="way-tab-title">Carte Bancaire</span>
+        <span class="way-tab-sub">Visa & Mastercard</span>
+      </div>
+    </div>
+
+    <!-- MOBILE MONEY OPERATORS & PHONE -->
+    <div id="mobileMoneyFormArea">
+      <div class="operator-grid">
+        <div class="op-btn active" data-op="mpesa" onclick="selectOperator('mpesa')">
+          <span style="font-size:1.2rem;">🔴</span>
+          <span>M-Pesa</span>
+        </div>
+        <div class="op-btn" data-op="airtel" onclick="selectOperator('airtel')">
+          <span style="font-size:1.2rem;">⭕</span>
+          <span>Airtel</span>
+        </div>
+        <div class="op-btn" data-op="orange" onclick="selectOperator('orange')">
+          <span style="font-size:1.2rem;">🟠</span>
+          <span>Orange</span>
+        </div>
+        <div class="op-btn" data-op="afrimoney" onclick="selectOperator('afrimoney')">
+          <span style="font-size:1.2rem;">🟣</span>
+          <span>Afrimoney</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Numéro Mobile Money de débit</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📱</span>
+          <input type="tel" id="inputCustomerPhone" class="form-input" placeholder="Ex: 0820000000 ou 0990000000"/>
+        </div>
+        <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">
+          ✓ Une demande de confirmation de paiement (USSD Push) s'affichera directement sur votre téléphone.
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD VISA / MASTERCARD FORM AREA -->
+    <div id="cardFormArea" style="display:none;">
+      <div class="bank-badges-box">
+        <span class="bank-badge" style="background:#1E3A8A; color:#60A5FA;">VISA</span>
+        <span class="bank-badge" style="background:#991B1B; color:#FCA5A5;">MASTERCARD</span>
+        <span class="bank-badge" style="background:#065F46; color:#6EE7B7;">EQUITY BCDC</span>
+        <span class="bank-badge" style="background:#1E40AF; color:#93C5FD;">ECOBANK</span>
+        <span class="bank-badge" style="background:#7C2D12; color:#FDBA74;">RAWBANK</span>
+        <span class="bank-badge" style="background:#581C87; color:#D8B4FE;">TMB</span>
+      </div>
+      <div style="font-size:0.8rem; color:#93C5FD; background:rgba(30, 58, 138, 0.3); padding:12px; border-radius:10px; margin-bottom:16px;">
+        🔒 Protection 3D-Secure par Moko Africa / CyberSource. Vous serez dirigé vers la page sécurisée de votre banque pour valider la carte.
+      </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-step" onclick="prevStep(1)">⬅ Retour</button>
+        <button class="btn-step btn-step-next" onclick="nextStep(3)">Continuer ➔</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Payer Details -->
+    <div id="step3" class="form-step">
+      <div class="section-header-title" style="margin-top:0px;">
+        <span>📋</span> Vos coordonnées pour le reçu officiel :
+      </div>
+    
+    <div class="form-group">
+      <label class="form-label">Nom et Prénom complets *</label>
+      <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input type="text" id="inputPayerName" class="form-input" placeholder="Ex: Jean-Paul Kasongo" required/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Adresse e-mail (Pour la réception du reçu) *</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📧</span>
+        <input type="email" id="inputPayerEmail" class="form-input" placeholder="Ex: votre.email@domain.com" required/>
+      </div>
+      <div style="font-size:0.74rem; color:#6EE7B7; margin-top:4px;">
+        📨 Votre reçu électronique certifié Zola vous sera expédié instantanément sur cette adresse e-mail.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Numéro de téléphone (Facultatif)</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📞</span>
+        <input type="tel" id="inputPayerPhone" class="form-input" placeholder="Ex: 0820000000"/>
+      </div>
+      <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">
+        Pour que le bénéficiaire puisse vous contacter si nécessaire.
+      </div>
+    </div>
+
+    <!-- PAY BUTTON -->
+    <div class="step-actions" style="margin-bottom: 12px;">
+      <button class="btn-step" onclick="prevStep(2)">⬅ Retour</button>
+    </div>
+    <button class="btn-step-next btn-pay-smart" id="btnConfirmPay" onclick="submitSmartPayment()">
+      <span>🔒 Payer Maintenant</span>
+      <span id="btnAmountBadge" style="background:rgba(0,0,0,0.2); padding:4px 10px; border-radius:8px;">0 CDF</span>
+    </button>
+    </div>
+
+    <div class="footer-secure">
+      Transactions garanties par Moko Africa & Zola Money Trans • <a href="https://www.zolamoneytrans.com" target="_blank">www.zolamoneytrans.com</a>
+    </div>
+  </div>
+
+  <!-- MODAL 1: USSD PUSH CONFIRMATION (For Mobile Money) -->
+  <div class="modal-overlay" id="ussdModal">
+    <div class="modal-content" style="max-width:520px;">
+      <div class="ussd-pulse-icon">
+        <span style="font-size:2.5rem;">📲</span>
+      </div>
+      <h2 style="font-family:'Outfit', sans-serif; font-size:1.55rem; color:#FFF; margin-bottom:10px;">
+        Demande envoyée sur votre téléphone !
+      </h2>
+      <p style="color:#FCD34D; font-size:0.95rem; font-weight:700; margin-bottom:18px;" id="ussdMainMessage">
+        Consultez votre écran mobile pour entrer votre code PIN.
+      </p>
+
+      <div style="background:#0F172A; border:1px solid rgba(245, 158, 11, 0.3); border-radius:16px; padding:18px; text-align:left; font-size:0.88rem; margin-bottom:22px; color:#CBD5E1; line-height:1.6;">
+        <div style="color:#FFF; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <span>⏳</span> <span>Instructions de validation :</span>
+        </div>
+        <ol style="padding-left:20px; color:#E2E8F0;">
+          <li style="margin-bottom:6px;">Prenez votre téléphone <strong style="color:var(--gold);" id="ussdPhoneVal">...</strong></li>
+          <li style="margin-bottom:6px;">Une notification <strong id="ussdOpVal">M-Pesa</strong> (Push USSD) va s'afficher.</li>
+          <li style="margin-bottom:6px;">Entrez votre <strong>Code PIN secret</strong> pour autoriser le paiement de <strong style="color:#FFF;" id="ussdAmountVal">...</strong> <span style="font-size:0.8rem; color:#94A3B8;">(dont frais de transaction : <strong style="color:#FCD34D;" id="ussdFeeVal">0</strong>)</span></li>
+          <li>Dès la confirmation de l'opérateur, votre reçu sera envoyé à <strong style="color:#60A5FA;" id="ussdEmailVal">...</strong></li>
+        </ol>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="confirmUssdDone()" style="background:linear-gradient(135deg, #10B981, #059669); color:#FFF; border:none; padding:15px; border-radius:14px; font-weight:800; font-size:1.02rem; cursor:pointer; box-shadow:0 8px 20px rgba(16, 185, 129, 0.3);">
+          ✅ J'ai validé mon code PIN sur mon téléphone
+        </button>
+        <button onclick="document.getElementById('ussdModal').classList.remove('active')" style="background:rgba(255,255,255,0.08); color:#94A3B8; border:none; padding:12px; border-radius:12px; font-weight:600; cursor:pointer;">
+          Fermer / Attendre la notification
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: SUCCESS & VIRAL ADVERTISING MODAL -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content" style="max-width:540px;">
+      <div style="background:rgba(16, 185, 129, 0.15); width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; border:2px solid #10B981; box-shadow:0 0 30px rgba(16, 185, 129, 0.4);">
+        <span style="font-size:2.2rem; color:#10B981;">✓</span>
+      </div>
+      <h2 style="font-family:'Outfit', sans-serif; font-size:1.6rem; color:#FFF; margin-bottom:6px;">
+        Paiement Enregistré !
+      </h2>
+      <p style="color:#6EE7B7; font-size:0.9rem; font-weight:600; margin-bottom:16px;" id="successSummaryText">
+        Votre reçu officiel est en cours d'expédition sur votre e-mail.
+      </p>
+
+      <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px; text-align:left; font-size:0.85rem; margin-bottom:20px; color:#CBD5E1;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>Bénéficiaire :</span>
+          <strong style="color:#FFF;" id="succBenefName">...</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>Montant Payé (Total) :</span>
+          <strong style="color:var(--gold); font-size:1.05rem;" id="succAmountVal">...</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; color:#94A3B8;">
+          <span>Dont frais de transaction :</span>
+          <strong style="color:#FCD34D;" id="succFeeVal">0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>Référence :</span>
+          <strong style="font-family:monospace; color:#FFF;" id="succRefVal">...</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>Reçu officiel envoyé à :</span>
+          <strong style="color:#60A5FA;" id="succEmailVal">...</strong>
+        </div>
+      </div>
+
+      <!-- VIRAL ADVERTISEMENT FOR ZOLA MONEY TRANS -->
+      <div class="viral-ad-card">
+        <div class="viral-badge">🚀 LE SAVIEZ-VOUS ?</div>
+        <h3 class="viral-title">Pourquoi payer comme invité à chaque fois ?</h3>
+        <p class="viral-desc">
+          Téléchargez l'application officielle <strong>Zola Money Trans</strong> et découvrez la liberté du paiement mobile unifié en RDC.
+        </p>
+        <ul class="viral-checklist">
+          <li><span>⚡</span> <strong>Vos paiements en 1 clic :</strong> Plus besoin de retaper votre numéro ou votre e-mail à chaque achat</li>
+          <li><span>💸</span> <strong>Zéro frais sur vos transferts :</strong> Envoyez de l'argent gratuitement entre utilisateurs Zola</li>
+          <li><span>🌐</span> <strong>Inter-opérable 100% :</strong> Envoyez de M-Pesa vers Airtel Money ou Orange Money instantanément !</li>
+          <li><span>📊</span> <strong>Historique en poche :</strong> Retrouvez tous vos reçus et gérez votre budget facilement</li>
+        </ul>
+
+        <div style="margin-bottom:16px;">
+          <a href="https://www.zolamoneytrans.com" target="_blank" class="btn-download-app">
+            <span>📲</span>
+            <span>TÉLÉCHARGER ZOLA MONEY TRANS</span>
+          </a>
+        </div>
+
+        <div style="display:inline-flex; align-items:center; gap:12px; background:rgba(0,0,0,0.35); padding:10px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.15);">
+          <div id="promoQR" style="background:#FFF; padding:6px; border-radius:8px;"></div>
+          <div style="text-align:left; font-size:0.75rem; color:#DDD6FE; max-width:180px;">
+            <strong style="color:#FCD34D;">Scannez ce code</strong> avec votre caméra pour installer l'application Zola sur votre mobile !<br/>
+            <span style="color:#A78BFA;">www.zolamoneytrans.com</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button onclick="window.location.href='index.html'" style="background:rgba(255,255,255,0.1); color:#FFF; border:none; padding:12px 24px; border-radius:12px; font-weight:700; cursor:pointer;">
+          Terminer & Retour au site
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script type="module">
+    import { db, doc, getDoc, functions, httpsCallable } from './js/firebase.js';
+
+    // Parse URL Params
+    const urlParams = new URLSearchParams(window.location.search);
+    let targetUid = urlParams.get('to') || urlParams.get('merchant') || 'ZMT-MARCHAND-DEMO';
+    let paramAmount = urlParams.get('amount') || urlParams.get('amt');
+    let paramCurrency = (urlParams.get('currency') || urlParams.get('curr') || 'CDF').toUpperCase();
+    let paramDesc = urlParams.get('desc') || urlParams.get('motif') || '';
+    let paramRef = urlParams.get('ref') || `ZOLA-QR-${Math.floor(100000 + Math.random() * 900000)}`;
+    const txId = urlParams.get('txId');
+
+    let currentCurrency = 'CDF';
+    let currentPaymentWay = 'mobile';
+    let selectedOperator = 'mpesa';
+    let merchantInfo = null;
+    let lockedMethod = null;
+
+    // Load txId if present
+    if (txId) {
+      document.getElementById('merchantNameDisplay').textContent = 'Chargement de la transaction...';
+      getDoc(doc(db, 'transactions', txId)).then(snap => {
+        if (snap.exists()) {
+          const data = snap.data();
+          targetUid = data.partnerId || data.userId || targetUid;
+          paramAmount = data.montant;
+          paramCurrency = data.currency;
+          paramRef = data.reference || data.merchantReference || paramRef;
+          
+          document.getElementById('customAmountInput').value = paramAmount;
+          document.getElementById('customAmountInput').readOnly = true;
+          document.getElementById('customAmountInput').style.opacity = '0.7';
+          window.selectCurrency(paramCurrency);
+          document.getElementById('btnCurrCDF').style.pointerEvents = 'none';
+          document.getElementById('btnCurrUSD').style.pointerEvents = 'none';
+          
+          document.getElementById('merchantNameDisplay').textContent = data.partnerName || 'Partenaire Zola';
+          
+          const allowed = data.allowedMethod || 'ALL';
+          if (allowed === 'BANK_CARD') {
+            window.location.href = `cb_checkout.html?txId=${txId}`;
+          } else if (allowed === 'MOBILE_MONEY') {
+            lockedMethod = 'MOBILE_MONEY';
+            document.getElementById('tabCard').style.display = 'none';
+          }
+        }
+      }).catch(err => console.error("Error loading txId:", err));
+    } else {
+      // 0-Delay Instant Fallback display before ANY network call
+      if (targetUid && targetUid !== 'ZMT-MARCHAND-DEMO') {
+        document.getElementById('merchantNameDisplay').textContent = targetUid.startsWith('ZMT-') ? targetUid : `Bénéficiaire Zola (${targetUid})`;
+      } else {
+        document.getElementById('merchantNameDisplay').textContent = 'Bénéficiaire Zola';
+      }
+
+      if (paramDesc) {
+        const descIn = document.getElementById('customDescInput');
+        if (descIn) descIn.value = paramDesc;
+      }
+
+      if (paramAmount && parseFloat(paramAmount) > 0) {
+        document.getElementById('customAmountInput').value = parseFloat(paramAmount);
+      }
+    }
+
+    // Initialize Currency
+    window.selectCurrency = function(curr) {
+      currentCurrency = curr;
+      document.getElementById('btnCurrCDF').classList.toggle('active', curr === 'CDF');
+      document.getElementById('btnCurrUSD').classList.toggle('active', curr === 'USD');
+      document.getElementById('currencyBadgeDisplay').textContent = curr;
+      updateQuickChips();
+      updateButtonBadge();
+    };
+
+    window.updateQuickChips = function() {
+      const box = document.getElementById('quickChipsBox');
+      box.innerHTML = '';
+      const chips = currentCurrency === 'USD' ? [1, 5, 10, 20, 50, 100] : [2500, 5000, 10000, 25000, 50000, 100000];
+      chips.forEach(val => {
+        const span = document.createElement('span');
+        span.className = 'chip';
+        span.textContent = `+${val.toLocaleString('fr-FR')} ${currentCurrency}`;
+        span.onclick = () => {
+          document.getElementById('customAmountInput').value = val;
+          updateButtonBadge();
+        };
+        box.appendChild(span);
+      });
+      updateButtonBadge();
+    };
+
+    window.updateButtonBadge = function() {
+      const amt = parseFloat(document.getElementById('customAmountInput').value) || 0;
+      const box = document.getElementById('feeBreakdownBox');
+      if (amt > 0) {
+        const fee = currentCurrency === 'USD' ? parseFloat((amt * 0.095).toFixed(2)) : Math.round(amt * 0.095);
+        const total = currentCurrency === 'USD' ? parseFloat((amt + fee).toFixed(2)) : amt + fee;
+        window.currentPayinTotal = total;
+        window.currentPayinFee = fee;
+        document.getElementById('displayBaseAmount').textContent = `${amt.toLocaleString('fr-FR')} ${currentCurrency}`;
+        document.getElementById('displayFeeAmount').textContent = `${fee.toLocaleString('fr-FR')} ${currentCurrency}`;
+        document.getElementById('displayTotalAmount').textContent = `${total.toLocaleString('fr-FR')} ${currentCurrency}`;
+        if (box) box.style.display = 'block';
+        document.getElementById('btnAmountBadge').textContent = `${total.toLocaleString('fr-FR')} ${currentCurrency}`;
+      } else {
+        window.currentPayinTotal = 0;
+        window.currentPayinFee = 0;
+        if (box) box.style.display = 'none';
+        document.getElementById('btnAmountBadge').textContent = `0 ${currentCurrency}`;
+      }
+    };
+
+    // Set initial currency based on URL param or default CDF
+    selectCurrency(['USD', 'CDF'].includes(paramCurrency) ? paramCurrency : 'CDF');
+    document.getElementById('customAmountInput').addEventListener('input', updateButtonBadge);
+
+    // Render App Download Promo QR inside modal ahead of time
+    setTimeout(() => {
+      const box = document.getElementById('promoQR');
+      if (box && window.QRCode) {
+        box.innerHTML = '';
+        new QRCode(box, {
+          text: 'https://www.zolamoneytrans.com',
+          width: 64,
+          height: 64,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      }
+    }, 600);
+
+    // Fetch exact Beneficiary Details asynchronously
+    async function loadBeneficiary() {
+      try {
+        const getPublicMerchFn = httpsCallable(functions, 'getPublicMerchantInfo');
+        const res = await getPublicMerchFn({ merchantUid: targetUid });
+        merchantInfo = res.data;
+
+        if (merchantInfo && merchantInfo.name) {
+          document.getElementById('merchantNameDisplay').textContent = merchantInfo.name;
+          if (merchantInfo.tagline) {
+            document.getElementById('merchantTaglineDisplay').textContent = merchantInfo.tagline;
+          }
+          if (merchantInfo.photoURL && merchantInfo.photoURL !== 'icons/zolalogo96x96.png') {
+            document.getElementById('merchantAvatarImg').src = merchantInfo.photoURL;
+          }
+          if (merchantInfo.kycLevel === 'marchand' || merchantInfo.kycLevel === 'verifie') {
+            document.getElementById('merchantKycBadge').innerHTML = '✓ Bénéficiaire Vérifié';
+          }
+          if (merchantInfo.receiverOp && ['mpesa', 'airtel', 'orange', 'afrimoney'].includes(merchantInfo.receiverOp.toLowerCase())) {
+            selectOperator(merchantInfo.receiverOp.toLowerCase());
+            document.getElementById('merchantReceiverOpVal').textContent = merchantInfo.receiverOp;
+          } else {
+            document.getElementById('merchantReceiverOpVal').textContent = merchantInfo.receiverOp || 'Non spécifié';
+          }
+          
+          if (merchantInfo.receiverPhone) {
+            // Mask the phone number for privacy, e.g. 082XXXXXX
+            let phone = merchantInfo.receiverPhone;
+            if (phone.length >= 6) {
+              phone = phone.substring(0, 3) + 'xxxx' + phone.substring(phone.length - 2);
+            }
+            document.getElementById('merchantReceiverPhoneVal').textContent = phone;
+          } else {
+            document.getElementById('merchantReceiverPhoneVal').textContent = 'Non spécifié';
+          }
+
+          if (merchantInfo.receiverCurrency && ['USD', 'CDF'].includes(merchantInfo.receiverCurrency.toUpperCase())) {
+            if (!urlParams.get('currency') && !urlParams.get('curr')) {
+              selectCurrency(merchantInfo.receiverCurrency.toUpperCase());
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch exact profile from server, using display parameters:', err);
+      }
+    }
+    loadBeneficiary();
+
+    window.switchPaymentWay = function(way) {
+      currentPaymentWay = way;
+      document.getElementById('tabMobile').classList.toggle('active', way === 'mobile');
+      document.getElementById('tabCard').classList.toggle('active', way === 'card');
+      document.getElementById('mobileMoneyFormArea').style.display = way === 'mobile' ? 'block' : 'none';
+      document.getElementById('cardFormArea').style.display = way === 'card' ? 'block' : 'none';
+    };
+
+    window.selectOperator = function(op) {
+      selectedOperator = op;
+      document.querySelectorAll('.op-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-op') === op);
+      });
+    };
+
+    window.nextStep = function(step) {
+      // Validation before moving
+      if (step === 2) {
+        let finalAmt = parseFloat(document.getElementById('customAmountInput').value);
+        if (!finalAmt || isNaN(finalAmt) || finalAmt <= 0) {
+          alert("Veuillez saisir un montant de paiement valide.");
+          return;
+        }
+        if (currentCurrency === 'USD' && finalAmt < 0.5) {
+          alert("Le montant minimum est de 0.50 USD.");
+          return;
+        }
+        if (currentCurrency === 'CDF' && finalAmt < 500) {
+          alert("Le montant minimum est de 500 CDF.");
+          return;
+        }
+      }
+      
+      if (step === 3) {
+        if (currentPaymentWay === 'mobile') {
+          const phoneVal = document.getElementById('inputCustomerPhone').value.trim();
+          if (!phoneVal || phoneVal.length < 9) {
+            alert("Veuillez entrer un numéro de téléphone mobile valide (ex: 0820000000).");
+            return;
+          }
+        }
+      }
+
+      // Update UI
+      document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+
+      document.getElementById('stepperStep1').classList.toggle('completed', step > 1);
+      document.getElementById('stepperStep2').classList.toggle('completed', step > 2);
+      
+      document.getElementById('stepperStep1').classList.toggle('active', step === 1);
+      document.getElementById('stepperStep2').classList.toggle('active', step === 2);
+      document.getElementById('stepperStep3').classList.toggle('active', step === 3);
+    };
+
+    window.prevStep = function(step) {
+      document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+
+      document.getElementById('stepperStep1').classList.toggle('completed', step > 1);
+      document.getElementById('stepperStep2').classList.toggle('completed', step > 2);
+
+      document.getElementById('stepperStep1').classList.toggle('active', step === 1);
+      document.getElementById('stepperStep2').classList.toggle('active', step === 2);
+      document.getElementById('stepperStep3').classList.toggle('active', step === 3);
+    };
+
+    window.confirmUssdDone = function() {
+      document.getElementById('ussdModal').classList.remove('active');
+      document.getElementById('successModal').classList.add('active');
+    };
+
+    window.submitSmartPayment = async function() {
+      const btn = document.getElementById('btnConfirmPay');
+      if (btn.disabled) return;
+
+      let finalAmt = parseFloat(document.getElementById('customAmountInput').value);
+      let finalCur = currentCurrency;
+      
+      if (!finalAmt || isNaN(finalAmt) || finalAmt <= 0) {
+        alert("Veuillez saisir un montant de paiement valide.");
+        document.getElementById('customAmountInput').focus();
+        return;
+      }
+      if (finalCur === 'USD' && finalAmt < 0.5) {
+        alert("Le montant minimum est de 0.50 USD.");
+        return;
+      }
+      if (finalCur === 'CDF' && finalAmt < 500) {
+        alert("Le montant minimum est de 500 CDF.");
+        return;
+      }
+
+      const payerName = document.getElementById('inputPayerName').value.trim();
+      const payerEmail = document.getElementById('inputPayerEmail').value.trim();
+      const payerPhone = document.getElementById('inputPayerPhone').value.trim();
+      const refVal = paramRef || (`ZOLA-QR-${Date.now()}`);
+      const descVal = document.getElementById('customDescInput')?.value.trim() || paramDesc || `Paiement de ${payerName}`;
+
+      if (!payerName) {
+        alert("Veuillez renseigner votre nom complet pour le reçu.");
+        document.getElementById('inputPayerName').focus();
+        return;
+      }
+      if (!payerEmail || !payerEmail.includes('@')) {
+        alert("Veuillez renseigner une adresse e-mail valide pour recevoir le reçu officiel.");
+        document.getElementById('inputPayerEmail').focus();
+        return;
+      }
+
+      let methodVal = selectedOperator;
+      let phoneOrCardHolder = "+243820000000";
+
+      if (currentPaymentWay === 'mobile') {
+        const phoneVal = document.getElementById('inputCustomerPhone').value.trim();
+        if (!phoneVal || phoneVal.length < 9) {
+          alert("Veuillez entrer un numéro de téléphone mobile valide (ex: 0820000000).");
+          document.getElementById('inputCustomerPhone').focus();
+          return;
+        }
+        phoneOrCardHolder = phoneVal;
+        methodVal = selectedOperator;
+      } else {
+        phoneOrCardHolder = "+243820000000"; // Numeric clean fallback for MokoAfrica bill_to_phone
+        methodVal = 'visa';
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> <span>Initiation en cours...</span>`;
+
+      try {
+        const processGuestFn = httpsCallable(functions, 'processGuestPayment');
+        const totalDebited = window.currentPayinTotal || finalAmt;
+        const feeAmount = window.currentPayinFee || 0;
+        const res = await processGuestFn({
+          merchantUid: targetUid,
+          amount: totalDebited,
+          amountBase: finalAmt,
+          frais: feeAmount,
+          currency: finalCur,
+          customerNumber: phoneOrCardHolder,
+          method: methodVal,
+          reference: refVal,
+          description: descVal,
+          payerName: payerName,
+          payerEmail: payerEmail,
+          txId: txId
+        });
+
+        const data = res.data || {};
+        if (data && (data.links || data.url)) {
+          alert("Redirection vers la passerelle sécurisée Visa/Mastercard Moko Africa...");
+          window.location.href = data.links || data.url;
+          return;
+        }
+
+        if (currentPaymentWay === 'card' && methodVal === 'visa') {
+          // If no link returned but succeeded
+          document.getElementById('succBenefName').textContent = merchantInfo && merchantInfo.name ? merchantInfo.name : targetUid;
+          document.getElementById('succAmountVal').textContent = `${totalDebited.toLocaleString('fr-FR')} ${finalCur}`;
+          if (document.getElementById('succFeeVal')) {
+            document.getElementById('succFeeVal').textContent = feeAmount > 0 ? `${feeAmount.toLocaleString('fr-FR')} ${finalCur}` : `0 ${finalCur}`;
+          }
+          document.getElementById('succRefVal').textContent = refVal;
+          document.getElementById('succEmailVal').textContent = payerEmail;
+          document.getElementById('successSummaryText').textContent = "Paiement par carte validé !";
+          document.getElementById('successModal').classList.add('active');
+          return;
+        }
+
+        // For Mobile Money: Show USSD Push Waiting Instructions instead of immediate success
+        const benefDisp = merchantInfo && merchantInfo.name ? merchantInfo.name : targetUid;
+        document.getElementById('ussdPhoneVal').textContent = phoneOrCardHolder;
+        document.getElementById('ussdOpVal').textContent = selectedOperator.toUpperCase();
+        document.getElementById('ussdAmountVal').textContent = `${totalDebited.toLocaleString('fr-FR')} ${finalCur}`;
+        if (document.getElementById('ussdFeeVal')) {
+          document.getElementById('ussdFeeVal').textContent = feeAmount > 0 ? `${feeAmount.toLocaleString('fr-FR')} ${finalCur}` : `0 ${finalCur}`;
+        }
+        document.getElementById('ussdEmailVal').textContent = payerEmail;
+        document.getElementById('ussdMainMessage').textContent = `Un message USSD Push vient d'être envoyé sur le ${phoneOrCardHolder} (${selectedOperator.toUpperCase()}).`;
+        
+        // Also populate success modal values for after they click confirmation
+        document.getElementById('succBenefName').textContent = benefDisp;
+        document.getElementById('succAmountVal').textContent = `${totalDebited.toLocaleString('fr-FR')} ${finalCur}`;
+        if (document.getElementById('succFeeVal')) {
+          document.getElementById('succFeeVal').textContent = feeAmount > 0 ? `${feeAmount.toLocaleString('fr-FR')} ${finalCur}` : `0 ${finalCur}`;
+        }
+        document.getElementById('succRefVal').textContent = refVal;
+        document.getElementById('succEmailVal').textContent = payerEmail;
+
+        document.getElementById('ussdModal').classList.add('active');
+      } catch (err) {
+        console.error("Erreur paiement invité:", err);
+        if (err.message && (err.message.includes('internal') || err.message.includes('failed') || err.message.includes('network'))) {
+          // Fallback UI if network disconnected mid-flight
+          const totalDebited = window.currentPayinTotal || finalAmt;
+          if (currentPaymentWay === 'mobile') {
+            document.getElementById('ussdPhoneVal').textContent = phoneOrCardHolder;
+            document.getElementById('ussdOpVal').textContent = selectedOperator.toUpperCase();
+            document.getElementById('ussdAmountVal').textContent = `${totalDebited.toLocaleString('fr-FR')} ${finalCur}`;
+            document.getElementById('ussdEmailVal').textContent = payerEmail;
+            document.getElementById('ussdMainMessage').textContent = `Une demande USSD Push a été initiée sur le ${phoneOrCardHolder}.`;
+            document.getElementById('ussdModal').classList.add('active');
+          } else {
+            alert("Erreur lors de la transaction carte : " + (err.message || "Impossible de contacter la passerelle Visa/Mastercard."));
+          }
+        } else {
+          alert("Erreur lors de la transaction : " + (err.message || "Impossible de contacter le serveur de paiement."));
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>🔒 Payer Maintenant</span> <span style="background:rgba(0,0,0,0.2); padding:4px 10px; border-radius:8px;">${finalAmt.toLocaleString('fr-FR')} ${finalCur}</span>`;
+      }
+    };
+
+    // Initialize UI from URL parameters if passed
+    const urlWay = urlParams.get('way');
+    if (urlWay) {
+      setTimeout(() => switchPaymentWay(urlWay), 100);
+    }
+  </script>
+</body>
+</html>

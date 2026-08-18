@@ -8,6 +8,7 @@ let pendingBatches = [];
 
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user.emailVerified && user.email !== "drnduwa@gmail.com") { window.location.href = 'auth.html?unverified=1'; return; }
   
   try {
     const userSnap = await getDoc(doc(db, 'users', user.uid));

@@ -83,10 +83,17 @@
       <img src="icons/zolalogo192x192.png" alt="Zola Money" style="width:80px; height:80px; border-radius:20px;" />
     </div>
 
-    <h2 style="margin-bottom:10px; text-align:center;">Traitement en cours</h2>
-    <p style="color:var(--c-text2); text-align:center; max-width:400px; margin-bottom:30px; font-size:0.9rem;">
-      Veuillez patienter pendant que nous confirmons et exécutons votre transfert. Ne fermez pas cette page.
-    </p>
+    <h2 style="margin-bottom:12px; text-align:center;">Traitement de votre transfert</h2>
+    
+    <div style="background:rgba(124, 58, 237, 0.08); border:1px solid rgba(124, 58, 237, 0.25); border-radius:14px; padding:16px; max-width:420px; margin-bottom:24px; text-align:left; display:flex; align-items:flex-start; gap:12px;">
+      <span style="font-size:1.4rem;">🛡️</span>
+      <div>
+        <div style="font-weight:600; font-size:0.92rem; color:var(--c-primary); margin-bottom:4px;">Garantie de Sécurité 100% Zola</div>
+        <div style="font-size:0.82rem; color:var(--c-text2); line-height:1.4;">
+          Notre serveur traite votre transaction de manière autonome. Si vous fermez cette application ou perdez votre connexion internet, <strong>le versement au bénéficiaire s'exécutera automatiquement</strong> en arrière-plan et vous recevrez votre confirmation par e-mail et notification.
+        </div>
+      </div>
+    </div>
 
     <div class="progress-container">
       
@@ -96,7 +103,7 @@
           <span id="check1" style="display:none;">✓</span>
         </div>
         <div>
-          <div class="step-text" id="text1">En attente de la confirmation Visa...</div>
+          <div class="step-text" id="text1">En attente de la confirmation Visa / Mobile Money...</div>
           <div class="step-subtext">Vérification du paiement sécurisé</div>
         </div>
       </div>
@@ -108,8 +115,8 @@
           <span id="icon2">💸</span>
         </div>
         <div>
-          <div class="step-text" id="text2">Paiement Mobile Money en attente</div>
-          <div class="step-subtext">Envoi des fonds au bénéficiaire</div>
+          <div class="step-text" id="text2">Versement Mobile Money au bénéficiaire...</div>
+          <div class="step-subtext">Envoi autonome des fonds au destinataire</div>
         </div>
       </div>
 
@@ -118,16 +125,25 @@
           🎉
         </div>
         <div>
-          <div class="step-text" id="text3">Finalisation</div>
+          <div class="step-text" id="text3">Finalisation & Délivrance</div>
         </div>
       </div>
 
     </div>
 
-    <div id="errorContainer" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:16px; color:#f87171; max-width:400px; text-align:center; margin-top:20px;">
+    <div id="errorContainer" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:16px; color:#f87171; max-width:420px; text-align:center; margin-top:20px;">
       <div style="font-weight:600; margin-bottom:8px;">Le transfert a échoué</div>
       <div id="errorMessage" style="font-size:0.85rem;">Une erreur est survenue lors de la transaction.</div>
-      <button class="btn btn-outline" style="margin-top:16px;" onclick="window.location.href='transfer.html'">Retourner aux transferts</button>
+      <button class="btn btn-outline" id="retryBtn" style="margin-top:16px;" onclick="window.location.href='transfer.html'">Refaire le transfert</button>
+    </div>
+
+    <div id="timeoutContainer" style="display:none; background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.35); border-radius:14px; padding:18px; color:var(--c-text); max-width:420px; text-align:center; margin-top:20px;">
+      <div style="font-weight:700; font-size:1rem; color:#10B981; margin-bottom:8px;">⚡ Traitement autonome en cours</div>
+      <div style="font-size:0.88rem; color:var(--c-text2); margin-bottom:16px; line-height:1.5;">
+        Votre demande a bien été prise en charge par nos serveurs sécurisés Zola. L'opérateur bancaire ou Mobile Money prend quelques instants supplémentaires. <br/><br/>
+        <strong>Vous pouvez quitter ou fermer cette page en toute sécurité :</strong> dès la confirmation, le bénéficiaire sera crédité et un e-mail / SMS de confirmation vous sera envoyé !
+      </div>
+      <button class="btn btn-primary" style="width:100%; font-weight:600;" onclick="window.location.href='dashboard.html'">Consulter le statut dans le tableau de bord</button>
     </div>
 
     <div id="successContainer" style="display:none; margin-top:20px; text-align:center;">

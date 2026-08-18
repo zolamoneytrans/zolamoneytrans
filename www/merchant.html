@@ -1,23 +1,215 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Paiement Marchand — Zola Money Trans</title>
-  <link rel="icon" href="icons/zolalogo96x96.png"/>
-  <meta name="theme-color" content="#7C3AED"/>
-  <link rel="stylesheet" href="css/main.css?v=6"/>
-  <link rel="stylesheet" href="css/components.css?v=6"/>
-  <link rel="stylesheet" href="css/animations.css?v=6"/>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Paiement Marchand — Studio QR & Encaissements | Zola Money Trans</title>
+  <meta name="description" content="Gérez vos encaissements marchands, personnalisez et imprimez votre QR Code HD au centre, configurez votre réception Mobile Money et suivez vos paiements en temps réel en USD et CDF." />
+  <meta name="theme-color" content="#7C3AED" />
+  <link rel="icon" type="image/png" href="icons/zolalogo192x192.png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Google Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+
+  <style>
+    /* ── Premium Studio & Dashboard CSS ── */
+    .onboarding-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 1024px) {
+      .onboarding-steps-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .onboarding-steps-grid { grid-template-columns: 1fr; }
+    }
+    .step-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      position: relative;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--c-primary-light);
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.12);
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c-primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(124, 58, 237, 0.35);
+    }
+    .step-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--c-text);
+    }
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--c-text2);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .guide-banner-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 14px !important;
+        font-size: 0.95rem !important;
+      }
+      .guide-banner-card {
+        padding: 16px !important;
+        gap: 16px !important;
+      }
+      .qr-studio-panel {
+        padding: 14px !important;
+      }
+      #btnSaveProfile, .btn {
+        white-space: normal !important;
+        height: auto !important;
+        word-break: break-word !important;
+        padding: 12px !important;
+      }
+      h3, .section-title {
+        word-break: break-word !important;
+        max-width: 100% !important;
+      }
+    }
+
+    .qr-studio-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      align-items: start;
+      max-width: 100%;
+    }
+    @media (max-width: 992px) {
+      .qr-studio-grid { grid-template-columns: 1fr; }
+    }
+
+    .poster-preview-box {
+      background: #ffffff;
+      color: #1e1e2d;
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+      text-align: center;
+      position: relative;
+      border: 3px solid #7C3AED;
+      transition: var(--transition);
+    }
+    .poster-preview-box:hover {
+      box-shadow: 0 20px 45px rgba(124, 58, 237, 0.22);
+    }
+
+    .kpi-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 640px) {
+      .kpi-dual-grid { grid-template-columns: 1fr; }
+    }
+    .kpi-box {
+      background: var(--c-surface2);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: var(--transition);
+    }
+    .kpi-box:hover {
+      border-color: var(--c-gold);
+      transform: translateY(-2px);
+    }
+    .kpi-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .kpi-icon.cdf { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+    .kpi-icon.usd { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+    .kpi-info { display: flex; flex-direction: column; gap: 2px; }
+    .kpi-label { font-size: 0.82rem; color: var(--c-text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-value { font-size: 1.55rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--c-text); }
+    .kpi-sub { font-size: 0.76rem; color: var(--c-text2); }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-period-filter, .btn-currency-filter {
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: var(--c-surface2);
+      color: var(--c-text2);
+      border: 1px solid var(--c-border);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-period-filter:hover, .btn-period-filter.active, .btn-currency-filter:hover, .btn-currency-filter.active {
+      background: var(--c-primary);
+      color: #fff;
+      border-color: var(--c-primary);
+    }
+    .op-pill {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.72rem;
+      margin: 2px;
+    }
+  </style>
+
+  <!-- Bibliothèques JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body>
-<div id="loadingScreen" class="loading-screen">
-  <img src="icons/zolalogo192x192.png" alt="Chargement..."/>
-  <div class="spinner" style="width:32px;height:32px;"></div>
+<body class="page-fade-in">
+
+<!-- Écran de chargement -->
+<div id="loadingScreen" style="position:fixed;inset:0;background:var(--c-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;">
+  <div class="spinner" style="width:48px;height:48px;border-width:4px;"></div>
+  <p style="margin-top:16px;color:var(--c-text2);font-weight:600;">Chargement de votre Studio Marchand…</p>
 </div>
 
-<div class="app-shell" id="appShell" style="display:none;">
+<!-- Shell PWA Marchand -->
+<div id="appShell" style="display:none;">
+
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <img src="icons/zolalogo96x96.png" alt="Zola"/>
@@ -25,12 +217,12 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-title">Principal</div>
-      <a href="dashboard.html" class="nav-item">
+      <a href="dashboard_marchand.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
         Tableau de bord
       </a>
       <a href="merchant.html" class="nav-item active">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
         Paiement Marchand
       </a>
       <a href="transfer.html" class="nav-item">
@@ -38,100 +230,299 @@
         Transferts
       </a>
       <a href="bills.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
         Factures
       </a>
-      <div class="nav-section-title">Compte</div>
+      <a href="history_marchand.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Historique
+      </a>
+      <div class="nav-section-title" style="margin-top:8px;">Compte</div>
       <a href="kyc.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
         Vérification KYC
       </a>
-      <a href="settings.html" class="nav-item">
+      <a href="settings_marchand.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Paramètres
       </a>
-      <a href="help.html" class="nav-item">
+      <a href="help_marchand.html" class="nav-item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
         Aide & Support
       </a>
     </nav>
     <div class="sidebar-footer">
-      <button class="nav-item" onclick="handleLogout()" style="width:100%;background:none;border:none;cursor:pointer;">
+      <button class="nav-item" onclick="handleLogout()" style="width:100%; background:none; border:none; cursor:pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
         Déconnexion
       </button>
     </div>
   </aside>
-  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+  <!-- Topbar Mobile & Header -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="user-avatar" id="userAvatar">M</div>
+      <div>
+        <h1 class="topbar-title">Studio QR Code & Paiement Marchand</h1>
+        <div id="kycBadge" style="display:inline-block; margin-top:2px;"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="help_marchand.html" class="btn-icon" title="Guide et Assistance">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Contenu Principal -->
   <main class="main-content">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="hamburger" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
-        <div class="topbar-title">Paiement Marchand</div>
-      </div>
-      <div class="topbar-right">
-        <div class="avatar" id="userAvatar">Z</div>
-      </div>
-    </header>
+    <div class="container-fluid" style="max-width:1200px; margin:0 auto;">
 
-    <div class="page-content page-enter">
-      <div class="responsive-grid" style="margin-bottom:24px;">
+      <!-- GUIDE MARCHAND BOUTON / BANNIÈRE COMPACTE (MOBILE FRIENDLY) -->
+      <div class="card guide-banner-card" style="margin-bottom:24px; border:2px solid var(--c-primary-light); background:linear-gradient(135deg, rgba(124,58,237,0.12), rgba(245,158,11,0.08)); padding:18px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; border-radius:18px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="width:50px; height:50px; border-radius:14px; background:var(--c-primary-light); display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.25);">🚀</div>
+          <div>
+            <h4 style="font-size:1.05rem; font-weight:800; color:var(--c-text); margin:0; display:flex; align-items:center; gap:8px;">Guide Marchand — Encaisser en 4 Étapes <span class="badge badge-gold" style="font-size:0.75rem;">Tutoriel</span></h4>
+            <p style="font-size:0.83rem; color:var(--c-text2); margin:4px 0 0 0; line-height:1.4;">Découvrez comment personnaliser votre Studio QR, imprimer en HD et recevoir vos paiements sur votre mobile.</p>
+          </div>
+        </div>
+        <button class="btn btn-primary guide-banner-btn" onclick="openGuideModal()" style="padding:12px 20px; font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px; flex-shrink:0; border-radius:12px; box-shadow:0 6px 18px rgba(124,58,237,0.35); background:linear-gradient(135deg, var(--c-primary), var(--c-primary-light)); border:none; color:#fff; cursor:pointer;">
+          <span>📖 Ouvrir le Guide Interactif</span>
+        </button>
+      </div>
 
-        <!-- QR Code statique -->
-        <div class="card">
-          <div class="section-header">
-            <span class="section-title">QR Code Statique Marchand</span>
-            <span class="badge badge-success">Actif</span>
+      <!-- STUDIO QR CODE MARCHAND : PERSONNALISATION & APERÇU DIRECT -->
+      <div class="card" style="margin-bottom:28px;">
+        <div class="section-header">
+          <div>
+            <span class="section-title">✨ Kit d'Affichage QR Code Marchand — Personnalisation & Impression HD</span>
+            <p style="font-size:0.85rem; color:var(--c-text2); margin-top:4px; margin-bottom:0;">Créez l'identité visuelle de votre point de vente. Vos clients peuvent payer avec n'importe quel opérateur Mobile Money ou carte bancaire.</p>
           </div>
-          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Imprimez ce QR code et affichez-le dans votre commerce. Vos clients peuvent payer avec n'importe quel opérateur.</p>
-          <div style="text-align:center; margin-bottom:20px;">
-            <div class="qr-box" id="staticQR" style="display:inline-flex;"></div>
-          </div>
-          <div class="btn-group-mobile" style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="downloadQR('staticQR','qr-statique-zola')">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-              Télécharger HD
+          <span class="badge badge-success">Format A4 Centré Prêt à Imprimer</span>
+        </div>
+
+        <div class="qr-studio-grid">
+          
+          <!-- Colonne Gauche : Personnalisation -->
+          <div class="qr-studio-panel" style="background:var(--c-surface2); padding:24px; border-radius:16px; border:1px solid var(--c-border); max-width:100%; box-sizing:border-box;">
+            <h3 style="font-size:1rem; font-weight:700; color:var(--c-text); margin-bottom:18px; display:flex; align-items:flex-start; flex-wrap:wrap; gap:8px; word-break:break-word; max-width:100%;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--c-primary-light);flex-shrink:0;margin-top:2px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <span>1. Personnalisez l'identité sur votre Poster</span>
+            </h3>
+
+            <div class="form-group" style="max-width:100%;">
+              <label class="form-label" style="word-break:break-word;">Nom de votre commerce ou établissement</label>
+              <input type="text" id="bizNameInput" class="form-control" placeholder="Ex: RESTAURANT CHEZ MAMA K." oninput="updateLivePosterPreview()"/>
+            </div>
+
+            <div class="form-group" style="max-width:100%;">
+              <label class="form-label">Type d'activité / Icône</label>
+              <select id="bizIconSelect" class="form-control" onchange="updateLivePosterPreview()" style="font-weight:600; cursor:pointer;">
+                <option value="shop">🛍 BOUTIQUE / SUPERMARCHÉ</option>
+                <option value="restaurant">🍽 RESTAURANT / BAR</option>
+                <option value="pharmacy">💊 PHARMACIE / SANTÉ</option>
+                <option value="transport">🚕 TAXI / TRANSPORT</option>
+                <option value="hotel">🏨 HÔTEL / SALON DE BEAUTÉ</option>
+                <option value="service">🏢 SERVICES & BUREAUX</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="max-width:100%;">
+              <label class="form-label" style="word-break:break-word;">Logo personnalisé de votre commerce (optionnel)</label>
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; max-width:100%;">
+                <input type="file" id="bizLogoInput" accept="image/png, image/jpeg, image/webp" style="display:none;" onchange="handleLogoUpload(event)" />
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('bizLogoInput').click()" style="white-space:normal; word-break:break-word; max-width:100%;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                  <span>Choisir un Logo (PNG/JPG)</span>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="clearCustomLogo()" title="Supprimer le logo importé">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group" style="max-width:100%;">
+              <label class="form-label">Message / Slogan pour vos clients</label>
+              <input type="text" id="bizTaglineInput" class="form-control" placeholder="Ex: Scannez pour payer votre commande en toute simplicité" oninput="updateLivePosterPreview()"/>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="btnSaveProfile" onclick="saveMerchantBizProfile()" style="margin-top:8px; width:100%; white-space:normal !important; word-break:break-word !important; height:auto; padding:13px 16px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span>Enregistrer l'identité & Mémoriser mon Logo</span>
             </button>
-            <button class="btn btn-outline" onclick="shareLink()">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
-              Partager
-            </button>
+
+            <!-- Hidden container for original QRCode generation -->
+            <div id="staticQR" style="display:none;"></div>
+
+            <div class="divider" style="margin:20px 0;"></div>
+
+            <div style="background:var(--c-surface); border-radius:12px; padding:14px; border:1px solid var(--c-border); font-size:0.82rem; color:var(--c-text2);">
+              <strong style="color:var(--c-text); display:block; margin-bottom:4px;">💡 Astuces de positionnement dans votre commerce :</strong>
+              <ul style="margin:0; padding-left:18px; line-height:1.6;">
+                <li><strong>Restaurants & Cafés :</strong> Imprimez et plastifiez au format A5 sur chaque chevalet de table ou directement sur le comptoir.</li>
+                <li><strong>Boutiques & Caisses :</strong> Affichez à hauteur des yeux du client à côté du terminal ou de la caisse enregistreuse.</li>
+              </ul>
+            </div>
           </div>
-          <div class="divider" style="margin:16px 0;"></div>
-          <div style="background:var(--c-surface2); border-radius:var(--radius-sm); padding:12px; font-size:0.82rem; color:var(--c-text2);">
-            <strong style="color:var(--c-text);">Lien de paiement :</strong><br/>
-            <span id="payLink" style="color:var(--c-primary-light); word-break:break-all;"></span>
+
+          <!-- Colonne Droite : Aperçu et Téléchargement -->
+          <div>
+            <h3 style="font-size:1rem; font-weight:700; color:var(--c-text); margin-bottom:18px; display:flex; align-items:center; gap:8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--c-gold);"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              2. Aperçu en Direct du Bulletin A4 & Actions
+            </h3>
+
+            <!-- Live Poster Visual Representation -->
+            <div class="poster-preview-box" id="livePosterPreview">
+              
+              <!-- Brand Top -->
+              <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:18px; padding-bottom:14px; border-bottom:1.5px dashed #cbd5e1;">
+                <img src="icons/zolalogo192x192.png" alt="Zola" style="height:44px; width:44px; object-fit:contain;" />
+                <div style="text-align:left; line-height:1.15;">
+                  <div style="color:#e31e24; font-weight:900; font-size:18px;">ZOLA <span style="color:#2D1B69;">MONEY</span> TRANS</div>
+                  <div style="color:#7C3AED; font-weight:800; font-size:10px; letter-spacing:1.5px;">PAIEMENT MARCHAND SÉCURISÉ</div>
+                </div>
+              </div>
+
+              <!-- Merchant Custom Area -->
+              <div style="margin-bottom:16px;">
+                <div id="previewBizLogoBox"></div>
+                <h4 id="previewBizName" style="color:#1e1e2d; font-size:20px; font-weight:900; margin:6px 0; text-transform:uppercase; word-break:break-word;">MON COMMERCE</h4>
+                <p id="previewBizTagline" style="color:#64748b; font-size:12px; font-weight:600; margin:0;">Scannez pour payer votre commande en toute simplicité</p>
+              </div>
+
+              <!-- Centered QR Box -->
+              <div style="background:#ffffff; padding:14px; border-radius:20px; border:4px solid #7C3AED; margin:0 auto 14px auto; width:210px; height:210px; display:flex; justify-content:center; align-items:center; box-shadow:0 10px 25px rgba(124,58,237,0.18);">
+                <div id="previewQRBox" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                  <span class="spinner" style="width:24px;height:24px;"></span>
+                </div>
+              </div>
+
+              <div style="font-size:16px; font-weight:900; color:#2D1B69; letter-spacing:0.5px; margin-bottom:12px;">
+                SCANNEZ POUR PAYER
+              </div>
+
+              <!-- Operator Pills -->
+              <div style="margin-bottom:12px;">
+                <span class="op-pill" style="background:#e31e24;">M-PESA</span>
+                <span class="op-pill" style="background:#FF0000;">airtel money</span>
+                <span class="op-pill" style="background:#FF6600;">orange money</span>
+                <span class="op-pill" style="background:#6D28D9;">afri money</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons below Preview -->
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:14px;">
+              <button class="btn btn-gold btn-block" onclick="downloadQR('staticQR','poster-qr-marchand-zola')" style="padding:16px; font-size:1.05rem; font-weight:800; box-shadow:0 8px 20px rgba(245,158,11,0.25);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:22px;height:22px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Télécharger le Poster A4 HD (PDF Officiel)
+              </button>
+
+              <button class="btn btn-outline btn-block" onclick="shareLink()" style="padding:14px; font-size:0.95rem; font-weight:700;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+                Partager le Lien de Paiement
+              </button>
+            </div>
+
+              <!-- Lien de paiement brut -->
+              <div style="background:var(--c-surface2); border-radius:10px; padding:10px 14px; font-size:0.78rem; color:var(--c-text2); text-align:left; word-break:break-all;">
+                <strong style="color:var(--c-text);">Lien de paiement unique :</strong><br/>
+                <span id="payLink" style="color:var(--c-primary-light);"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PARAMÉTRAGE DU COMPTE DE RÉCEPTION MOBILE MONEY -->
+      <div class="card" style="margin-bottom:28px; border:1px solid var(--c-primary); background:var(--c-surface);">
+        <div class="section-header">
+          <div>
+            <span class="section-title">📲 Paramétrage Mobile Money de Réception (Où recevoir vos paiements)</span>
+            <p style="font-size:0.85rem; color:var(--c-text2); margin-top:4px; margin-bottom:0;">Sélectionnez l'opérateur et le numéro sur lequel vous souhaitez que les fonds soient automatiquement crédités lors d'un paiement par QR Code.</p>
+          </div>
+          <span class="badge badge-primary">Encaissement Instantané</span>
+        </div>
+
+        <div class="responsive-grid" style="grid-template-columns: repeat(3, 1fr); gap:16px; margin-top:16px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Opérateur de réception</label>
+            <select id="receiverOpSelect" class="form-control" style="font-weight:700; cursor:pointer;">
+              <option value="M-Pesa">🔴 M-Pesa (Vodacom)</option>
+              <option value="Airtel Money">🔴 Airtel Money</option>
+              <option value="Orange Money">🟠 Orange Money</option>
+              <option value="AfriMoney">🟣 AfriMoney</option>
+              <option value="Compte Zola Wallet">🔵 Compte Zola Wallet Interne</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Numéro de téléphone de réception</label>
+            <input type="tel" id="receiverPhoneInput" class="form-control" placeholder="Ex: 0970000000" style="font-family:'Outfit',sans-serif; font-weight:700;"/>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Conversion de Devise</label>
+            <select id="receiverCurrencySelect" class="form-control" style="cursor:pointer; font-weight:600;">
+              <option value="auto">Automatique (selon le client USD/CDF)</option>
+              <option value="CDF">Recevoir tout en Francs Congolais (CDF)</option>
+              <option value="USD">Recevoir tout en Dollars (USD)</option>
+            </select>
           </div>
         </div>
 
-        <!-- QR Code dynamique -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-top:20px;">
+          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.85rem; color:var(--c-text);">
+            <input type="checkbox" checked style="width:18px; height:18px; accent-color:var(--c-primary);" />
+            <span>M'envoyer une notification SMS & Sonore instantanée à chaque encaissement réussi</span>
+          </label>
+
+          <button class="btn btn-primary" id="btnSaveReceiver" onclick="saveMerchantSettings()" style="min-width:260px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Enregistrer mes paramètres de réception
+          </button>
+        </div>
+
+        <!-- Alert de statut de réception -->
+        <div class="alert alert-success" id="receiverStatusAlert" style="margin-top:20px; display:none; align-items:center; gap:12px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;flex-shrink:0;color:#10B981;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span id="receiverStatusText" style="font-size:0.88rem;"></span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <!-- QR Code dynamique (avec montant) -->
         <div class="card">
           <div class="section-header">
-            <span class="section-title">QR Code Dynamique</span>
-            <span class="badge badge-primary">Avec montant</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Générez un QR code avec un montant pré-rempli et une durée de validité configurable.</p>
-
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div class="form-group" style="flex:1; margin-bottom:0;">
-              <label class="form-label">Montant</label>
-              <input type="number" id="dynAmount" class="form-control" placeholder="Ex: 50000"/>
+            <div>
+              <span class="section-title">⏱ QR Code Dynamique avec Montant</span>
+              <p style="font-size:0.82rem; color:var(--c-text2); margin-top:2px; margin-bottom:0;">Pour émettre une facture spécifique de caisse.</p>
             </div>
-            <div class="form-group" style="width:100px; margin-bottom:0;">
+            <span class="badge badge-primary">Montant pré-rempli</span>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top:14px; margin-bottom:14px;">
+            <div class="form-group" style="flex:1; margin-bottom:0;">
+              <label class="form-label">Montant à encaisser</label>
+              <input type="number" id="dynAmount" class="form-control" placeholder="Ex: 25000"/>
+            </div>
+            <div class="form-group" style="width:110px; margin-bottom:0;">
               <label class="form-label">Devise</label>
-              <select id="dynCurrency" class="form-control" style="cursor:pointer; font-weight:600;">
-                <option value="CDF">CDF</option>
-                <option value="USD">USD</option>
+              <select id="dynCurrency" class="form-control" style="cursor:pointer; font-weight:700;">
+                <option value="CDF">CDF (FC)</option>
+                <option value="USD">USD ($)</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Description (optionnel)</label>
-            <input type="text" id="dynDesc" class="form-control" placeholder="Ex: Commande #001"/>
+            <label class="form-label">Numéro de commande ou Description</label>
+            <input type="text" id="dynDesc" class="form-control" placeholder="Ex: Table #4 - Menu Soirée"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Validité</label>
+            <label class="form-label">Durée de validité</label>
             <select id="dynValidity" class="form-control">
               <option value="5">5 minutes</option>
               <option value="30" selected>30 minutes</option>
@@ -141,88 +532,182 @@
           </div>
           <button class="btn btn-gold btn-block" onclick="generateDynamicQR()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-            Générer le QR Code
+            Générer le QR Code avec Montant
           </button>
-          <div id="dynQRWrap" style="text-align:center; margin-top:20px; display:none;">
-            <div class="qr-box" id="dynamicQR" style="display:inline-flex; margin-bottom:12px;"></div>
-            <div id="dynTimer" class="badge badge-warning" style="display:block; text-align:center; margin-bottom:12px;"></div>
-            <button class="btn btn-outline btn-sm btn-block" onclick="downloadQR('dynamicQR','qr-dynamique-zola')">Télécharger</button>
+          <div id="dynQRWrap" style="text-align:center; margin-top:20px; display:none; background:var(--c-surface2); padding:16px; border-radius:14px;">
+            <div class="qr-box" id="dynamicQR" style="display:inline-flex; margin-bottom:12px; background:#fff; padding:12px; border-radius:12px; border:2px solid var(--c-primary);"></div>
+            <div id="dynTimer" class="badge badge-warning" style="display:block; text-align:center; margin-bottom:12px; font-weight:700;"></div>
+            <button class="btn btn-outline btn-sm btn-block" onclick="downloadQR('dynamicQR','qr-dynamique-zola')">Télécharger Facture QR HD</button>
           </div>
         </div>
       </div>
 
-      <!-- Sélection opérateur & simulation paiement -->
-      <div class="card" style="margin-bottom:24px;">
-        <div class="section-title" style="margin-bottom:16px;">Simuler un paiement entrant</div>
-        <p style="font-size:0.85rem; color:var(--c-text2); margin-bottom:20px;">Testez la réception d'un paiement via un opérateur Mobile Money.</p>
-        <div class="operator-grid" id="opSelector">
-          <button class="operator-btn selected" onclick="selectOp(this,'M-Pesa')">
-            <div class="operator-dot" style="background:#e31e24;">M</div>
-            M-Pesa
-            <span class="badge badge-success" style="font-size:0.65rem;">En ligne</span>
-          </button>
-          <button class="operator-btn" onclick="selectOp(this,'Airtel Money')">
-            <div class="operator-dot" style="background:#FF0000;">A</div>
-            Airtel Money
-            <span class="badge badge-success" style="font-size:0.65rem;">En ligne</span>
-          </button>
-          <button class="operator-btn" onclick="selectOp(this,'Orange Money')">
-            <div class="operator-dot" style="background:#FF6600;">O</div>
-            Orange Money
-            <span class="badge badge-warning" style="font-size:0.65rem;">Lent</span>
-          </button>
-        </div>
-        <div class="btn-group-mobile" style="margin-top:20px; display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap;">
-          <div class="form-group" style="flex:1; min-width:180px; margin-bottom:0;">
-            <label class="form-label">Montant simulation (CDF)</label>
-            <input type="number" id="simAmount" class="form-control" placeholder="45000" value="45000"/>
-          </div>
-          <button class="btn btn-success" onclick="simulatePayment()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Simuler réception
-          </button>
-        </div>
-      </div>
-
-      <!-- Transactions du jour -->
+      <!-- SECTION SUIVI & COMPTABILITÉ : ENCAISSEMENTS EN TEMPS RÉEL (USD & CDF) -->
       <div class="card">
-        <div class="section-header">
-          <span class="section-title">Transactions du jour</span>
-          <span class="badge badge-primary" id="todayCount">0 transactions</span>
+        <div class="section-header" style="margin-bottom:18px;">
+          <div>
+            <span class="section-title">📊 Suivi de vos Encaissements en Temps Réel (USD & CDF)</span>
+            <p style="font-size:0.85rem; color:var(--c-text2); margin-top:4px; margin-bottom:0;">Consultez vos revenus par devise et par période. Vos bilans sont mis à jour instantanément à chaque scan.</p>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <span class="badge badge-primary" id="txCountBadge" style="font-size:0.85rem; padding:6px 14px;">0 transactions</span>
+            <button class="btn btn-outline btn-sm" onclick="exportMerchantCSV()" title="Exporter en Excel ou CSV">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Exporter Excel / CSV
+            </button>
+          </div>
         </div>
-        <div class="tx-list" id="todayTxList">
-          <p style="text-align:center; color:var(--c-text3); padding:24px; font-size:0.88rem;">Aucune transaction aujourd'hui. Partagez votre QR code pour commencer !</p>
+
+        <!-- Double KPI Cards (USD & CDF) -->
+        <div class="kpi-dual-grid">
+          <div class="kpi-box">
+            <div class="kpi-icon cdf">FC</div>
+            <div class="kpi-info">
+              <span class="kpi-label">Total Encaissé — Francs Congolais (CDF)</span>
+              <span class="kpi-value" id="totalReceivedCDF">0 FC</span>
+              <span class="kpi-sub" id="countReceivedCDF">0 encaissement réussi</span>
+            </div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-icon usd">$</div>
+            <div class="kpi-info">
+              <span class="kpi-label">Total Encaissé — Dollars Américains (USD)</span>
+              <span class="kpi-value" id="totalReceivedUSD">$0.00 USD</span>
+              <span class="kpi-sub" id="countReceivedUSD">0 encaissement réussi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtres de Période & de Devise -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid var(--c-border); padding-bottom:14px;">
+          <div class="filter-bar" style="margin-bottom:0;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--c-text3); align-self:center; margin-right:4px;">Période :</span>
+            <button class="btn-period-filter active" id="btnFilterPeriod_all" onclick="filterTxPeriod('all')">Tout l'historique</button>
+            <button class="btn-period-filter" id="btnFilterPeriod_month" onclick="filterTxPeriod('month')">Ce mois-ci</button>
+            <button class="btn-period-filter" id="btnFilterPeriod_today" onclick="filterTxPeriod('today')">Aujourd'hui</button>
+          </div>
+
+          <div class="filter-bar" style="margin-bottom:0;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--c-text3); align-self:center; margin-right:4px;">Devise :</span>
+            <button class="btn-currency-filter active" id="btnFilterCurrency_all" onclick="filterTxCurrency('all')">Toutes (USD + CDF)</button>
+            <button class="btn-currency-filter" id="btnFilterCurrency_USD" onclick="filterTxCurrency('USD')">Paiements USD ($)</button>
+            <button class="btn-currency-filter" id="btnFilterCurrency_CDF" onclick="filterTxCurrency('CDF')">Paiements CDF (FC)</button>
+          </div>
+        </div>
+
+        <!-- Tableau des Transactions -->
+        <div class="table-responsive">
+          <table class="table" style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--c-border); text-align:left; font-size:0.8rem; color:var(--c-text3); text-transform:uppercase;">
+                <th style="padding:12px 8px;">Date & Heure</th>
+                <th style="padding:12px 8px;">Client Payeur / Réf</th>
+                <th style="padding:12px 8px;">Opérateur</th>
+                <th style="padding:12px 8px;">Devise</th>
+                <th style="padding:12px 8px;">Montant</th>
+                <th style="padding:12px 8px;">Statut</th>
+              </tr>
+            </thead>
+            <tbody id="merchantTxBody">
+              <tr>
+                <td colspan="6" style="text-align:center; color:var(--c-text3); padding:36px; font-size:0.9rem;">
+                  <span class="spinner" style="width:24px;height:24px;margin:0 auto 12px auto;display:block;"></span>
+                  Chargement de vos encaissements en direct…
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
     </div>
   </main>
 
   <!-- Navigation Mobile Bas (PWA Shell) -->
   <nav class="mobile-bottom-nav">
-    <a href="dashboard.html" class="mobile-nav-item">
+    <a href="dashboard_marchand.html" class="mobile-nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
       <span>Accueil</span>
     </a>
     <a href="merchant.html" class="mobile-nav-item active">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-      <span>Paiement</span>
+      <span>Studio QR</span>
     </a>
-    <a href="transfer.html" class="mobile-nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 16 4-4-4-4"/><path d="m11 20 4-4-4-4"/><path d="M3 12h18"/></svg>
-      <span>Transferts</span>
+    <a href="history_marchand.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+      <span>Historique</span>
     </a>
-    <a href="bills.html" class="mobile-nav-item">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-      <span>Factures</span>
-    </a>
-    <a href="settings.html" class="mobile-nav-item">
+    <a href="settings_marchand.html" class="mobile-nav-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>Paramètres</span>
+    </a>
+    <a href="help_marchand.html" class="mobile-nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+      <span>Support</span>
     </a>
   </nav>
 </div>
 
+  <!-- MODALE DU GUIDE MARCHAND (INTERACTIF & MOBILE FRIENDLY) -->
+  <div class="modal-overlay" id="guideMarchandModal" onclick="if(event.target===this) closeGuideModal()">
+    <div class="modal" style="max-width:760px; max-height:86vh; overflow-y:auto; border:2px solid var(--c-primary-light); background:var(--c-surface);">
+      <div class="modal-header" style="position:sticky; top:0; background:var(--c-surface); z-index:10; padding-bottom:14px; border-bottom:1px solid var(--c-border); margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.5rem;">🚀</span>
+          <div>
+            <div class="modal-title" style="color:var(--c-primary-light);">Guide Marchand — Encaisser en 4 Étapes</div>
+            <p style="font-size:0.8rem; color:var(--c-text2); margin:2px 0 0 0;">Suivez ce tutoriel rapide pour maîtriser votre Studio QR Code & vos encaissements</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeGuideModal()" style="font-size:1.3rem;">✕</button>
+      </div>
+
+      <div class="onboarding-steps-grid" style="margin-bottom:24px;">
+        <!-- Étape 1 -->
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-title">Personnalisez votre Poster</div>
+          <div class="step-desc">Ajoutez le nom de votre commerce, votre slogan ou importez votre propre logo officiel pour rassurer vos clients lors du scan.</div>
+        </div>
+        <!-- Étape 2 -->
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-title">Imprimez au Centre (HD)</div>
+          <div class="step-desc">Cliquez sur <strong>Télécharger le Poster A4 HD</strong>. Notre format est 100% centré et net. Plastifiez-le et posez-le sur votre caisse ou vos tables.</div>
+        </div>
+        <!-- Étape 3 -->
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-title">Configurez votre Numéro</div>
+          <div class="step-desc">Dans la section inférieure, choisissez l'opérateur (M-Pesa, Airtel, Orange) et le numéro sur lequel vous voulez recevoir l'argent en direct.</div>
+        </div>
+        <!-- Étape 4 -->
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-title">Suivez en USD & CDF</div>
+          <div class="step-desc">Consultez en direct vos encaissements avec les doubles compteurs Francs Congolais et Dollars. Exportez le rapport en Excel/CSV en un clic.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:12px; border-top:1px solid var(--c-border); padding-top:16px;">
+        <button class="btn btn-primary" onclick="closeGuideModal()" style="padding:11px 24px; font-weight:700; border-radius:12px;">
+          Compris, commencer la personnalisation !
+        </button>
+      </div>
+    </div>
+  </div>
+
 <div id="toast-container"></div>
+<script>
+  window.openGuideModal = function() {
+    const modal = document.getElementById('guideMarchandModal');
+    if (modal) modal.classList.add('open');
+  };
+  window.closeGuideModal = function() {
+    const modal = document.getElementById('guideMarchandModal');
+    if (modal) modal.classList.remove('open');
+  };
+</script>
 <script src="js/app.js" type="module"></script>
 <script type="module" src="js/merchant.js"></script>
 </body>

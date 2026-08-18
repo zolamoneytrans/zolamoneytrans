@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide d'Intégration Benda Bus API - Zola Money Trans</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-top: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 30px;
+    }
+    p {
+      color: var(--text-muted);
+    }
+    .code-block {
+      background: #000;
+      color: #38bdf8;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+    }
+    .endpoint {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 15px;
+      border: 1px solid var(--border);
+    }
+    .method {
+      background: var(--primary);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-right: 15px;
+    }
+    .url {
+      font-family: monospace;
+      color: #fff;
+      word-break: break-all;
+    }
+    .alert {
+      background: rgba(234, 179, 8, 0.1);
+      border-left: 4px solid #eab308;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .alert-title {
+      color: #eab308;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>API d'Intégration Partenaire</h1>
+    <p style="font-size:1.1rem; max-width:600px; margin:0 auto;">Guide officiel pour la connexion de Benda Bus au système de paiement Zola Money Trans.</p>
+  </header>
+
+  <div class="alert">
+    <div class="alert-title">Sécurité & Authentification</div>
+    <p style="margin:0; color:#fff;">Toutes les requêtes vers l'API Zola Money Trans doivent inclure le header <code>X-Zola-Api-Key</code> contenant la clé secrète fournie par l'administrateur Zola.</p>
+  </div>
+
+  <h2>1. Initier un Paiement</h2>
+  <p>Ce point de terminaison permet à Benda Bus d'initier un paiement. En réponse, Zola fournira une URL de paiement (checkoutUrl) vers laquelle rediriger l'utilisateur final.</p>
+
+  <div class="endpoint">
+    <span class="method">POST</span>
+    <span class="url">https://us-central1-zolamoneytrans.cloudfunctions.net/bendabusInitPayment</span>
+  </div>
+
+  <h3>Corps de la requête (JSON)</h3>
+  <div class="code-block">
+{
+  "merchantReference": "RESERVATION:BND-2026-HBY9MH",
+  "amount": "100.00",
+  "currency": "USD",
+  "paymentMethod": "MPESA",
+  "callbackUrl": "https://api.bendabus.com/api/payments/callback"
+}
+  </div>
+
+  <h3>Réponse de succès (HTTP 200)</h3>
+  <div class="code-block">
+{
+  "success": true,
+  "transactionId": "TX123456789",
+  "checkoutUrl": "https://zolamoneytrans.com/pay.html?txId=TX123456789",
+  "amount": 100.00,
+  "currency": "USD",
+  "fee": 9.50
+}
+  </div>
+
+  <h2>2. Callback Benda Bus (Confirmation de Paiement)</h2>
+  <p>Une fois le paiement complété avec succès ou échoué par le client sur la page Zola, notre système effectuera automatiquement un appel (POST) vers votre endpoint de callback.</p>
+  
+  <div class="endpoint">
+    <span class="method" style="background:#3b82f6;">POST</span>
+    <span class="url">https://api.bendabus.com/api/payments/callback</span>
+  </div>
+
+  <h3>Headers envoyés par Zola</h3>
+  <div class="code-block">
+Content-Type: application/json
+X-Benda-Callback-Token: Xmaler895XtpLhfhf55Ka0086!jgkLL@hgytkg--
+  </div>
+
+  <h3>Format de la charge utile (JSON)</h3>
+  <div class="code-block">
+{
+  "eventId": "PAY-TX123456789-PAID",
+  "merchantReference": "RESERVATION:BND-2026-HBY9MH",
+  "providerReference": "TX123456789",
+  "status": "PAID",
+  "amount": 100.00,
+  "currency": "USD",
+  "paymentMethod": "MPESA",
+  "sourcePlatform": "API_PARTENAIRE",
+  "paidAt": "2026-07-22T21:45:00.000Z"
+}
+  </div>
+  <p>Le statut (<code>status</code>) sera l'un des suivants : <code>PAID</code>, <code>PENDING</code>, <code>FAILED</code>, <code>CANCELLED</code>, ou <code>EXPIRED</code>.</p>
+
+  <h2>3. Reversements (Payouts)</h2>
+  <p>Conformément à l'accord de partenariat, Zola Money Trans prélève des frais de <strong>9.5%</strong> sur les montants collectés. Le montant net (Montant initial - Frais de 9.5%) est ensuite reversé automatiquement ou manuellement sur le compte Mobile Money configuré par l'administrateur Zola.</p>
+</div>
+
+</body>
+</html>
