@@ -9,14 +9,15 @@ workflows:
       node: latest
       xcode: latest
       cocoapods: default
-
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.zolamoneytrans.web
     scripts:
       - name: Install dependencies
         script: npm install
       - name: Sync Capacitor (iOS)
         script: npx cap sync ios
-      - name: Fetch and create signing files
-        script: app-store-connect fetch-signing-files "com.zolamoneytrans.web" --type IOS_APP_STORE --create
+
       - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
       - name: Build IPA
