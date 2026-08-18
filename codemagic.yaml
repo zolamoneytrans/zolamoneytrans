@@ -9,9 +9,8 @@ workflows:
       node: latest
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.zolamoneytrans.web
+      groups:
+        - appstore_credentials
     scripts:
       - name: Install dependencies
         script: npm install
