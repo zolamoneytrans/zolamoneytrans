@@ -1,5 +1,5 @@
 // sw.js — Service Worker Zola Money Trans (Network First)
-const CACHE_NAME = 'zola-v68';
+const CACHE_NAME = 'zola-v70';
 const STATIC_ASSETS = [
   '/js/tutorial.js',
   '/',

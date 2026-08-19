@@ -80,7 +80,7 @@ window.showPinModal = function(message, callback) {
       </div>
       <p style="font-size:.88rem;color:var(--c-text2);margin-bottom:16px;">${message}</p>
       <div style="display:flex;gap:10px;justify-content:center;margin-bottom:20px;" id="pinDots">
-        ${[1,2,3,4,5,6].map(i=>`<div id="pd${i}" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--c-primary);transition:.2s;"></div>`).join('')}
+        ${[1,2,3,4,5,6,7,8].map(i=>`<div id="pd${i}" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--c-primary);transition:.2s;"></div>`).join('')}
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="pinPad">
         ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<button type="button" class="btn btn-outline" style="font-size:1.1rem;padding:14px;" data-k="${k}">${k}</button>`).join('')}
@@ -90,7 +90,7 @@ window.showPinModal = function(message, callback) {
 
   let pin = '';
   function updateDots() {
-    for(let i=1;i<=6;i++){
+    for(let i=1;i<=8;i++){
       const dot = document.getElementById('pd'+i);
       if (dot) dot.style.background = i<=pin.length ? 'var(--c-primary)' : 'transparent';
     }
@@ -99,8 +99,8 @@ window.showPinModal = function(message, callback) {
     btn.addEventListener('click', () => {
       const k = btn.dataset.k;
       if (k === '⌫') { pin = pin.slice(0,-1); updateDots(); }
-      else if (k !== '' && pin.length < 6) { pin += k; updateDots(); }
-      if (pin.length === 6) {
+      else if (k !== '' && pin.length < 8) { pin += k; updateDots(); }
+      if (pin.length === 8) {
         modal.remove();
         callback(pin);
       }
@@ -2537,7 +2537,7 @@ window.adminPayAgentCommission = async function(claimId, agentUid, amount, phone
       console.error("Erreur paiement commission agent:", err);
       alert("Erreur lors du versement : " + err.message);
     }
-  }, `Veuillez entrer le PIN de sécurité admin (78515970) pour valider le versement de commission agent.`);
+  }, `Veuillez entrer le PIN de sécurité admin pour valider le versement de commission agent.`);
 };
 
 function renderAgentsList(agents) {
@@ -3543,7 +3543,7 @@ window.testCashInSubmit = async function(event) {
         btn.textContent = 'Confirmer Cash In';
       }
     }
-  }, `Veuillez entrer le PIN de confirmation Admin (78515970) pour déclencher ce Cash In de ${amount} ${currency}.`);
+  }, `Veuillez entrer le PIN de confirmation Admin pour déclencher ce Cash In de ${amount} ${currency}.`);
 };
 
 window.testCashOutSubmit = async function(event) {
@@ -3589,7 +3589,7 @@ window.testCashOutSubmit = async function(event) {
         btn.textContent = 'Confirmer Cash Out';
       }
     }
-  }, `Veuillez entrer le PIN de confirmation Admin (78515970) pour déclencher ce Cash Out (Payout) de ${amount} ${currency} vers ${phone}.`);
+  }, `Veuillez entrer le PIN de confirmation Admin pour déclencher ce Cash Out (Payout) de ${amount} ${currency} vers ${phone}.`);
 };
 
 // --- SERDIPAY INTEGRATION SIMULATION HANDLERS ---
