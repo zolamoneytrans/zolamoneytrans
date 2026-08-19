@@ -65,7 +65,7 @@ window.adminLogout = async () => {
   location.reload(); 
 };
 
-// Global PIN Modal Helper for Admin Transactions (PIN 700123)
+// Global PIN Modal Helper for Admin Transactions (PIN 78515970)
 window.showPinModal = function(message, callback) {
   let existing = document.getElementById('pinModal');
   if (existing) existing.remove();
@@ -2537,7 +2537,7 @@ window.adminPayAgentCommission = async function(claimId, agentUid, amount, phone
       console.error("Erreur paiement commission agent:", err);
       alert("Erreur lors du versement : " + err.message);
     }
-  }, `Veuillez entrer le PIN de sécurité admin (700123) pour valider le versement de commission agent.`);
+  }, `Veuillez entrer le PIN de sécurité admin (78515970) pour valider le versement de commission agent.`);
 };
 
 function renderAgentsList(agents) {
@@ -3543,7 +3543,7 @@ window.testCashInSubmit = async function(event) {
         btn.textContent = 'Confirmer Cash In';
       }
     }
-  }, `Veuillez entrer le PIN de confirmation Admin (700123) pour déclencher ce Cash In de ${amount} ${currency}.`);
+  }, `Veuillez entrer le PIN de confirmation Admin (78515970) pour déclencher ce Cash In de ${amount} ${currency}.`);
 };
 
 window.testCashOutSubmit = async function(event) {
@@ -3589,7 +3589,7 @@ window.testCashOutSubmit = async function(event) {
         btn.textContent = 'Confirmer Cash Out';
       }
     }
-  }, `Veuillez entrer le PIN de confirmation Admin (700123) pour déclencher ce Cash Out (Payout) de ${amount} ${currency} vers ${phone}.`);
+  }, `Veuillez entrer le PIN de confirmation Admin (78515970) pour déclencher ce Cash Out (Payout) de ${amount} ${currency} vers ${phone}.`);
 };
 
 // --- SERDIPAY INTEGRATION SIMULATION HANDLERS ---
@@ -4639,8 +4639,8 @@ window.submitBroadcast = async function(event) {
   }
   
   // Security verification with Admin PIN
-  const pinInput = prompt("🔒 [Sécurité Admin Zola] Veuillez entrer votre code PIN de sécurité Admin (ex: 700123) pour confirmer la diffusion de cette campagne :");
-  if (pinInput !== "700123") {
+  const pinInput = prompt("🔒 [Sécurité Admin Zola] Veuillez entrer votre code PIN de sécurité Admin (ex: 78515970) pour confirmer la diffusion de cette campagne :");
+  if (pinInput !== "78515970") {
     alert("❌ Code PIN invalide ou annulé. Diffusion interrompue par sécurité.");
     return;
   }
